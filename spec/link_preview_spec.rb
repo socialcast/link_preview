@@ -170,4 +170,29 @@ describe LinkPreview do
       content.title
     end
   end
+
+  context 'kaltura opengraph', :vcr => {:cassette_name => 'kaltura_opengraph'} do
+    subject(:content) do
+      LinkPreview.fetch('https://media.mediaspace.kaltura.com/media/Grim+Outlook+For+BlackBerry/1_vgzs34xc')
+    end
+
+    it { should be_a(LinkPreview::Content) }
+    its(:url) { should  == 'https://media.mediaspace.kaltura.com/media/Grim+Outlook+For+BlackBerry/1_vgzs34xc' }
+    its(:title) { should  == %Q{Grim Outlook For BlackBerry} }
+    its(:description) { should == %Q{Summary of business headlines: Research in Motion tops lowered quarterly forecasts but outlook remains grim; Zynga raises $1 billion in IPO; U.S. economy improving, but IMF chief issues warning to all; Wall Street breaks three-day sell-off. Conway G. Gittens reports.} }
+    its(:site_name) { should == 'MediaSpace Video Portal' }
+    its(:site_url) { should == 'https://media.mediaspace.kaltura.com' }
+    its(:image_url) { should == 'http://cdnsecakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/1_vgzs34xc/version/100001/width/' }
+    its(:image_data) { should be_a(StringIO) }
+    its(:image_content_type) { should == 'image/jpeg' }
+    its(:image_file_name) { should == 'width' }
+
+    it 'should issue minimum number of requests' do
+      http_client.should_receive(:get).with('https://media.mediaspace.kaltura.com/media/Grim+Outlook+For+BlackBerry/1_vgzs34xc').ordered.and_call_original
+      content.title
+      http_client.should_receive(:get).with('http://cdnsecakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/1_vgzs34xc/version/100001/width/').ordered.and_call_original
+      content.image_data
+      content.description
+    end
+  end
 end
