@@ -33,14 +33,22 @@ module LinkPreview
         },
         :opengraph =>
         {
-          :image_url => :image
+          :image_url => [:image_secure_url, :image, :image_url],
+          :content_url => [:video_secure_url, :video, :video_url],
+          :content_type => :video_type,
+          :content_width => :width,
+          :content_height => :height
         }
       }
 
     REVERSE_PROPERTIES_TABLE =
-      {}.tap do |reverse_property_table|
+      Hash.new { |h,k| h[k] = {} }.tap do |reverse_property_table|
         PROPERTIES_TABLE.each do |source, table|
-          reverse_property_table[source] = table.invert
+          table.invert.each_pair do |keys, val|
+            Array.wrap(keys).each do |key|
+              reverse_property_table[source][key] = val
+            end
+          end
         end
       end
 
@@ -51,7 +59,10 @@ module LinkPreview
       @sources = Hash.new { |h,k| h[k] = {} }
       crawler.enqueue!(@content_uri)
 
-      add_properties!(:initial, properties)
+      [:initial, :image, :oembed, :opengraph, :html].map do |source|
+        next unless properties[source].present?
+        add_properties!(source, properties[source])
+      end
     end
 
     # @return [String] permalink URL of resource
@@ -59,7 +70,20 @@ module LinkPreview
       extract(:url) || @content_uri
     end
 
-    PROPERTIES = [:title, :description, :site_name, :site_url, :image_url, :image_data, :image_content_type, :image_file_name]
+    PROPERTIES = [
+      :title,
+      :description,
+      :site_name,
+      :site_url,
+      :image_url,
+      :image_data,
+      :image_content_type,
+      :image_file_name,
+      :content_url,
+      :content_type,
+      :content_width,
+      :content_height ]
+
     PROPERTIES.each do |property|
       define_method(property) do
         extract(property)
@@ -90,14 +114,39 @@ module LinkPreview
     end
 
     def as_oembed
-      raw(:oembed).reverse_merge(
-        :version         => '1.0',
-        :provider_name   => site_name,
-        :provider_url    => site_url,
-        :title           => title,
-        :description     => description,
-        :type            => 'link',
-        :thumbnail_url   => image_url)
+      if content_type == 'application/x-shockwave-flash'
+        raw(:oembed).reverse_merge(as_oembed_video)
+      else
+        raw(:oembed).reverse_merge(as_oembed_link)
+      end
+    end
+
+    def content_html
+      %Q{<iframe width="#{content_width_scaled}" height="#{content_height_scaled}" src="#{content_url}" frameborder="0" allowfullscreen></iframe>}
+    end
+
+    def content_width_scaled
+      # Width takes precedence over height
+      if @options[:width].to_i > 0
+        @options[:width]
+      elsif @options[:height].to_i > 0 && content_height.to_i > 0
+        # Compute scaled width using the ratio of requested height to actual height, round up to prevent truncation
+        (((@options[:height].to_i * 1.0) / (content_height.to_i * 1.0)) * content_width.to_i).ceil
+      else
+        content_width.to_i
+      end
+    end
+
+    def content_height_scaled
+      # Width takes precedence over height
+      if @options[:width].to_i > 0 && content_width.to_i > 0
+        # Compute scaled height using the ratio of requested width to actual width, round up to prevent truncation
+        (((@options[:width].to_i * 1.0) / (content_width.to_i * 1.0)) * content_height.to_i).ceil
+      elsif @options[:height].to_i > 0
+        @options[:height]
+      else
+        content_height.to_i
+      end
     end
 
     protected
@@ -196,7 +245,11 @@ module LinkPreview
     end
 
     def property_alias(source, property)
-      PROPERTIES_TABLE.deep_fetch(source, property) || property
+      property_aliases(source,property).detect { |property| @sources[source].has_key?(property) }
+    end
+
+    def property_aliases(source, property)
+      Array.wrap(PROPERTIES_TABLE.deep_fetch(source, property) || property)
     end
 
     def property_unalias(source, property)
@@ -234,7 +287,7 @@ module LinkPreview
     end
 
     def extract_all
-      [:title, :description, :image_url, :image_data, :site_name, :site_url].each do |property|
+      PROPERTIES.each do |property|
         send(property)
       end
     end
@@ -242,6 +295,26 @@ module LinkPreview
     # FIXME this is expensive
     def strip_html(value)
       Nokogiri::HTML(value).xpath('//text()').remove.to_s
+    end
+
+    def as_oembed_link
+      {
+        :version         => '1.0',
+        :provider_name   => site_name,
+        :provider_url    => site_url,
+        :title           => title,
+        :description     => description,
+        :type            => 'link',
+        :thumbnail_url   => image_url
+      }
+    end
+
+    def as_oembed_video
+      as_oembed_link.merge({
+          :type            => 'video',
+          :html            => content_html,
+          :width           => content_width_scaled.to_i,
+          :height          => content_height_scaled.to_i})
     end
   end
 end

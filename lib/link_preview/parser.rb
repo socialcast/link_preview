@@ -37,6 +37,7 @@ module LinkPreview
       }
     end
 
+    # FIXME currently secure_url is favored over url via implicit ordering of keys
     def parse_html(data)
       if doc = Nokogiri::HTML.parse(data.body, nil, 'UTF-8')
         enum_oembed_link(doc) do |link_rel|
@@ -46,11 +47,19 @@ module LinkPreview
           :opengraph => {
             :title => find_meta_property(doc, 'og:title'),
             :description => find_meta_property(doc, 'og:description'),
+            :image_secure_url => find_meta_property(doc, 'og:image:secure_url'),
             :image => find_meta_property(doc, 'og:image'),
+            :image_url => find_meta_property(doc, 'og:image:url'),
             :tag => find_meta_property(doc, 'og:tag'),
             :url => find_meta_property(doc, 'og:url'),
             :type => find_meta_property(doc, 'og:type'),
             :site_name => find_meta_property(doc, 'og:site_name'),
+            :video_secure_url => find_meta_property(doc, 'og:video:secure_url'),
+            :video => find_meta_property(doc, 'og:video'),
+            :video_url => find_meta_property(doc, 'og:video:url'),
+            :video_type => find_meta_property(doc, 'og:video:type'),
+            :width => find_meta_property(doc, 'og:width'),
+            :height => find_meta_property(doc, 'og:height')
           },
           :html => {
             :title => find_title(doc),
