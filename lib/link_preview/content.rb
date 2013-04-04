@@ -114,6 +114,7 @@ module LinkPreview
     end
 
     def as_oembed
+      return unless found?
       if content_type == 'application/x-shockwave-flash'
         raw(:oembed).reverse_merge(as_oembed_video)
       else
@@ -223,6 +224,11 @@ module LinkPreview
       unencoded_url
     end
 
+    # called via normalize_property
+    def normalize_html(html)
+      html
+    end
+
     def get_property(property)
       [:initial, :image, :oembed, :opengraph, :html].map do |source|
         @sources[source][property_alias(source, property)]
@@ -306,7 +312,7 @@ module LinkPreview
         :description     => description,
         :type            => 'link',
         :thumbnail_url   => image_url
-      }
+      }.reject { |_,v| v.nil? }
     end
 
     def as_oembed_video

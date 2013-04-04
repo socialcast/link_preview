@@ -28,6 +28,22 @@ describe LinkPreview do
       http_client.should_receive(:get).with('http://ogp.me/logo.png').ordered.and_call_original
       content.image_data
     end
+
+    context '#as_oembed' do
+      subject(:oembed) { content.as_oembed }
+
+      it 'should encode as link' do
+        should == {
+          :version        => '1.0',
+          :provider_name  => %Q{ogp.me},
+          :provider_url   => 'http://ogp.me',
+          :title          => %Q{Open Graph protocol},
+          :description    => %Q{The Open Graph protocol enables any web page to become a rich object in a social graph.},
+          :type           => 'link',
+          :thumbnail_url  => 'http://ogp.me/logo.png'
+        }
+      end
+    end
   end
 
   context 'youtube oembed', :vcr => {:cassette_name => 'youtube'} do
@@ -53,6 +69,30 @@ describe LinkPreview do
       content.description
       http_client.should_receive(:get).with('http://i2.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg').ordered.and_call_original
       content.image_data
+    end
+
+    context '#as_oembed' do
+      subject(:oembed) { content.as_oembed }
+
+      it 'should proxy oembed content' do
+        should == {
+          :version          => '1.0',
+          :provider_name    => %Q{YouTube},
+          :provider_url     => 'http://www.youtube.com/',
+          :url              => "http://youtube.com/watch?v=M3r2XDceM6A",
+          :title            => %Q{Amazing Nintendo Facts},
+          :description      => %Q{Learn about the history of Nintendo, its gaming systems, and Mario! It's 21 amazing facts about Nintendo you may have never known. Update: As of late 2008, W...},
+          :type             => 'video',
+          :thumbnail_url    => 'http://i2.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg',
+          :thumbnail_width  => 480,
+          :thumbnail_height => 360,
+          :html             => %Q{<iframe width="480" height="270" src="http://www.youtube.com/embed/M3r2XDceM6A?feature=oembed" frameborder="0" allowfullscreen></iframe>},
+          :width            => 480,
+          :height           => 270,
+          :author_name      => 'ZackScott',
+          :author_url       => 'http://www.youtube.com/user/ZackScott',
+        }
+      end
     end
   end
 
@@ -110,10 +150,20 @@ describe LinkPreview do
     context '#as_oembed' do
       subject(:oembed) { content.as_oembed }
 
-      it 'should' do
-        oembed[:type].should == 'rich'
-        oembed[:html].should_not be_nil
-        oembed[:width].should == 420
+      it 'should proxy oembed content' do
+        should == {
+          :version          => '1.0',
+          :provider_name    => %Q{SlideRocket},
+          :provider_url     => 'http://sliderocket.com/',
+          :url              => 'http://app.sliderocket.com/app/fullplayer.aspx?id=f614ec65-0f9b-4167-bb2a-b384dad535f3',
+          :title            => %Q{Hoshyar-Foundation},
+          :description      => %Q{Proudly crafted with SlideRocket.},
+          :thumbnail_url    => 'http://cdn.sliderocket.com/thumbnails/4/43/43b475a4-192e-455e-832f-4a40697d8d25.jpg',
+          :type             => 'rich',
+          :html             => %Q{<iframe src="http://app.sliderocket.com/app/fullplayer.aspx?id=f614ec65-0f9b-4167-bb2a-b384dad535f3" width="420" height="315" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>},
+          :width            => 420,
+          :height           => 315
+        }
       end
     end
   end
@@ -139,6 +189,21 @@ describe LinkPreview do
       content.title
       content.image_data
     end
+
+    context '#as_oembed' do
+      subject(:oembed) { content.as_oembed }
+
+      it 'should convert to oembed link' do
+        should == {
+          :version        => '1.0',
+          :provider_name  => %Q{support.apple.com},
+          :provider_url   => 'http://support.apple.com',
+          :title          => %Q{About the security content of iOS 6.1 Software Update},
+          :description    => %Q{This document describes the security content of iOS 6.1.\nFor the protection of our customers, Apple does not disclose, discuss, or confirm security issues until a full investigation has occurred and any necessary patches or releases are available. To learn more about Apple Product Security, see the Apple Product Security website.\nFor information about the Apple Product Security PGP Key, see How to use the Apple Product Security PGP Key.\nWhere possible, CVE IDs are used to reference the vulnerabilities for further information.\nTo learn about other Security Updates, see Apple Security Updates.},
+          :type           => 'link'
+        }
+      end
+    end
   end
 
   context 'image data', :vcr => {:cassette_name => 'ggp.png'} do
@@ -156,6 +221,22 @@ describe LinkPreview do
     its(:image_data) { should be_a(StringIO) }
     its(:image_content_type) { should == 'image/png' }
     its(:image_file_name) { should == 'Golden_Gate_Park_Logo_Header.png' }
+
+    # FIXME should convert to photo via paperclip
+    context '#as_oembed' do
+      subject(:oembed) { content.as_oembed }
+
+      it 'should convert to oembed link' do
+        should == {
+          :version        => '1.0',
+          :provider_name  => %Q{www.golden-gate-park.com},
+          :provider_url   => 'http://www.golden-gate-park.com',
+          :title          => %Q{http://www.golden-gate-park.com/wp-content/uploads/2011/02/Golden_Gate_Park_Logo_Header.png},
+          :type           => 'link',
+          :thumbnail_url  => 'http://www.golden-gate-park.com/wp-content/uploads/2011/02/Golden_Gate_Park_Logo_Header.png'
+        }
+      end
+    end
   end
 
   context 'youtube oembed 404', :vcr => {:cassette_name => 'youtube 404'} do
@@ -169,6 +250,8 @@ describe LinkPreview do
       http_client.should_receive(:get).with('http://youtube.com/watch?v=1').ordered.and_call_original
       content.title
     end
+
+    its(:as_oembed) { should be_nil }
   end
 
   context 'kaltura opengraph', :vcr => {:cassette_name => 'kaltura_opengraph'} do
@@ -196,18 +279,23 @@ describe LinkPreview do
     end
 
     # FIXME re-record once Kaltura og:video:width and og:view:height are fixed
-    it 'should convert opengraph to oembed' do
-      content.as_oembed.should == {
-        :version        => '1.0',
-        :provider_name  => %Q{MediaSpace Video Portal},
-        :provider_url   => 'https://media.mediaspace.kaltura.com',
-        :title          => %Q{Grim Outlook For BlackBerry},
-        :description    => %Q{Summary of business headlines: Research in Motion tops lowered quarterly forecasts but outlook remains grim; Zynga raises $1 billion in IPO; U.S. economy improving, but IMF chief issues warning to all; Wall Street breaks three-day sell-off. Conway G. Gittens reports.},
-        :type           => 'video',
-        :thumbnail_url  => "https://cdnsecakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/1_vgzs34xc/version/100001/width/",
-        :html           => %Q{<iframe width="0" height="0" src="https://www.kaltura.com/index.php/kwidget/wid/_1059491/uiconf_id//entry_id/1_vgzs34xc" frameborder="0" allowfullscreen></iframe>},
-        :width          => 0,
-        :height         => 0 }
+    context '#as_oembed' do
+      subject(:oembed) { content.as_oembed }
+
+      it 'should convert opengraph to oembed' do
+        should == {
+          :version        => '1.0',
+          :provider_name  => %Q{MediaSpace Video Portal},
+          :provider_url   => 'https://media.mediaspace.kaltura.com',
+          :title          => %Q{Grim Outlook For BlackBerry},
+          :description    => %Q{Summary of business headlines: Research in Motion tops lowered quarterly forecasts but outlook remains grim; Zynga raises $1 billion in IPO; U.S. economy improving, but IMF chief issues warning to all; Wall Street breaks three-day sell-off. Conway G. Gittens reports.},
+          :type           => 'video',
+          :thumbnail_url  => "https://cdnsecakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/1_vgzs34xc/version/100001/width/",
+          :html           => %Q{<iframe width="0" height="0" src="https://www.kaltura.com/index.php/kwidget/wid/_1059491/uiconf_id//entry_id/1_vgzs34xc" frameborder="0" allowfullscreen></iframe>},
+          :width          => 0,
+          :height         => 0 
+        }
+      end
     end
   end
 end
