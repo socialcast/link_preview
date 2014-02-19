@@ -1,5 +1,5 @@
 require 'faraday'
-require 'faraday_middleware'
+require 'faraday/follow_redirects'
 
 module Faraday
   class Response
@@ -31,7 +31,7 @@ module LinkPreview
     # TODO Rails cache middleware
     def faraday_connection
       @faraday_connection ||= Faraday.new do |builder|
-        builder.use FaradayMiddleware::FollowRedirects, limit: @config.max_redirects
+        builder.use Faraday::FollowRedirects, limit: @config.max_redirects
         builder.use Faraday::Adapter::NetHttp
         builder.options[:timeout] = @config.timeout
         builder.options[:open_timeout] = @config.open_timeout
