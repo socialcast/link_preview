@@ -36,8 +36,8 @@ module LinkPreview
           :image_url => [:image_secure_url, :image, :image_url],
           :content_url => [:video_secure_url, :video, :video_url],
           :content_type => :video_type,
-          :content_width => :width,
-          :content_height => :height
+          :content_width => :video_width,
+          :content_height => :video_height
         }
       }
 
@@ -123,7 +123,20 @@ module LinkPreview
     end
 
     def content_html
-      %Q{<iframe width="#{content_width_scaled}" height="#{content_height_scaled}" src="#{content_url}" frameborder="0" allowfullscreen></iframe>}
+      return nil unless content_url.present?
+
+      <<-EOF.strip.gsub(/\s+/, ' ').gsub(/>\s+</, '><')
+          <object width="#{content_width_scaled}" height="#{content_height_scaled}">
+            <param name="movie" value="#{content_url}"></param>
+            <param name="allowScriptAccess" value="always"></param>
+            <param name="allowFullScreen" value="true"></param>
+            <embed src="#{content_url}"
+                   type="#{content_type}"
+                   allowscriptaccess="always"
+                   allowfullscreen="true"
+                   width="#{content_width_scaled}" height="#{content_height_scaled}"></embed>
+          </object>
+      EOF
     end
 
     def content_width_scaled

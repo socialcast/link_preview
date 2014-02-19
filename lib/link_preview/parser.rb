@@ -58,8 +58,8 @@ module LinkPreview
             :video => find_meta_property(doc, 'og:video'),
             :video_url => find_meta_property(doc, 'og:video:url'),
             :video_type => find_meta_property(doc, 'og:video:type'),
-            :width => find_meta_property(doc, 'og:width'),
-            :height => find_meta_property(doc, 'og:height')
+            :video_width => find_meta_property(doc, 'og:video:width'),
+            :video_height => find_meta_property(doc, 'og:video:height')
           },
           :html => {
             :title => find_title(doc),
