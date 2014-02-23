@@ -54,9 +54,7 @@ module LinkPreview
 
     def to_absolute(reference_uri)
       return self if absolute?
-      absolute_uri = self.class.parse(reference_uri, @options)
-      absolute_uri.path += self.path
-      absolute_uri.normalize
+      self.class.parse(::URI.join(reference_uri, self.path), @options)
     end
 
     class << self
@@ -65,7 +63,21 @@ module LinkPreview
       end
 
       def unescape(uri)
-        ::URI.unescape(uri)
+        Addressable::URI.unescape(uri, Addressable::URI)
+      end
+
+      def escape(uri)
+        Addressable::URI.escape(uri, Addressable::URI)
+      end
+
+      def safe_escape(uri)
+        parsed_uri = Addressable::URI.parse(uri)
+        unescaped = self.unescape(parsed_uri)
+        if unescaped.to_s == parsed_uri.to_s
+          self.escape(parsed_uri)
+        else
+          parsed_uri
+        end
       end
     end
 

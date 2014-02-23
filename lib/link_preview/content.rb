@@ -223,7 +223,7 @@ module LinkPreview
     def normalize_image_url(partial_image_url)
       return unless partial_image_url
       parsed_partial_image_url = LinkPreview::URI.parse(partial_image_url, @options)
-      parsed_absolute_image_url = parsed_partial_image_url.to_absolute(@content_url)
+      parsed_absolute_image_url = parsed_partial_image_url.to_absolute(@content_uri)
       parsed_absolute_image_url.to_s.tap do |absolute_image_url|
         crawler.enqueue!(absolute_image_url, :image)
       end
@@ -234,7 +234,13 @@ module LinkPreview
       return unless discovered_url
       unencoded_url = LinkPreview::URI.unescape(discovered_url)
       crawler.enqueue!(unencoded_url, :html)
-      unencoded_url
+      unencoded_url.to_s
+    end
+
+    # called via normalize_property
+    def normalize_content_url(content_url)
+      return unless content_url
+      LinkPreview::URI.safe_escape(content_url).to_s
     end
 
     # called via normalize_property
