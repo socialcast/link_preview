@@ -33,6 +33,14 @@ describe LinkPreview::URI do
       it { parsed_uri.should be_a_kaltura_uri }
       it { parsed_uri.should be_a_oembed_uri }
     end
+
+    context 'with kaltura uri with space error' do
+      let(:uri) { 'https://cdnsecakmi.kaltura.com/ index.php/kwidget/wid/_1257971/uiconf_id//entry_id/0_aivu6h6k' }
+      it { parsed_uri.should be_a(LinkPreview::URI) }
+      it { parsed_uri.to_s.should == 'https://cdnsecakmi.kaltura.com/%20index.php/kwidget/wid/_1257971/uiconf_id//entry_id/0_aivu6h6k' }
+      it { parsed_uri.should_not be_a_kaltura_uri }
+      it { parsed_uri.should_not be_a_oembed_uri }
+    end
   end
 
   describe '#to_absolute' do
@@ -54,6 +62,13 @@ describe LinkPreview::URI do
 
       it { absolute_uri.should be_a(LinkPreview::URI) }
       it { absolute_uri.to_s.should == 'http://socialcast.com/a/b/c' }
+    end
+
+    context 'with another relative uri' do
+      let(:uri) { 'a/b/../../z' }
+
+      it { absolute_uri.should be_a(LinkPreview::URI) }
+      it { absolute_uri.to_s.should == 'http://socialcast.com/z' }
     end
   end
 end

@@ -291,7 +291,7 @@ describe LinkPreview do
           :description    => %Q{Summary of business headlines: Research in Motion tops lowered quarterly forecasts but outlook remains grim; Zynga raises $1 billion in IPO; U.S. economy improving, but IMF chief issues warning to all; Wall Street breaks three-day sell-off. Conway G. Gittens reports.},
           :type           => 'video',
           :thumbnail_url  => "https://cdnsecakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/1_vgzs34xc/version/100001/width/",
-          :html           => %Q{<iframe width="0" height="0" src="https://www.kaltura.com/index.php/kwidget/wid/_1059491/uiconf_id//entry_id/1_vgzs34xc" frameborder="0" allowfullscreen></iframe>},
+          :html           => %Q{<object width=\"0\" height=\"0\"><param name=\"movie\" value=\"https://www.kaltura.com/index.php/kwidget/wid/_1059491/uiconf_id//entry_id/1_vgzs34xc\"></param><param name=\"allowScriptAccess\" value=\"always\"></param><param name=\"allowFullScreen\" value=\"true\"></param><embed src=\"https://www.kaltura.com/index.php/kwidget/wid/_1059491/uiconf_id//entry_id/1_vgzs34xc\" type=\"application/x-shockwave-flash\" allowscriptaccess=\"always\" allowfullscreen=\"true\" width=\"0\" height=\"0\"></embed></object>},
           :width          => 0,
           :height         => 0 
         }
