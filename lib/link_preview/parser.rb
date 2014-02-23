@@ -78,7 +78,7 @@ module LinkPreview
         MultiJson.load(data.body)
       end
       # TODO validate oembed response
-      { :oembed => oembed_data.merge(:url => parse_oembed_content_url(data)) }
+      { :oembed => (oembed_data || {}).merge(:url => parse_oembed_content_url(data)) }
     end
 
     def parse_oembed_content_url(data)

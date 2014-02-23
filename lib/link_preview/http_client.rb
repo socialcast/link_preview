@@ -29,6 +29,7 @@ module LinkPreview
     private
 
     # TODO Rails cache middleware
+    # TODO redirect validation
     def faraday_connection
       @faraday_connection ||= Faraday.new do |builder|
         builder.use Faraday::FollowRedirects, limit: @config.max_redirects
