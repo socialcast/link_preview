@@ -59,7 +59,7 @@ module LinkPreview
 
     class << self
       def parse(uri, options = {})
-        self.new(Addressable::URI.parse(uri), options).normalize
+        self.new(Addressable::URI.parse(safe_escape(uri)), options).normalize
       end
 
       def unescape(uri)

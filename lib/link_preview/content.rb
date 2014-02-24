@@ -52,6 +52,8 @@ module LinkPreview
         end
       end
 
+    attr_accessor :crawler
+
     def initialize(config, content_uri, options = {}, properties = {})
       @config = config
       @content_uri = content_uri
@@ -114,7 +116,6 @@ module LinkPreview
     end
 
     def as_oembed
-      return unless found?
       if content_type == 'application/x-shockwave-flash'
         raw(:oembed).reverse_merge(as_oembed_video)
       else
@@ -163,11 +164,15 @@ module LinkPreview
       end
     end
 
-    protected
-
     def crawler
       @crawler ||= LinkPreview::Crawler.new(@config, @options)
     end
+
+    def crawler=(crawler)
+      @crawler = crawler
+    end
+
+    protected
 
     def parser
       @parser ||= LinkPreview::Parser.new(@config, @options)

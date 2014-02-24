@@ -23,6 +23,8 @@ module LinkPreview
         parse_oembed(data)
       when %r{\Aapplication/json.*}
         parse_oembed(data)
+      else
+        {}
       end
     end
 
