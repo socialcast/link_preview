@@ -5,7 +5,7 @@ require 'link_preview/null_crawler'
 module LinkPreview
   class Client
     def configure
-      yield @configuration
+      yield configuration
     end
 
     def configuration
