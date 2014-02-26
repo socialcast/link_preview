@@ -251,7 +251,18 @@ describe LinkPreview do
       content.title
     end
 
-    its(:as_oembed) { should be_nil }
+    context '#as_oembed' do
+      subject(:oembed) { content.as_oembed }
+      it 'should return basic oembed' do
+        should == {
+          :version       => '1.0',
+          :provider_name => 'youtube.com',
+          :provider_url  => 'http://youtube.com',
+          :title         => 'YouTube',
+          :type          => 'link'
+        }
+      end
+    end
   end
 
   context 'kaltura opengraph', :vcr => {:cassette_name => 'kaltura_opengraph'} do
@@ -293,7 +304,7 @@ describe LinkPreview do
           :thumbnail_url  => "https://cdnsecakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/1_vgzs34xc/version/100001/width/",
           :html           => %Q{<object width=\"0\" height=\"0\"><param name=\"movie\" value=\"https://www.kaltura.com/index.php/kwidget/wid/_1059491/uiconf_id//entry_id/1_vgzs34xc\"></param><param name=\"allowScriptAccess\" value=\"always\"></param><param name=\"allowFullScreen\" value=\"true\"></param><embed src=\"https://www.kaltura.com/index.php/kwidget/wid/_1059491/uiconf_id//entry_id/1_vgzs34xc\" type=\"application/x-shockwave-flash\" allowscriptaccess=\"always\" allowfullscreen=\"true\" width=\"0\" height=\"0\"></embed></object>},
           :width          => 0,
-          :height         => 0 
+          :height         => 0
         }
       end
     end
