@@ -28,12 +28,10 @@ module LinkPreview
 
     private
 
-    # TODO Rails cache middleware
-    # TODO redirect validation
     def faraday_connection
       @faraday_connection ||= Faraday.new do |builder|
-        builder.use Faraday::FollowRedirects, limit: @config.max_redirects
-        builder.use Faraday::Adapter::NetHttp
+        builder.use Faraday::FollowRedirects, limit: @config.max_redirects if @config.follow_redirects
+        builder.use @config.http_adapter
         builder.options[:timeout] = @config.timeout
         builder.options[:open_timeout] = @config.open_timeout
         builder.use NormalizeURI
