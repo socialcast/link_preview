@@ -28,8 +28,10 @@ module LinkPreview
     def dequeue!(priority_order = [])
       return if finished?
       uri = dequeue_by_priority(priority_order)
-      @config.http_client.get(uri).tap do |response|
-        @status[uri] = response.status.to_i
+      with_extra_env do
+        @config.http_client.get(uri).tap do |response|
+          @status[uri] = response.status.to_i
+        end
       end
     rescue => e
       @status[uri] ||= 500
@@ -72,6 +74,13 @@ module LinkPreview
 
     def enqueued?(uri)
       @queue.values.flatten.uniq.include?(uri)
+    end
+
+    def with_extra_env(&block)
+      LinkPreview::ExtraEnv.extra = @options
+      yield
+    ensure
+      LinkPreview::ExtraEnv.extra = nil
     end
   end
 end

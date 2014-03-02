@@ -10,6 +10,19 @@ module Faraday
 end
 
 module LinkPreview
+  class ExtraEnv < Faraday::Middleware
+    class << self
+      attr_accessor :extra
+    end
+
+    def call(env)
+      env[:link_preview] = self.class.extra || {}
+      @app.call(env)
+    ensure
+      env[:link_preview] = nil
+    end
+  end
+
   class NormalizeURI < Faraday::Middleware
     def call(env)
       env[:url] = env[:url].normalize
@@ -30,6 +43,7 @@ module LinkPreview
 
     def faraday_connection
       @faraday_connection ||= Faraday.new do |builder|
+        builder.use ExtraEnv
         builder.use Faraday::FollowRedirects, limit: @config.max_redirects if @config.follow_redirects
         builder.use @config.http_adapter
         builder.options[:timeout] = @config.timeout
