@@ -1,5 +1,3 @@
 - Implement PDF preview with Prawn
 - Use Paperclip to generate thumbnails honoring oEmbed thumbnail_width/thumbnail_height
 - Allow fetching of UNC URI
-- Cache HTTP Response in Rails.cache via Faraday middleware (Railtie)
-- Rails engine for oembed/api + JavaScript + generator for LinkPreview model
