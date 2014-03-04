@@ -10,6 +10,7 @@ module LinkPreview
     attr_accessor :timeout
     attr_accessor :open_timeout
     attr_accessor :error_handler
+    attr_accessor :middleware
 
     def http_client
       @http_client ||= HTTPClient.new(self)
@@ -52,6 +53,14 @@ module LinkPreview
 
     def error_handler
       @error_handler ||= Proc.new() { |_| }
+    end
+
+    def middleware
+      @middleware || []
+    end
+
+    def middleware=(*middleware)
+      @middleware = middleware
     end
   end
 end

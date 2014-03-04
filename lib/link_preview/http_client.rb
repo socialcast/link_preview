@@ -43,12 +43,15 @@ module LinkPreview
 
     def faraday_connection
       @faraday_connection ||= Faraday.new do |builder|
-        builder.use ExtraEnv
-        builder.use Faraday::FollowRedirects, limit: @config.max_redirects if @config.follow_redirects
-        builder.use @config.http_adapter
         builder.options[:timeout] = @config.timeout
         builder.options[:open_timeout] = @config.open_timeout
+
+        builder.use ExtraEnv
+        builder.use Faraday::FollowRedirects, limit: @config.max_redirects if @config.follow_redirects
         builder.use NormalizeURI
+        @config.middleware.each { |middleware| builder.use middleware }
+
+        builder.use @config.http_adapter
       end
     end
   end
