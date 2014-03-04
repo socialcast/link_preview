@@ -4,23 +4,6 @@ require 'link_preview/uri'
 
 require 'active_support/core_ext/object'
 
-class Hash
-  # from ryansonnek: utility for performing multiple fetches on hashes
-  # ex:
-  # h = {:foo => {:bar => :baz}}
-  # h.deep_fetch :foo, :bar
-  #
-  def deep_fetch(*keys)
-    last_key = keys.pop
-    scope = self
-    keys.each do |key|
-      scope = scope.fetch key, {}
-    end
-    scope[last_key]
-  end
-end
-
-# TODO rename Properties
 module LinkPreview
   class Content
     PROPERTIES_TABLE =
@@ -106,20 +89,19 @@ module LinkPreview
       end
     end
 
-    # FIXME should just be transparent hash
-    def raw(*keys)
-      unless @sources[keys.first].present?
-        properties = parser.parse(crawler.dequeue!([keys.first]))
+    def source(source)
+      unless @sources[source].present?
+        properties = parser.parse(crawler.dequeue!([source]))
         add_source_properties!(properties)
       end
-      @sources.deep_fetch(*keys)
+      @sources[source]
     end
 
     def as_oembed
       if content_type == 'application/x-shockwave-flash'
-        raw(:oembed).reverse_merge(as_oembed_video)
+        source(:oembed).reverse_merge(as_oembed_video)
       else
-        raw(:oembed).reverse_merge(as_oembed_link)
+        source(:oembed).reverse_merge(as_oembed_link)
       end
     end
 
@@ -279,11 +261,11 @@ module LinkPreview
     end
 
     def property_aliases(source, property)
-      Array.wrap(PROPERTIES_TABLE.deep_fetch(source, property) || property)
+      Array.wrap(PROPERTIES_TABLE.fetch(source, {}).fetch(property, property))
     end
 
     def property_unalias(source, property)
-      REVERSE_PROPERTIES_TABLE.deep_fetch(source, property) || property
+      REVERSE_PROPERTIES_TABLE.fetch(source, {}).fetch(property, property)
     end
 
     def property_source_priority(property)
