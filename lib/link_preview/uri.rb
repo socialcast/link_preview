@@ -20,8 +20,6 @@ end
 
 module LinkPreview
   class URI < SimpleDelegator
-    OEmbed::Providers.register_all
-
     def initialize(addressable_uri, options)
       __setobj__(addressable_uri)
       @options = options
@@ -40,6 +38,7 @@ module LinkPreview
 
     def as_oembed_uri
       return self if kaltura_uri? || oembed_uri?
+      register_default_oembed_providers!
       if provider = OEmbed::Providers.find(self.to_s)
         self.class.parse(provider.build(self.to_s), @options)
       end
@@ -110,6 +109,12 @@ module LinkPreview
 
     def kaltura_query
       {:width => @options[:width], :height => @options[:height]}.reject { |_,value| value.nil? }
+    end
+
+    def register_default_oembed_providers!
+      return if OEmbed::Providers.urls.any?
+      OEmbed::Providers.register_all
+      OEmbed::Providers.register_fallback(OEmbed::ProviderDiscovery)
     end
   end
 end
