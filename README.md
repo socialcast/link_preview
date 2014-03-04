@@ -1,15 +1,13 @@
 Usage
 ------
 
-Simple:
-```
-link_preview = LinkPreview.fetch(url)
-link_preview.as_oembed
-# Serialize by converting to JSON
-link_preview.as_json
+Generate link_preview content from URL
+```ruby
+content = LinkPreview.fetch(url)
+content.as_oembed
 ```
 
-Existing Structured Data
-```
-link_preview = LinkPreview.load(structured_data)
+Load previous link_preview content via sources
+```ruby
+previous_content = LinkPreview.load_content(url, options, content.sources)
 ```

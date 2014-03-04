@@ -1,10 +1,10 @@
 # encoding: UTF-8
 require 'spec_helper'
 
-describe LinkPreview::Crawler do
+describe LinkPreview::HTTPCrawler do
   let(:config) { LinkPreview::Configuration.new }
 
-  subject(:crawler) { LinkPreview::Crawler.new(config) }
+  subject(:crawler) { LinkPreview::HTTPCrawler.new(config) }
 
   describe '#dequeue!' do
     before do

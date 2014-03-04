@@ -2,7 +2,7 @@ require 'link_preview'
 require 'link_preview/uri'
 
 module LinkPreview
-  class Crawler
+  class HTTPCrawler
     def initialize(config, options = {})
       @config = config
       @options = options

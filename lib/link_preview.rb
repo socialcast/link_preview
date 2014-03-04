@@ -1,6 +1,5 @@
 require 'link_preview/configuration'
 require 'link_preview/content'
-require 'link_preview/null_crawler'
 
 module LinkPreview
   class Client
@@ -12,14 +11,12 @@ module LinkPreview
       @configuration ||= LinkPreview::Configuration.new
     end
 
-    def fetch(uri, options = {}, properties = {})
-      LinkPreview::Content.new(configuration, uri, options, properties)
+    def fetch(uri, options = {}, sources = {})
+      LinkPreview::Content.new(configuration, uri, options, sources)
     end
 
-    def load_properties(uri, options = {}, properties = {})
-      LinkPreview::Content.new(configuration, uri, options, properties).tap do |content|
-        content.crawler = LinkPreview::NullCrawler.new(configuration, options)
-      end
+    def load_content(uri, options = {}, sources = {})
+      LinkPreview::Content.new(configuration, uri, options.merge(allow_requests: false), sources)
     end
   end
 
@@ -30,5 +27,5 @@ module LinkPreview
     @default_client ||= Client.new
   end
 
-  def_delegators :default_client, :fetch, :load_properties, :configure, :configuration
+  def_delegators :default_client, :fetch, :load_content, :configure, :configuration
 end
