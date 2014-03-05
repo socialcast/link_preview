@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 # Copyright (c) 2014, VMware, Inc. All Rights Reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,19 +20,28 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-require 'bundler/setup'
-Bundler.require(:default, :development, :test)
+require 'spec_helper'
 
-VCR.configure do |config|
-  config.cassette_library_dir = 'spec/files/requests'
-  config.hook_into :webmock
-  config.configure_rspec_metadata!
+describe LinkPreview::HTTPCrawler do
+  let(:config) { LinkPreview::Configuration.new }
+
+  subject(:crawler) { LinkPreview::HTTPCrawler.new(config) }
+
+  describe '#dequeue!' do
+    before do
+      crawler.enqueue!('http://example.com')
+    end
+
+    context 'when http_client.get raises an exception' do
+      before do
+        config.http_client.stub(:get).and_raise(Timeout::Error)
+      end
+
+      it 'should receive error_handler call' do
+        config.error_handler.should_receive(:call).once
+        crawler.dequeue!
+      end
+    end
+  end
 end
 
-RSpec.configure do |config|
-  config.mock_with :rspec
-
-  # so we can use :vcr rather than :vcr => true;
-  # in RSpec 3 this will no longer be necessary.
-  config.treat_symbols_as_metadata_keys_with_true_values = true
-end

@@ -1,75 +1,32 @@
-require 'link_preview/crawler'
-require 'link_preview/parser'
+# Copyright (c) 2014, VMware, Inc. All Rights Reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights to
+# use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+# of the Software, and to permit persons to whom the Software is furnished to do
+# so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 require 'link_preview/uri'
+require 'link_preview/parser'
+require 'link_preview/http_crawler'
+require 'link_preview/null_crawler'
 
 require 'active_support/core_ext/object'
 
-class Hash
-  # from ryansonnek: utility for performing multiple fetches on hashes
-  # ex:
-  # h = {:foo => {:bar => :baz}}
-  # h.deep_fetch :foo, :bar
-  #
-  def deep_fetch(*keys)
-    last_key = keys.pop
-    scope = self
-    keys.each do |key|
-      scope = scope.fetch key, {}
-    end
-    scope[last_key]
-  end
-end
-
-# TODO rename Properties
 module LinkPreview
   class Content
-    PROPERTIES_TABLE =
-      {
-        :oembed =>
-        {
-          :site_name => :provider_name,
-          :site_url => :provider_url,
-          :image_url => :thumbnail_url
-        },
-        :opengraph =>
-        {
-          :image_url => [:image_secure_url, :image, :image_url],
-          :content_url => [:video_secure_url, :video, :video_url],
-          :content_type => :video_type,
-          :content_width => :width,
-          :content_height => :height
-        }
-      }
-
-    REVERSE_PROPERTIES_TABLE =
-      Hash.new { |h,k| h[k] = {} }.tap do |reverse_property_table|
-        PROPERTIES_TABLE.each do |source, table|
-          table.invert.each_pair do |keys, val|
-            Array.wrap(keys).each do |key|
-              reverse_property_table[source][key] = val
-            end
-          end
-        end
-      end
-
-    def initialize(config, content_uri, options = {}, properties = {})
-      @config = config
-      @content_uri = content_uri
-      @options = options
-      @sources = Hash.new { |h,k| h[k] = {} }
-      crawler.enqueue!(@content_uri)
-
-      [:initial, :image, :oembed, :opengraph, :html].map do |source|
-        next unless properties[source].present?
-        add_properties!(source, properties[source])
-      end
-    end
-
-    # @return [String] permalink URL of resource
-    def url
-      extract(:url) || @content_uri
-    end
-
     PROPERTIES = [
       :title,
       :description,
@@ -83,6 +40,52 @@ module LinkPreview
       :content_type,
       :content_width,
       :content_height ]
+
+    SOURCES = [:initial, :image, :oembed, :opengraph, :html]
+
+    SOURCE_PROPERTIES_TABLE =
+      {
+        :oembed =>
+        {
+          :site_name => :provider_name,
+          :site_url => :provider_url,
+          :image_url => :thumbnail_url
+        },
+        :opengraph =>
+        {
+          :image_url => [:image_secure_url, :image, :image_url],
+          :content_url => [:video_secure_url, :video, :video_url],
+          :content_type => :video_type,
+          :content_width => :video_width,
+          :content_height => :video_height
+        }
+      }
+
+    PROPERTIES_SOURCE_TABLE =
+      Hash.new { |h,k| h[k] = {} }.tap do |reverse_property_table|
+        SOURCE_PROPERTIES_TABLE.each do |source, table|
+          table.invert.each_pair do |keys, val|
+            Array.wrap(keys).each do |key|
+              reverse_property_table[source][key] = val
+            end
+          end
+        end
+      end
+
+    def initialize(config, content_uri, options = {}, sources = {})
+      @config = config
+      @content_uri = content_uri
+      @options = options
+      @sources = Hash.new { |h,k| h[k] = {} }
+      crawler.enqueue!(@content_uri)
+
+      add_source_properties!(sources)
+    end
+
+    # @return [String] permalink URL of resource
+    def url
+      extract(:url) || @content_uri
+    end
 
     PROPERTIES.each do |property|
       define_method(property) do
@@ -99,61 +102,29 @@ module LinkPreview
     # @return [Boolean] true of at least one content property is present
     def empty?
       extract_all
-      [:initial, :image, :oembed, :opengraph, :html].none? do |source|
+      SOURCES.none? do |source|
         @sources[source].any?(&:present?)
       end
     end
 
-    # FIXME should just be transparent hash
-    def raw(*keys)
-      unless @sources[keys.first].present?
-        properties = parser.parse(crawler.dequeue!([keys.first]))
-        add_source_properties!(properties)
-      end
-      @sources.deep_fetch(*keys)
+    def sources
+      @sources
     end
 
     def as_oembed
-      return unless found?
       if content_type == 'application/x-shockwave-flash'
-        raw(:oembed).reverse_merge(as_oembed_video)
+        @sources[:oembed].reverse_merge(as_oembed_video)
       else
-        raw(:oembed).reverse_merge(as_oembed_link)
-      end
-    end
-
-    def content_html
-      %Q{<iframe width="#{content_width_scaled}" height="#{content_height_scaled}" src="#{content_url}" frameborder="0" allowfullscreen></iframe>}
-    end
-
-    def content_width_scaled
-      # Width takes precedence over height
-      if @options[:width].to_i > 0
-        @options[:width]
-      elsif @options[:height].to_i > 0 && content_height.to_i > 0
-        # Compute scaled width using the ratio of requested height to actual height, round up to prevent truncation
-        (((@options[:height].to_i * 1.0) / (content_height.to_i * 1.0)) * content_width.to_i).ceil
-      else
-        content_width.to_i
-      end
-    end
-
-    def content_height_scaled
-      # Width takes precedence over height
-      if @options[:width].to_i > 0 && content_width.to_i > 0
-        # Compute scaled height using the ratio of requested width to actual width, round up to prevent truncation
-        (((@options[:width].to_i * 1.0) / (content_width.to_i * 1.0)) * content_height.to_i).ceil
-      elsif @options[:height].to_i > 0
-        @options[:height]
-      else
-        content_height.to_i
+        @sources[:oembed].reverse_merge(as_oembed_link)
       end
     end
 
     protected
 
     def crawler
-      @crawler ||= LinkPreview::Crawler.new(@config, @options)
+      @crawler ||= @options.fetch(:allow_requests, true) ?
+        LinkPreview::HTTPCrawler.new(@config, @options) :
+        LinkPreview::NullCrawler.new(@config, @options)
     end
 
     def parser
@@ -210,7 +181,7 @@ module LinkPreview
     def normalize_image_url(partial_image_url)
       return unless partial_image_url
       parsed_partial_image_url = LinkPreview::URI.parse(partial_image_url, @options)
-      parsed_absolute_image_url = parsed_partial_image_url.to_absolute(@content_url)
+      parsed_absolute_image_url = parsed_partial_image_url.to_absolute(@content_uri)
       parsed_absolute_image_url.to_s.tap do |absolute_image_url|
         crawler.enqueue!(absolute_image_url, :image)
       end
@@ -221,7 +192,13 @@ module LinkPreview
       return unless discovered_url
       unencoded_url = LinkPreview::URI.unescape(discovered_url)
       crawler.enqueue!(unencoded_url, :html)
-      unencoded_url
+      unencoded_url.to_s
+    end
+
+    # called via normalize_property
+    def normalize_content_url(content_url)
+      return unless content_url
+      LinkPreview::URI.safe_escape(content_url).to_s
     end
 
     # called via normalize_property
@@ -230,24 +207,15 @@ module LinkPreview
     end
 
     def get_property(property)
-      [:initial, :image, :oembed, :opengraph, :html].map do |source|
+      SOURCES.map do |source|
         @sources[source][property_alias(source, property)]
       end.compact.first || default_property(property)
     end
 
     def has_property?(property)
-      [:initial, :image, :oembed, :opengraph, :html].map do |source|
+      SOURCES.map do |source|
         @sources[source][property_alias(source, property)]
       end.any?(&:present?)
-    end
-
-    def add_properties!(source, properties)
-      properties.symbolize_keys!
-      properties.reject!{ |_, value| value.blank? }
-      properties.each do |property, value|
-        next if @sources[source][property]
-        @sources[source][property] = normalize_property(property_unalias(source, property), value)
-      end
     end
 
     def property_alias(source, property)
@@ -255,11 +223,11 @@ module LinkPreview
     end
 
     def property_aliases(source, property)
-      Array.wrap(PROPERTIES_TABLE.deep_fetch(source, property) || property)
+      Array.wrap(SOURCE_PROPERTIES_TABLE.fetch(source, {}).fetch(property, property))
     end
 
     def property_unalias(source, property)
-      REVERSE_PROPERTIES_TABLE.deep_fetch(source, property) || property
+      PROPERTIES_SOURCE_TABLE.fetch(source, {}).fetch(property, property)
     end
 
     def property_source_priority(property)
@@ -273,9 +241,17 @@ module LinkPreview
       end
     end
 
-    def add_source_properties!(properties)
-      properties.each do |source, property|
-        add_properties!(source, property)
+    def add_source_properties!(sources)
+      sources.symbolize_keys!
+      sources.reject!{ |_, properties| properties.empty? }
+      sources.select! { |source,_| SOURCES.include?(source) }
+      sources.each do |source, properties|
+        properties.symbolize_keys!
+        properties.reject!{ |_, value| value.blank? }
+        properties.each do |property, value|
+          next if @sources[source][property]
+          @sources[source][property] = normalize_property(property_unalias(source, property), value)
+        end
       end
       parser.discovered_uris.each do |uri|
         crawler.enqueue!(uri)
@@ -321,6 +297,47 @@ module LinkPreview
           :html            => content_html,
           :width           => content_width_scaled.to_i,
           :height          => content_height_scaled.to_i})
+    end
+
+    def content_html
+      return nil unless content_url.present?
+
+      <<-EOF.strip.gsub(/\s+/, ' ').gsub(/>\s+</, '><')
+          <object width="#{content_width_scaled}" height="#{content_height_scaled}">
+            <param name="movie" value="#{content_url}"></param>
+            <param name="allowScriptAccess" value="always"></param>
+            <param name="allowFullScreen" value="true"></param>
+            <embed src="#{content_url}"
+                   type="#{content_type}"
+                   allowscriptaccess="always"
+                   allowfullscreen="true"
+                   width="#{content_width_scaled}" height="#{content_height_scaled}"></embed>
+          </object>
+      EOF
+    end
+
+    def content_width_scaled
+      # Width takes precedence over height
+      if @options[:width].to_i > 0
+        @options[:width]
+      elsif @options[:height].to_i > 0 && content_height.to_i > 0
+        # Compute scaled width using the ratio of requested height to actual height, round up to prevent truncation
+        (((@options[:height].to_i * 1.0) / (content_height.to_i * 1.0)) * content_width.to_i).ceil
+      else
+        content_width.to_i
+      end
+    end
+
+    def content_height_scaled
+      # Width takes precedence over height
+      if @options[:width].to_i > 0 && content_width.to_i > 0
+        # Compute scaled height using the ratio of requested width to actual width, round up to prevent truncation
+        (((@options[:width].to_i * 1.0) / (content_width.to_i * 1.0)) * content_height.to_i).ceil
+      elsif @options[:height].to_i > 0
+        @options[:height]
+      else
+        content_height.to_i
+      end
     end
   end
 end

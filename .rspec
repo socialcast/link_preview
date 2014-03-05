@@ -1,3 +1,4 @@
 --colour
 --backtrace
--fd
+--format documentation
+--debugger

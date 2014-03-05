@@ -11,24 +11,23 @@ Gem::Specification.new do |s|
   s.summary     = 'Generate a link_preview for any URL'
   s.description = 'Generate a link_preview for any URL'
 
-  s.files = Dir['lib/**/*'] + ['LICENSE', 'Rakefile', 'README.md']
+  s.files = Dir['lib/**/*'] + ['LICENSE.txt', 'Rakefile', 'README.md']
   s.test_files = Dir['spec/**/*']
 
-  s.add_dependency('ruby-oembed', '~> 0.8')
-  s.add_dependency('addressable', '~> 2.3')
-  s.add_dependency('faraday', '~> 0.8')
-  s.add_dependency('faraday_middleware', '~> 0.8')
+  s.add_dependency('ruby-oembed')
+  s.add_dependency('addressable')
+  s.add_dependency('faraday', '~> 0.9.0')
   s.add_dependency('nokogiri')
   s.add_dependency('multi_json')
 
   s.add_dependency('activesupport')
 
   # Development
-  s.add_development_dependency('rake', '~> 0.9')
+  s.add_development_dependency('rake')
 
   # Testing
-  s.add_development_dependency('rspec', '~> 2.12')
-  s.add_development_dependency('vcr', '~> 2.4')
+  s.add_development_dependency('rspec')
+  s.add_development_dependency('vcr')
   s.add_development_dependency('webmock')
   s.add_development_dependency('debugger')
 end
