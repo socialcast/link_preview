@@ -25,7 +25,7 @@ Features
 --------
 - Designed to make the minimal number of HTTP requests to generate a preview
 - Configurable via [Faraday](https://github.com/lostisland/faraday) middleware
-- Battletested on wide variety of URLs in the wild
+- Battletested on wide variety of URLs and HTML in the wild
 
 Installation
 -------------
