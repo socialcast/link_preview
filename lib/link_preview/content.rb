@@ -143,7 +143,7 @@ module LinkPreview
 
     # called via default_property
     def default_title
-      parsed_url.to_s
+      parsed_url.for_display.to_s
     end
 
     # called via default_property
