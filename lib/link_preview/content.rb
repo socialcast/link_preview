@@ -202,6 +202,11 @@ module LinkPreview
     end
 
     # called via normalize_property
+    def normalize_title(title)
+      CGI.unescapeHTML(title)
+    end
+
+    # called via normalize_property
     def normalize_html(html)
       html
     end
