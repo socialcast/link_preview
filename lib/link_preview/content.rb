@@ -143,7 +143,7 @@ module LinkPreview
 
     # called via default_property
     def default_title
-      parsed_url.to_s
+      parsed_url.for_display.to_s
     end
 
     # called via default_property
@@ -199,6 +199,11 @@ module LinkPreview
     def normalize_content_url(content_url)
       return unless content_url
       LinkPreview::URI.safe_escape(content_url).to_s
+    end
+
+    # called via normalize_property
+    def normalize_title(title)
+      CGI.unescapeHTML(title)
     end
 
     # called via normalize_property
