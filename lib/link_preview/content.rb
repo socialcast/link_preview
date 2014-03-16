@@ -136,7 +136,7 @@ module LinkPreview
     end
 
     def default_property(property)
-      if respond_to?("default_#{property}")
+      if respond_to?("default_#{property}", true)
         send("default_#{property}")
       end
     end
@@ -159,7 +159,7 @@ module LinkPreview
     end
 
     def normalize_property(property, value)
-      if respond_to?("normalize_#{property}")
+      if respond_to?("normalize_#{property}", true)
         send("normalize_#{property}", value)
       else
         normalize_generic(property, value)
