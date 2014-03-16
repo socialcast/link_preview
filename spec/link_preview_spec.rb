@@ -78,7 +78,7 @@ describe LinkPreview do
     its(:description) { should == %Q{Learn about the history of Nintendo, its gaming systems, and Mario! It's 21 amazing facts about Nintendo you may have never known. Update: As of late 2008, W...} }
     its(:site_name) { should == 'YouTube' }
     its(:site_url) { should == 'http://www.youtube.com/' }
-    its(:image_url) { should == 'http://i2.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg' }
+    its(:image_url) { should == 'http://i1.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg' }
     its(:image_data) { should be_a(StringIO) }
     its(:image_content_type) { should == 'image/jpeg' }
     its(:image_file_name) { should == 'hqdefault.jpg' }
@@ -88,7 +88,7 @@ describe LinkPreview do
       content.title
       http_client.should_receive(:get).with('http://youtube.com/watch?v=M3r2XDceM6A').ordered.and_call_original
       content.description
-      http_client.should_receive(:get).with('http://i2.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg').ordered.and_call_original
+      http_client.should_receive(:get).with('http://i1.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg').ordered.and_call_original
       content.image_data
     end
 
@@ -104,7 +104,7 @@ describe LinkPreview do
           :title            => %Q{Amazing Nintendo Facts},
           :description      => %Q{Learn about the history of Nintendo, its gaming systems, and Mario! It's 21 amazing facts about Nintendo you may have never known. Update: As of late 2008, W...},
           :type             => 'video',
-          :thumbnail_url    => 'http://i2.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg',
+          :thumbnail_url    => 'http://i1.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg',
           :thumbnail_width  => 480,
           :thumbnail_height => 360,
           :html             => %Q{<iframe width="480" height="270" src="http://www.youtube.com/embed/M3r2XDceM6A?feature=oembed" frameborder="0" allowfullscreen></iframe>},
@@ -119,26 +119,26 @@ describe LinkPreview do
 
   context 'kaltura oembed', :vcr => {:cassette_name => 'kaltura'} do
     subject(:content) do
-      LinkPreview.fetch('http://demo.kaltura.com/mediaspace/media/index.php/action/oembed?url=http%3A%2F%2Fdemo.kaltura.com%2Fmediaspace%2Fmedia%2F%2Fid%2F1_h9tin5on&playerId=3073841&entryId=1_h9tin5on', :width => 420)
+      LinkPreview.fetch('http://videos.kaltura.com/oembed?url=http%3A%2F%2Fvideos.kaltura.com%2Fmedia%2F%2Fid%2F1_abxlxlll&playerId=3073841&entryId=1_abxlxlll', :width => 420)
     end
 
     it { should be_a(LinkPreview::Content) }
-    its(:url) { should  == 'http://demo.kaltura.com/mediaspace/media//id/1_h9tin5on' }
-    its(:title) { should  == %Q{The Chronicles of Narnia: The Voyage of the Dawn Treader} }
+    its(:url) { should  == 'http://videos.kaltura.com/media//id/1_abxlxlll' }
+    its(:title) { should  == %Q{KMC Overview | Kaltura KMC Tutorial} }
     its(:description) { should be_nil }
-    its(:site_name) { should == 'Kaltura MediaSpace' }
-    its(:site_url) { should == 'http://demo.kaltura.com/mediaspace/media/' }
-    its(:image_url) { should == 'http://www.kaltura.com/p/439471/thumbnail/width/420/height/285/entry_id/1_h9tin5on' }
+    its(:site_name) { should == 'Kaltura Videos' }
+    its(:site_url) { should == 'http://videos.kaltura.com/' }
+    its(:image_url) { should == "http://cdnbakmi.kaltura.com/p/811441/sp/81144100/thumbnail/entry_id/1_abxlxlll/version/100012/width//height/" }
     its(:image_data) { should be_a(StringIO) }
     its(:image_content_type) { should == 'image/jpeg' }
-    its(:image_file_name) { should == '1_h9tin5on' }
+    its(:image_file_name) { should == 'height' }
 
     it 'should issue minimum number of requests' do
-      http_client.should_receive(:get).with('http://demo.kaltura.com/mediaspace/media/index.php/action/oembed/?url=http%3A%2F%2Fdemo.kaltura.com%2Fmediaspace%2Fmedia%2F%2Fid%2F1_h9tin5on&playerId=3073841&entryId=1_h9tin5on&width=420').ordered.and_call_original
+      http_client.should_receive(:get).with('http://videos.kaltura.com/oembed/?url=http%3A%2F%2Fvideos.kaltura.com%2Fmedia%2F%2Fid%2F1_abxlxlll&playerId=3073841&entryId=1_abxlxlll&width=420').ordered.and_call_original
       content.title
-      http_client.should_receive(:get).with('http://www.kaltura.com/p/439471/thumbnail/width/420/height/285/entry_id/1_h9tin5on').ordered.and_call_original
+      http_client.should_receive(:get).with('http://cdnbakmi.kaltura.com/p/811441/sp/81144100/thumbnail/entry_id/1_abxlxlll/version/100012/width//height/').ordered.and_call_original
       content.image_data
-      http_client.should_receive(:get).with('http://demo.kaltura.com/mediaspace/media//id/1_h9tin5on').ordered.and_call_original
+      http_client.should_receive(:get).with('http://videos.kaltura.com/media//id/1_abxlxlll').ordered.and_call_original
       content.description
     end
   end
@@ -288,44 +288,44 @@ describe LinkPreview do
 
   context 'kaltura opengraph', :vcr => {:cassette_name => 'kaltura_opengraph'} do
     subject(:content) do
-      LinkPreview.fetch('https://media.mediaspace.kaltura.com/media/Grim+Outlook+For+BlackBerry/1_vgzs34xc')
+      LinkPreview.fetch('https://media.mediaspace.kaltura.com/media/Despicable+Me/0_w2zsofdj/6065172')
     end
 
     it { should be_a(LinkPreview::Content) }
-    its(:url) { should  == 'https://media.mediaspace.kaltura.com/media/Grim+Outlook+For+BlackBerry/1_vgzs34xc' }
-    its(:title) { should  == %Q{Grim Outlook For BlackBerry} }
-    its(:description) { should == %Q{Summary of business headlines: Research in Motion tops lowered quarterly forecasts but outlook remains grim; Zynga raises $1 billion in IPO; U.S. economy improving, but IMF chief issues warning to all; Wall Street breaks three-day sell-off. Conway G. Gittens reports.} }
-    its(:site_name) { should == 'MediaSpace Video Portal' }
-    its(:site_url) { should == 'https://media.mediaspace.kaltura.com' }
-    its(:image_url) { should == 'https://cdnsecakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/1_vgzs34xc/version/100001/width/' }
+    its(:url) { should  == 'http://media.mediaspace.kaltura.com/media/Despicable+Me/0_w2zsofdj' }
+    its(:title) { should  == %Q{Despicable Me} }
+    its(:description) { should == %Q{In a happy suburban neighborhood surrounded by white picket fences with flowering rose bushes, sits a black house with a dead lawn. Unbeknownst to the neighbors, hidden beneath this home is a vast secret hideout. Surrounded by a small army of minions, we discover Gru planning the biggest heist in the history of the world. He is going to steal the moon, yes, the moon. Gru delights in all things wicked. Armed with his arsenal of shrink rays, freeze rays, and battle-ready vehicles for land and air, he vanquishes all who stand in his way. Until the day he encounters the immense will of three little orphaned girls who look at him and see something that no one else has ever seen: a potential Dad. The world's greatest villain has just met his greatest challenge: three little girls named Margo, Edith and Agnes.} }
+    its(:site_name) { should == 'MediaSpace Demo Site' }
+    its(:site_url) { should == 'http://media.mediaspace.kaltura.com' }
+    its(:image_url) { should == 'https://cdnbakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/0_w2zsofdj/version/100021/width/400' }
     its(:image_data) { should be_a(StringIO) }
     its(:image_content_type) { should == 'image/jpeg' }
-    its(:image_file_name) { should == 'width' }
+    its(:image_file_name) { should == '400' }
 
     it 'should issue minimum number of requests' do
-      http_client.should_receive(:get).with('https://media.mediaspace.kaltura.com/media/Grim+Outlook+For+BlackBerry/1_vgzs34xc').ordered.and_call_original
+      http_client.should_receive(:get).with('https://media.mediaspace.kaltura.com/media/Despicable+Me/0_w2zsofdj/6065172').ordered.and_call_original
       content.title
-      http_client.should_receive(:get).with('https://cdnsecakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/1_vgzs34xc/version/100001/width/').ordered.and_call_original
+      http_client.should_receive(:get).with('https://cdnbakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/0_w2zsofdj/version/100021/width/400').ordered.and_call_original
+      http_client.should_receive(:get).with('http://cdnbakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/0_w2zsofdj/version/100021/width/400').ordered.and_call_original
       content.image_data
       content.description
     end
 
-    # FIXME re-record once Kaltura og:video:width and og:view:height are fixed
     context '#as_oembed' do
       subject(:oembed) { content.as_oembed }
 
       it 'should convert opengraph to oembed' do
         should == {
           :version        => '1.0',
-          :provider_name  => %Q{MediaSpace Video Portal},
-          :provider_url   => 'https://media.mediaspace.kaltura.com',
-          :title          => %Q{Grim Outlook For BlackBerry},
-          :description    => %Q{Summary of business headlines: Research in Motion tops lowered quarterly forecasts but outlook remains grim; Zynga raises $1 billion in IPO; U.S. economy improving, but IMF chief issues warning to all; Wall Street breaks three-day sell-off. Conway G. Gittens reports.},
+          :provider_name  => %Q{MediaSpace Demo Site},
+          :provider_url   => 'http://media.mediaspace.kaltura.com',
+          :title          => %Q{Despicable Me},
+          :description    => %Q{In a happy suburban neighborhood surrounded by white picket fences with flowering rose bushes, sits a black house with a dead lawn. Unbeknownst to the neighbors, hidden beneath this home is a vast secret hideout. Surrounded by a small army of minions, we discover Gru planning the biggest heist in the history of the world. He is going to steal the moon, yes, the moon. Gru delights in all things wicked. Armed with his arsenal of shrink rays, freeze rays, and battle-ready vehicles for land and air, he vanquishes all who stand in his way. Until the day he encounters the immense will of three little orphaned girls who look at him and see something that no one else has ever seen: a potential Dad. The world's greatest villain has just met his greatest challenge: three little girls named Margo, Edith and Agnes.},
           :type           => 'video',
-          :thumbnail_url  => "https://cdnsecakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/1_vgzs34xc/version/100001/width/",
-          :html           => %Q{<object width=\"0\" height=\"0\"><param name=\"movie\" value=\"https://www.kaltura.com/index.php/kwidget/wid/_1059491/uiconf_id//entry_id/1_vgzs34xc\"></param><param name=\"allowScriptAccess\" value=\"always\"></param><param name=\"allowFullScreen\" value=\"true\"></param><embed src=\"https://www.kaltura.com/index.php/kwidget/wid/_1059491/uiconf_id//entry_id/1_vgzs34xc\" type=\"application/x-shockwave-flash\" allowscriptaccess=\"always\" allowfullscreen=\"true\" width=\"0\" height=\"0\"></embed></object>},
-          :width          => 0,
-          :height         => 0
+          :thumbnail_url  => "http://cdnbakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/0_w2zsofdj/version/100021/width/400",
+          :html           => %Q{<object width=\"400\" height=\"333\"><param name=\"movie\" value=\"https://www.kaltura.com/index.php/kwidget/wid/_1059491/uiconf_id/16199142/entry_id/0_w2zsofdj\"></param><param name=\"allowScriptAccess\" value=\"always\"></param><param name=\"allowFullScreen\" value=\"true\"></param><embed src=\"https://www.kaltura.com/index.php/kwidget/wid/_1059491/uiconf_id/16199142/entry_id/0_w2zsofdj\" type=\"application/x-shockwave-flash\" allowscriptaccess=\"always\" allowfullscreen=\"true\" width=\"400\" height=\"333\"></embed></object>},
+          :width          => 400,
+          :height         => 333
         }
       end
     end
