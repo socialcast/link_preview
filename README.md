@@ -36,7 +36,7 @@ gem install link_preview
 
 Configuration
 --------------
-LinkPreview is configured via to [`Faraday`](https://github.com/lostisland/faraday) with some additional middleware:
+LinkPreview is configured via [`Faraday`](https://github.com/lostisland/faraday) with some additional middleware:
 
 ```ruby
 # $RAILS_ROOT/config/initializer/link_preview.rb
