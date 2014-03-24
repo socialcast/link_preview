@@ -26,6 +26,7 @@ Features
 - Designed to make the minimal number of HTTP requests to generate a preview
 - Configurable via [Faraday](https://github.com/lostisland/faraday) middleware
 - Battletested on wide variety of URLs and HTML in the wild
+- Includes test helper for stubbing `LinkPreview::Content`
 
 Installation
 -------------
@@ -35,7 +36,9 @@ gem install link_preview
 
 Configuration
 --------------
-TODO
+```ruby
+
+```
 
 Contributing
 --------------

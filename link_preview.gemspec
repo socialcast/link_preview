@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.summary     = 'Generate a link_preview for any URL'
   s.description = 'Generate a link_preview for any URL'
 
-  s.files = Dir['lib/**/*'] + ['LICENSE.txt', 'Rakefile', 'README.md']
+  s.files = Dir['{lib,spec/support/link_preview}/**/*'] + ['LICENSE.txt', 'Rakefile', 'README.md']
   s.test_files = Dir['spec/**/*']
 
   s.add_dependency('ruby-oembed')
