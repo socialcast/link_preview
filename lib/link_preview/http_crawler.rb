@@ -57,6 +57,7 @@ module LinkPreview
     rescue => e
       @status[uri] ||= 500
       @config.error_handler.call(e)
+      Faraday::Response.new
     end
 
     # @return [Boolean] true if any content discovered thus far has been successfully fetched
