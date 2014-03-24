@@ -11,7 +11,7 @@ content = LinkPreview.fetch(url)
 content.as_oembed
 ```
 
-Serialize content:
+Serialize content sources:
 ```ruby
 content.sources
 ```
