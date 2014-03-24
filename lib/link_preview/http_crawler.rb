@@ -33,6 +33,7 @@ module LinkPreview
     # @param [String] URI of content to crawl
     def enqueue!(uri, priority = :default)
       return if full?
+      return unless uri
       parsed_uri = LinkPreview::URI.parse(uri, @options)
 
       if oembed_uri = parsed_uri.as_oembed_uri
@@ -56,6 +57,7 @@ module LinkPreview
     rescue => e
       @status[uri] ||= 500
       @config.error_handler.call(e)
+      Faraday::Response.new
     end
 
     # @return [Boolean] true if any content discovered thus far has been successfully fetched

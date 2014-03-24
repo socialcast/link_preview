@@ -8,10 +8,10 @@
 # use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
 # of the Software, and to permit persons to whom the Software is furnished to do
 # so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -329,5 +329,19 @@ describe LinkPreview do
         }
       end
     end
+  end
+
+  context 'resource with bad utf-8 in response', :vcr => {:cassette_name => 'bad_utf8'} do
+    let(:url) { 'http://s.taobao.com' }
+    subject(:content) do
+      LinkPreview.fetch(url)
+    end
+
+    its(:url) { should  == url }
+    its(:title) { should  == url }
+    its(:description) { should be_nil }
+    its(:site_name) { should == 's.taobao.com' }
+    its(:site_url) { should == url }
+    its(:image_url) { should be_nil }
   end
 end

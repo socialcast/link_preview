@@ -28,6 +28,11 @@ describe LinkPreview::URI do
       LinkPreview::URI.parse(uri, options)
     end
 
+    context 'with nil' do
+      let(:uri) { nil }
+      it { parsed_uri.should be_nil }
+    end
+
     context 'with parsed LinkPreview::URI' do
       let(:uri) { LinkPreview::URI.parse('http://socialcast.com') }
 

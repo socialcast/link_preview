@@ -25,7 +25,7 @@ require 'spec_helper'
 describe LinkPreview::HTTPCrawler do
   let(:config) { LinkPreview::Configuration.new }
 
-  subject(:crawler) { LinkPreview::HTTPCrawler.new(config) }
+  let(:crawler) { LinkPreview::HTTPCrawler.new(config) }
 
   describe '#dequeue!' do
     before do
@@ -35,11 +35,14 @@ describe LinkPreview::HTTPCrawler do
     context 'when http_client.get raises an exception' do
       before do
         config.http_client.stub(:get).and_raise(Timeout::Error)
+        config.error_handler.should_receive(:call).once.and_return { 'something' }
       end
 
-      it 'should receive error_handler call' do
-        config.error_handler.should_receive(:call).once
-        crawler.dequeue!
+      subject(:response) { crawler.dequeue! }
+
+      it 'should receive error_handler call and return non successful response' do
+        should be_a(Faraday::Response)
+        should_not be_success
       end
     end
   end

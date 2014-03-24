@@ -41,7 +41,7 @@ end
 module LinkPreview
   class URI < SimpleDelegator
     def initialize(addressable_uri, options)
-      __setobj__(addressable_uri)
+      super addressable_uri
       @options = options
       if kaltura_uri?
         merge_query(kaltura_query)
@@ -86,6 +86,7 @@ module LinkPreview
 
     class << self
       def parse(uri, options = {})
+        return unless uri
         self.new(Addressable::URI.parse(safe_escape(uri)), options).normalize
       end
 

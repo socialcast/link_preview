@@ -50,6 +50,21 @@ module LinkPreview
     end
   end
 
+  class ForceUTF8Body < Faraday::Middleware
+    def call(env)
+      @app.call(env).on_complete do |env|
+        next if env[:body].encoding == Encoding::UTF_8 && env[:body].valid_encoding?
+        env[:body].encode!('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+        unless env[:body].valid_encoding?
+          # cleanse untrusted invalid bytes with a double transcode as suggested here:
+          # http://stackoverflow.com/questions/2982677/ruby-1-9-invalid-byte-sequence-in-utf-8
+          env[:body].encode!('UTF-16', 'binary', invalid: :replace, undef: :replace, replace: '')
+          env[:body].encode!('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+        end
+      end
+    end
+  end
+
   class HTTPClient
     extend Forwardable
 
@@ -69,6 +84,7 @@ module LinkPreview
         builder.use ExtraEnv
         builder.use Faraday::FollowRedirects, limit: @config.max_redirects if @config.follow_redirects
         builder.use NormalizeURI
+        builder.use ForceUTF8Body
         @config.middleware.each { |middleware| builder.use middleware }
 
         builder.use @config.http_adapter
