@@ -33,6 +33,7 @@ module LinkPreview
     # @param [String] URI of content to crawl
     def enqueue!(uri, priority = :default)
       return if full?
+      return unless uri
       parsed_uri = LinkPreview::URI.parse(uri, @options)
 
       if oembed_uri = parsed_uri.as_oembed_uri
