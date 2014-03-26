@@ -28,16 +28,18 @@ describe LinkPreview do
   let(:http_client) { LinkPreview.configuration.http_client }
 
   context 'open graph data', :vcr => {:cassette_name => 'ogp.me'} do
+    let(:url) { 'http://ogp.me' }
+
     subject(:content) do
-      LinkPreview.fetch('http://ogp.me')
+      LinkPreview.fetch(url)
     end
 
     it { should be_a(LinkPreview::Content) }
-    its(:url) { should  == 'http://ogp.me/' }
-    its(:title) { should  == %Q{Open Graph protocol} }
+    its(:url) { should == url }
+    its(:title) { should == %Q{Open Graph protocol} }
     its(:description) { should == %Q{The Open Graph protocol enables any web page to become a rich object in a social graph.} }
     its(:site_name) { should == 'ogp.me' }
-    its(:site_url) { should == 'http://ogp.me' }
+    its(:site_url) { should == url }
     its(:image_url) { should == 'http://ogp.me/logo.png' }
     its(:image_data) { should be_a(StringIO) }
     its(:image_content_type) { should == 'image/png' }
@@ -73,8 +75,8 @@ describe LinkPreview do
     end
 
     it { should be_a(LinkPreview::Content) }
-    its(:url) { should  == 'http://youtube.com/watch?v=M3r2XDceM6A' }
-    its(:title) { should  == %Q{Amazing Nintendo Facts} }
+    its(:url) { should == 'http://youtube.com/watch?v=M3r2XDceM6A' }
+    its(:title) { should == %Q{Amazing Nintendo Facts} }
     its(:description) { should == %Q{Learn about the history of Nintendo, its gaming systems, and Mario! It's 21 amazing facts about Nintendo you may have never known. Update: As of late 2008, W...} }
     its(:site_name) { should == 'YouTube' }
     its(:site_url) { should == 'http://www.youtube.com/' }
@@ -123,8 +125,8 @@ describe LinkPreview do
     end
 
     it { should be_a(LinkPreview::Content) }
-    its(:url) { should  == 'http://videos.kaltura.com/media//id/1_abxlxlll' }
-    its(:title) { should  == %Q{KMC Overview | Kaltura KMC Tutorial} }
+    its(:url) { should == 'http://videos.kaltura.com/media//id/1_abxlxlll' }
+    its(:title) { should == %Q{KMC Overview | Kaltura KMC Tutorial} }
     its(:description) { should be_nil }
     its(:site_name) { should == 'Kaltura Videos' }
     its(:site_url) { should == 'http://videos.kaltura.com/' }
@@ -149,8 +151,8 @@ describe LinkPreview do
     end
 
     it { should be_a(LinkPreview::Content) }
-    its(:url) { should  == 'http://portal.sliderocket.com/SlideRocket-Presentations/Hoshyar-Foundation' }
-    its(:title) { should  == %Q{Hoshyar-Foundation} }
+    its(:url) { should == 'http://portal.sliderocket.com/SlideRocket-Presentations/Hoshyar-Foundation' }
+    its(:title) { should == %Q{Hoshyar-Foundation} }
     its(:description) { should == %Q{Proudly crafted with SlideRocket.} }
     its(:site_name) { should == 'SlideRocket' }
     its(:site_url) { should == 'http://sliderocket.com/' }
@@ -195,8 +197,8 @@ describe LinkPreview do
     end
 
     it { should be_a(LinkPreview::Content) }
-    its(:url) { should  == 'http://support.apple.com/kb/HT5642' }
-    its(:title) { should  == %Q{About the security content of iOS 6.1 Software Update} }
+    its(:url) { should == 'http://support.apple.com/kb/HT5642' }
+    its(:title) { should == %Q{About the security content of iOS 6.1 Software Update} }
     its(:description) { should == %Q{This document describes the security content of iOS 6.1.\nFor the protection of our customers, Apple does not disclose, discuss, or confirm security issues until a full investigation has occurred and any necessary patches or releases are available. To learn more about Apple Product Security, see the Apple Product Security website.\nFor information about the Apple Product Security PGP Key, see How to use the Apple Product Security PGP Key.\nWhere possible, CVE IDs are used to reference the vulnerabilities for further information.\nTo learn about other Security Updates, see Apple Security Updates.} }
     its(:site_name) { should == 'support.apple.com' }
     its(:site_url) { should == 'http://support.apple.com' }
@@ -292,8 +294,8 @@ describe LinkPreview do
     end
 
     it { should be_a(LinkPreview::Content) }
-    its(:url) { should  == 'http://media.mediaspace.kaltura.com/media/Despicable+Me/0_w2zsofdj' }
-    its(:title) { should  == %Q{Despicable Me} }
+    its(:url) { should == 'http://media.mediaspace.kaltura.com/media/Despicable+Me/0_w2zsofdj' }
+    its(:title) { should == %Q{Despicable Me} }
     its(:description) { should == %Q{In a happy suburban neighborhood surrounded by white picket fences with flowering rose bushes, sits a black house with a dead lawn. Unbeknownst to the neighbors, hidden beneath this home is a vast secret hideout. Surrounded by a small army of minions, we discover Gru planning the biggest heist in the history of the world. He is going to steal the moon, yes, the moon. Gru delights in all things wicked. Armed with his arsenal of shrink rays, freeze rays, and battle-ready vehicles for land and air, he vanquishes all who stand in his way. Until the day he encounters the immense will of three little orphaned girls who look at him and see something that no one else has ever seen: a potential Dad. The world's greatest villain has just met his greatest challenge: three little girls named Margo, Edith and Agnes.} }
     its(:site_name) { should == 'MediaSpace Demo Site' }
     its(:site_url) { should == 'http://media.mediaspace.kaltura.com' }
@@ -331,14 +333,48 @@ describe LinkPreview do
     end
   end
 
+  context 'elasticsearch', :vcr => {:cassette_name => 'elasticsearch'} do
+    let(:url) { 'http://www.elasticsearch.org/overview/hadoop' }
+
+    subject(:content) do
+      LinkPreview.fetch(url)
+    end
+
+    its(:url) { should == url }
+    its(:title) { should == %Q{Hadoop | Elasticsearch} }
+    its(:description) { should == %Q{Search your Hadoop Data and Get Real-Time Results Deep API integration makes searching data in Hadoop easy Elasticsearch for Apache Hadoop enables real-time searching against data stored in Apache Hadoop. It provides native integration with Map/Reduce, Hive, Pig, and Cascading, all with no customization. Download Elasticsearch for Apache Hadoop Documentation Great fit for “Big Data” [...]} }
+    its(:site_name) { should == 'Elasticsearch.org' }
+    its(:site_url) { should_not be_nil }
+    its(:image_url) { should == 'http://www.elasticsearch.org/content/uploads/2013/10/blank_hero.png' }
+    its(:image_data) { should be_a(StringIO) }
+    its(:image_content_type) { should == 'image/png' }
+    its(:image_file_name) { should == 'blank_hero.png' }
+
+    context '#as_oembed' do
+      subject(:oembed) { content.as_oembed }
+
+      it 'should encode as link' do
+        should == {
+          :version        => '1.0',
+          :provider_name  => %Q{Elasticsearch.org},
+          :provider_url   => 'http://www.elasticsearch.org',
+          :title          => %Q{Hadoop | Elasticsearch},
+          :description    => %Q{Search your Hadoop Data and Get Real-Time Results Deep API integration makes searching data in Hadoop easy Elasticsearch for Apache Hadoop enables real-time searching against data stored in Apache Hadoop. It provides native integration with Map/Reduce, Hive, Pig, and Cascading, all with no customization. Download Elasticsearch for Apache Hadoop Documentation Great fit for “Big Data” [...]},
+          :type           => 'link',
+          :thumbnail_url  => 'http://www.elasticsearch.org/content/uploads/2013/10/blank_hero.png'
+        }
+      end
+    end
+  end
+
   context 'resource with bad utf-8 in response', :vcr => {:cassette_name => 'bad_utf8'} do
     let(:url) { 'http://s.taobao.com' }
     subject(:content) do
       LinkPreview.fetch(url)
     end
 
-    its(:url) { should  == url }
-    its(:title) { should  == url }
+    its(:url) { should == url }
+    its(:title) { should == url }
     its(:description) { should be_nil }
     its(:site_name) { should == 's.taobao.com' }
     its(:site_url) { should == url }
