@@ -188,11 +188,13 @@ module LinkPreview
     end
 
     # called via normalize_property
-    def normalize_url(discovered_url)
-      return unless discovered_url
-      unencoded_url = LinkPreview::URI.unescape(discovered_url)
-      crawler.enqueue!(unencoded_url, :html)
-      unencoded_url.to_s
+    def normalize_url(partial_url)
+      return unless partial_url
+      partial_unencoded_url = LinkPreview::URI.unescape(partial_url)
+      parsed_partial_url = LinkPreview::URI.parse(partial_unencoded_url, @options)
+      parsed_absolute_url = parsed_partial_url.to_absolute(@content_uri)
+      crawler.enqueue!(parsed_absolute_url, :html)
+      parsed_absolute_url.for_display.to_s
     end
 
     # called via normalize_property
