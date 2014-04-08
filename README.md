@@ -1,4 +1,5 @@
-[![Build Status](https://secure.travis-ci.org/socialcast/link_preview.png?branch=master)](http://travis-ci.org/socialcast/link_preview)
+[![Build Status](https://secure.travis-ci.org/socialcast/link_preview.png?branch=master)](http://travis-ci.org/socialcast/link_preview) 
+[![Code Climate](https://codeclimate.com/github/socialcast/link_preview.png)](https://codeclimate.com/github/socialcast/link_preview)
 
 link_preview
 ==============
