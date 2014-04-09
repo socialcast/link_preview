@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.version     = LinkPreview::VERSION
   s.authors     = ['Michael Andrews']
   s.email       = ['michael@socialcast.com']
-  s.homepage    = 'https://github.com/socialcast/uri_abstract'
+  s.homepage    = 'https://github.com/socialcast/link_preview'
   s.summary     = 'Generate a link_preview for any URL'
   s.description = 'Generate a link_preview for any URL'
 
