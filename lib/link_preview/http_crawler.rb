@@ -22,6 +22,10 @@ require 'link_preview'
 require 'link_preview/uri'
 
 module LinkPreview
+  module ResponseWithURL
+    attr_accessor :url
+  end
+
   class HTTPCrawler
     def initialize(config, options = {})
       @config = config
@@ -51,6 +55,8 @@ module LinkPreview
       uri = dequeue_by_priority(priority_order)
       with_extra_env do
         @config.http_client.get(uri).tap do |response|
+          response.extend ResponseWithURL
+          response.url = uri
           @status[uri] = response.status.to_i
         end
       end
