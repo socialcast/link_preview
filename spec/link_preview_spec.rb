@@ -37,47 +37,47 @@ describe LinkPreview do
     it { should be_a(LinkPreview::Content) }
 
     describe '#url' do
-      subject { super().url }
+      subject { content.url }
       it { should == url }
     end
 
     describe '#title' do
-      subject { super().title }
+      subject { content.title }
       it { should == %Q{Open Graph protocol} }
     end
 
     describe '#description' do
-      subject { super().description }
+      subject { content.description }
       it { should == %Q{The Open Graph protocol enables any web page to become a rich object in a social graph.} }
     end
 
     describe '#site_name' do
-      subject { super().site_name }
+      subject { content.site_name }
       it { should == 'ogp.me' }
     end
 
     describe '#site_url' do
-      subject { super().site_url }
+      subject { content.site_url }
       it { should == url }
     end
 
     describe '#image_url' do
-      subject { super().image_url }
+      subject { content.image_url }
       it { should == 'http://ogp.me/logo.png' }
     end
 
     describe '#image_data' do
-      subject { super().image_data }
+      subject { content.image_data }
       it { should be_a(StringIO) }
     end
 
     describe '#image_content_type' do
-      subject { super().image_content_type }
+      subject { content.image_content_type }
       it { should == 'image/png' }
     end
 
     describe '#image_file_name' do
-      subject { super().image_file_name }
+      subject { content.image_file_name }
       it { should == 'logo.png' }
     end
 
@@ -113,47 +113,47 @@ describe LinkPreview do
     it { should be_a(LinkPreview::Content) }
 
     describe '#url' do
-      subject { super().url }
+      subject { content.url }
       it { should == 'http://youtube.com/watch?v=M3r2XDceM6A' }
     end
 
     describe '#title' do
-      subject { super().title }
+      subject { content.title }
       it { should == %Q{Amazing Nintendo Facts} }
     end
 
     describe '#description' do
-      subject { super().description }
+      subject { content.description }
       it { should == %Q{Learn about the history of Nintendo, its gaming systems, and Mario! It's 21 amazing facts about Nintendo you may have never known. Update: As of late 2008, W...} }
     end
 
     describe '#site_name' do
-      subject { super().site_name }
+      subject { content.site_name }
       it { should == 'YouTube' }
     end
 
     describe '#site_url' do
-      subject { super().site_url }
+      subject { content.site_url }
       it { should == 'http://www.youtube.com/' }
     end
 
     describe '#image_url' do
-      subject { super().image_url }
+      subject { content.image_url }
       it { should == 'http://i1.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg' }
     end
 
     describe '#image_data' do
-      subject { super().image_data }
+      subject { content.image_data }
       it { should be_a(StringIO) }
     end
 
     describe '#image_content_type' do
-      subject { super().image_content_type }
+      subject { content.image_content_type }
       it { should == 'image/jpeg' }
     end
 
     describe '#image_file_name' do
-      subject { super().image_file_name }
+      subject { content.image_file_name }
       it { should == 'hqdefault.jpg' }
     end
 
@@ -199,47 +199,47 @@ describe LinkPreview do
     it { should be_a(LinkPreview::Content) }
 
     describe '#url' do
-      subject { super().url }
+      subject { content.url }
       it { should == 'http://videos.kaltura.com/media//id/1_abxlxlll' }
     end
 
     describe '#title' do
-      subject { super().title }
+      subject { content.title }
       it { should == %Q{KMC Overview | Kaltura KMC Tutorial} }
     end
 
     describe '#description' do
-      subject { super().description }
+      subject { content.description }
       it { should be_nil }
     end
 
     describe '#site_name' do
-      subject { super().site_name }
+      subject { content.site_name }
       it { should == 'Kaltura Videos' }
     end
 
     describe '#site_url' do
-      subject { super().site_url }
+      subject { content.site_url }
       it { should == 'http://videos.kaltura.com/' }
     end
 
     describe '#image_url' do
-      subject { super().image_url }
+      subject { content.image_url }
       it { should == "http://cdnbakmi.kaltura.com/p/811441/sp/81144100/thumbnail/entry_id/1_abxlxlll/version/100012/width//height/" }
     end
 
     describe '#image_data' do
-      subject { super().image_data }
+      subject { content.image_data }
       it { should be_a(StringIO) }
     end
 
     describe '#image_content_type' do
-      subject { super().image_content_type }
+      subject { content.image_content_type }
       it { should == 'image/jpeg' }
     end
 
     describe '#image_file_name' do
-      subject { super().image_file_name }
+      subject { content.image_file_name }
       it { should == 'height' }
     end
 
@@ -261,47 +261,47 @@ describe LinkPreview do
     it { should be_a(LinkPreview::Content) }
 
     describe '#url' do
-      subject { super().url }
+      subject { content.url }
       it { should == 'http://portal.sliderocket.com/SlideRocket-Presentations/Hoshyar-Foundation' }
     end
 
     describe '#title' do
-      subject { super().title }
+      subject { content.title }
       it { should == %Q{Hoshyar-Foundation} }
     end
 
     describe '#description' do
-      subject { super().description }
+      subject { content.description }
       it { should == %Q{Proudly crafted with SlideRocket.} }
     end
 
     describe '#site_name' do
-      subject { super().site_name }
+      subject { content.site_name }
       it { should == 'SlideRocket' }
     end
 
     describe '#site_url' do
-      subject { super().site_url }
+      subject { content.site_url }
       it { should == 'http://sliderocket.com/' }
     end
 
     describe '#image_url' do
-      subject { super().image_url }
+      subject { content.image_url }
       it { should == 'http://cdn.sliderocket.com/thumbnails/4/43/43b475a4-192e-455e-832f-4a40697d8d25.jpg' }
     end
 
     describe '#image_data' do
-      subject { super().image_data }
+      subject { content.image_data }
       it { should be_a(StringIO) }
     end
 
     describe '#image_content_type' do
-      subject { super().image_content_type }
+      subject { content.image_content_type }
       it { should == 'binary/octet-stream' }
     end
 
     describe '#image_file_name' do
-      subject { super().image_file_name }
+      subject { content.image_file_name }
       it { should == '43b475a4-192e-455e-832f-4a40697d8d25.jpg' }
     end
 
@@ -343,47 +343,47 @@ describe LinkPreview do
     it { should be_a(LinkPreview::Content) }
 
     describe '#url' do
-      subject { super().url }
+      subject { content.url }
       it { should == 'http://support.apple.com/kb/HT5642' }
     end
 
     describe '#title' do
-      subject { super().title }
+      subject { content.title }
       it { should == %Q{About the security content of iOS 6.1 Software Update} }
     end
 
     describe '#description' do
-      subject { super().description }
+      subject { content.description }
       it { should == %Q{This document describes the security content of iOS 6.1.\nFor the protection of our customers, Apple does not disclose, discuss, or confirm security issues until a full investigation has occurred and any necessary patches or releases are available. To learn more about Apple Product Security, see the Apple Product Security website.\nFor information about the Apple Product Security PGP Key, see How to use the Apple Product Security PGP Key.\nWhere possible, CVE IDs are used to reference the vulnerabilities for further information.\nTo learn about other Security Updates, see Apple Security Updates.} }
     end
 
     describe '#site_name' do
-      subject { super().site_name }
+      subject { content.site_name }
       it { should == 'support.apple.com' }
     end
 
     describe '#site_url' do
-      subject { super().site_url }
+      subject { content.site_url }
       it { should == 'http://support.apple.com' }
     end
 
     describe '#image_url' do
-      subject { super().image_url }
+      subject { content.image_url }
       it { should be_nil }
     end
 
     describe '#image_data' do
-      subject { super().image_data }
+      subject { content.image_data }
       it { should be_nil }
     end
 
     describe '#image_content_type' do
-      subject { super().image_content_type }
+      subject { content.image_content_type }
       it { should be_nil }
     end
 
     describe '#image_file_name' do
-      subject { super().image_file_name }
+      subject { content.image_file_name }
       it { should be_nil }
     end
 
@@ -417,47 +417,47 @@ describe LinkPreview do
     it { should be_a(LinkPreview::Content) }
 
     describe '#url' do
-      subject { super().url }
+      subject { content.url }
       it { should == 'http://www.golden-gate-park.com/wp-content/uploads/2011/02/Golden_Gate_Park_Logo_Header.png' }
     end
 
     describe '#title' do
-      subject { super().title }
+      subject { content.title }
       it { should == 'http://www.golden-gate-park.com/wp-content/uploads/2011/02/Golden_Gate_Park_Logo_Header.png' }
     end
 
     describe '#description' do
-      subject { super().description }
+      subject { content.description }
       it { should be_nil }
     end
 
     describe '#site_name' do
-      subject { super().site_name }
+      subject { content.site_name }
       it { should == 'www.golden-gate-park.com' }
     end
 
     describe '#site_url' do
-      subject { super().site_url }
+      subject { content.site_url }
       it { should == 'http://www.golden-gate-park.com' }
     end
 
     describe '#image_url' do
-      subject { super().image_url }
+      subject { content.image_url }
       it { should == 'http://www.golden-gate-park.com/wp-content/uploads/2011/02/Golden_Gate_Park_Logo_Header.png' }
     end
 
     describe '#image_data' do
-      subject { super().image_data }
+      subject { content.image_data }
       it { should be_a(StringIO) }
     end
 
     describe '#image_content_type' do
-      subject { super().image_content_type }
+      subject { content.image_content_type }
       it { should == 'image/png' }
     end
 
     describe '#image_file_name' do
-      subject { super().image_file_name }
+      subject { content.image_file_name }
       it { should == 'Golden_Gate_Park_Logo_Header.png' }
     end
 
@@ -512,47 +512,47 @@ describe LinkPreview do
     it { should be_a(LinkPreview::Content) }
 
     describe '#url' do
-      subject { super().url }
+      subject { content.url }
       it { should == 'http://media.mediaspace.kaltura.com/media/Despicable+Me/0_w2zsofdj' }
     end
 
     describe '#title' do
-      subject { super().title }
+      subject { content.title }
       it { should == %Q{Despicable Me} }
     end
 
     describe '#description' do
-      subject { super().description }
+      subject { content.description }
       it { should == %Q{In a happy suburban neighborhood surrounded by white picket fences with flowering rose bushes, sits a black house with a dead lawn. Unbeknownst to the neighbors, hidden beneath this home is a vast secret hideout. Surrounded by a small army of minions, we discover Gru planning the biggest heist in the history of the world. He is going to steal the moon, yes, the moon. Gru delights in all things wicked. Armed with his arsenal of shrink rays, freeze rays, and battle-ready vehicles for land and air, he vanquishes all who stand in his way. Until the day he encounters the immense will of three little orphaned girls who look at him and see something that no one else has ever seen: a potential Dad. The world's greatest villain has just met his greatest challenge: three little girls named Margo, Edith and Agnes.} }
     end
 
     describe '#site_name' do
-      subject { super().site_name }
+      subject { content.site_name }
       it { should == 'MediaSpace Demo Site' }
     end
 
     describe '#site_url' do
-      subject { super().site_url }
+      subject { content.site_url }
       it { should == 'http://media.mediaspace.kaltura.com' }
     end
 
     describe '#image_url' do
-      subject { super().image_url }
+      subject { content.image_url }
       it { should == 'https://cdnbakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/0_w2zsofdj/version/100021/width/400' }
     end
 
     describe '#image_data' do
-      subject { super().image_data }
+      subject { content.image_data }
       it { should be_a(StringIO) }
     end
 
     describe '#image_content_type' do
-      subject { super().image_content_type }
+      subject { content.image_content_type }
       it { should == 'image/jpeg' }
     end
 
     describe '#image_file_name' do
-      subject { super().image_file_name }
+      subject { content.image_file_name }
       it { should == '400' }
     end
 
@@ -593,47 +593,47 @@ describe LinkPreview do
     end
 
     describe '#url' do
-      subject { super().url }
+      subject { content.url }
       it { should == url }
     end
 
     describe '#title' do
-      subject { super().title }
+      subject { content.title }
       it { should == %Q{Hadoop | Elasticsearch} }
     end
 
     describe '#description' do
-      subject { super().description }
+      subject { content.description }
       it { should == %Q{Search your Hadoop Data and Get Real-Time Results Deep API integration makes searching data in Hadoop easy Elasticsearch for Apache Hadoop enables real-time searching against data stored in Apache Hadoop. It provides native integration with Map/Reduce, Hive, Pig, and Cascading, all with no customization. Download Elasticsearch for Apache Hadoop Documentation Great fit for “Big Data” [...]} }
     end
 
     describe '#site_name' do
-      subject { super().site_name }
+      subject { content.site_name }
       it { should == 'Elasticsearch.org' }
     end
 
     describe '#site_url' do
-      subject { super().site_url }
+      subject { content.site_url }
       it { should_not be_nil }
     end
 
     describe '#image_url' do
-      subject { super().image_url }
+      subject { content.image_url }
       it { should == 'http://www.elasticsearch.org/content/uploads/2013/10/blank_hero.png' }
     end
 
     describe '#image_data' do
-      subject { super().image_data }
+      subject { content.image_data }
       it { should be_a(StringIO) }
     end
 
     describe '#image_content_type' do
-      subject { super().image_content_type }
+      subject { content.image_content_type }
       it { should == 'image/png' }
     end
 
     describe '#image_file_name' do
-      subject { super().image_file_name }
+      subject { content.image_file_name }
       it { should == 'blank_hero.png' }
     end
 
@@ -661,32 +661,32 @@ describe LinkPreview do
     end
 
     describe '#url' do
-      subject { super().url }
+      subject { content.url }
       it { should == url }
     end
 
     describe '#title' do
-      subject { super().title }
+      subject { content.title }
       it { should == url }
     end
 
     describe '#description' do
-      subject { super().description }
+      subject { content.description }
       it { should be_nil }
     end
 
     describe '#site_name' do
-      subject { super().site_name }
+      subject { content.site_name }
       it { should == 's.taobao.com' }
     end
 
     describe '#site_url' do
-      subject { super().site_url }
+      subject { content.site_url }
       it { should == url }
     end
 
     describe '#image_url' do
-      subject { super().image_url }
+      subject { content.image_url }
       it { should be_nil }
     end
   end
