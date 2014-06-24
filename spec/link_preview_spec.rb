@@ -35,20 +35,56 @@ describe LinkPreview do
     end
 
     it { should be_a(LinkPreview::Content) }
-    its(:url) { should == url }
-    its(:title) { should == %Q{Open Graph protocol} }
-    its(:description) { should == %Q{The Open Graph protocol enables any web page to become a rich object in a social graph.} }
-    its(:site_name) { should == 'ogp.me' }
-    its(:site_url) { should == url }
-    its(:image_url) { should == 'http://ogp.me/logo.png' }
-    its(:image_data) { should be_a(StringIO) }
-    its(:image_content_type) { should == 'image/png' }
-    its(:image_file_name) { should == 'logo.png' }
+
+    describe '#url' do
+      subject { super().url }
+      it { should == url }
+    end
+
+    describe '#title' do
+      subject { super().title }
+      it { should == %Q{Open Graph protocol} }
+    end
+
+    describe '#description' do
+      subject { super().description }
+      it { should == %Q{The Open Graph protocol enables any web page to become a rich object in a social graph.} }
+    end
+
+    describe '#site_name' do
+      subject { super().site_name }
+      it { should == 'ogp.me' }
+    end
+
+    describe '#site_url' do
+      subject { super().site_url }
+      it { should == url }
+    end
+
+    describe '#image_url' do
+      subject { super().image_url }
+      it { should == 'http://ogp.me/logo.png' }
+    end
+
+    describe '#image_data' do
+      subject { super().image_data }
+      it { should be_a(StringIO) }
+    end
+
+    describe '#image_content_type' do
+      subject { super().image_content_type }
+      it { should == 'image/png' }
+    end
+
+    describe '#image_file_name' do
+      subject { super().image_file_name }
+      it { should == 'logo.png' }
+    end
 
     it 'should issue minimum number of requests' do
-      http_client.should_receive(:get).with('http://ogp.me/').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://ogp.me/').ordered.and_call_original
       content.title
-      http_client.should_receive(:get).with('http://ogp.me/logo.png').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://ogp.me/logo.png').ordered.and_call_original
       content.image_data
     end
 
@@ -75,22 +111,58 @@ describe LinkPreview do
     end
 
     it { should be_a(LinkPreview::Content) }
-    its(:url) { should == 'http://youtube.com/watch?v=M3r2XDceM6A' }
-    its(:title) { should == %Q{Amazing Nintendo Facts} }
-    its(:description) { should == %Q{Learn about the history of Nintendo, its gaming systems, and Mario! It's 21 amazing facts about Nintendo you may have never known. Update: As of late 2008, W...} }
-    its(:site_name) { should == 'YouTube' }
-    its(:site_url) { should == 'http://www.youtube.com/' }
-    its(:image_url) { should == 'http://i1.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg' }
-    its(:image_data) { should be_a(StringIO) }
-    its(:image_content_type) { should == 'image/jpeg' }
-    its(:image_file_name) { should == 'hqdefault.jpg' }
+
+    describe '#url' do
+      subject { super().url }
+      it { should == 'http://youtube.com/watch?v=M3r2XDceM6A' }
+    end
+
+    describe '#title' do
+      subject { super().title }
+      it { should == %Q{Amazing Nintendo Facts} }
+    end
+
+    describe '#description' do
+      subject { super().description }
+      it { should == %Q{Learn about the history of Nintendo, its gaming systems, and Mario! It's 21 amazing facts about Nintendo you may have never known. Update: As of late 2008, W...} }
+    end
+
+    describe '#site_name' do
+      subject { super().site_name }
+      it { should == 'YouTube' }
+    end
+
+    describe '#site_url' do
+      subject { super().site_url }
+      it { should == 'http://www.youtube.com/' }
+    end
+
+    describe '#image_url' do
+      subject { super().image_url }
+      it { should == 'http://i1.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg' }
+    end
+
+    describe '#image_data' do
+      subject { super().image_data }
+      it { should be_a(StringIO) }
+    end
+
+    describe '#image_content_type' do
+      subject { super().image_content_type }
+      it { should == 'image/jpeg' }
+    end
+
+    describe '#image_file_name' do
+      subject { super().image_file_name }
+      it { should == 'hqdefault.jpg' }
+    end
 
     it 'should issue minimum number of requests' do
-      http_client.should_receive(:get).with('http://www.youtube.com/oembed?format=json&url=http%3A%2F%2Fyoutube.com%2Fwatch%3Fv%3DM3r2XDceM6A').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://www.youtube.com/oembed?format=json&url=http%3A%2F%2Fyoutube.com%2Fwatch%3Fv%3DM3r2XDceM6A').ordered.and_call_original
       content.title
-      http_client.should_receive(:get).with('http://youtube.com/watch?v=M3r2XDceM6A').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://youtube.com/watch?v=M3r2XDceM6A').ordered.and_call_original
       content.description
-      http_client.should_receive(:get).with('http://i1.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://i1.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg').ordered.and_call_original
       content.image_data
     end
 
@@ -125,22 +197,58 @@ describe LinkPreview do
     end
 
     it { should be_a(LinkPreview::Content) }
-    its(:url) { should == 'http://videos.kaltura.com/media//id/1_abxlxlll' }
-    its(:title) { should == %Q{KMC Overview | Kaltura KMC Tutorial} }
-    its(:description) { should be_nil }
-    its(:site_name) { should == 'Kaltura Videos' }
-    its(:site_url) { should == 'http://videos.kaltura.com/' }
-    its(:image_url) { should == "http://cdnbakmi.kaltura.com/p/811441/sp/81144100/thumbnail/entry_id/1_abxlxlll/version/100012/width//height/" }
-    its(:image_data) { should be_a(StringIO) }
-    its(:image_content_type) { should == 'image/jpeg' }
-    its(:image_file_name) { should == 'height' }
+
+    describe '#url' do
+      subject { super().url }
+      it { should == 'http://videos.kaltura.com/media//id/1_abxlxlll' }
+    end
+
+    describe '#title' do
+      subject { super().title }
+      it { should == %Q{KMC Overview | Kaltura KMC Tutorial} }
+    end
+
+    describe '#description' do
+      subject { super().description }
+      it { should be_nil }
+    end
+
+    describe '#site_name' do
+      subject { super().site_name }
+      it { should == 'Kaltura Videos' }
+    end
+
+    describe '#site_url' do
+      subject { super().site_url }
+      it { should == 'http://videos.kaltura.com/' }
+    end
+
+    describe '#image_url' do
+      subject { super().image_url }
+      it { should == "http://cdnbakmi.kaltura.com/p/811441/sp/81144100/thumbnail/entry_id/1_abxlxlll/version/100012/width//height/" }
+    end
+
+    describe '#image_data' do
+      subject { super().image_data }
+      it { should be_a(StringIO) }
+    end
+
+    describe '#image_content_type' do
+      subject { super().image_content_type }
+      it { should == 'image/jpeg' }
+    end
+
+    describe '#image_file_name' do
+      subject { super().image_file_name }
+      it { should == 'height' }
+    end
 
     it 'should issue minimum number of requests' do
-      http_client.should_receive(:get).with('http://videos.kaltura.com/oembed/?url=http%3A%2F%2Fvideos.kaltura.com%2Fmedia%2F%2Fid%2F1_abxlxlll&playerId=3073841&entryId=1_abxlxlll&width=420').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://videos.kaltura.com/oembed/?url=http%3A%2F%2Fvideos.kaltura.com%2Fmedia%2F%2Fid%2F1_abxlxlll&playerId=3073841&entryId=1_abxlxlll&width=420').ordered.and_call_original
       content.title
-      http_client.should_receive(:get).with('http://cdnbakmi.kaltura.com/p/811441/sp/81144100/thumbnail/entry_id/1_abxlxlll/version/100012/width//height/').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://cdnbakmi.kaltura.com/p/811441/sp/81144100/thumbnail/entry_id/1_abxlxlll/version/100012/width//height/').ordered.and_call_original
       content.image_data
-      http_client.should_receive(:get).with('http://videos.kaltura.com/media//id/1_abxlxlll').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://videos.kaltura.com/media//id/1_abxlxlll').ordered.and_call_original
       content.description
     end
   end
@@ -151,22 +259,58 @@ describe LinkPreview do
     end
 
     it { should be_a(LinkPreview::Content) }
-    its(:url) { should == 'http://portal.sliderocket.com/SlideRocket-Presentations/Hoshyar-Foundation' }
-    its(:title) { should == %Q{Hoshyar-Foundation} }
-    its(:description) { should == %Q{Proudly crafted with SlideRocket.} }
-    its(:site_name) { should == 'SlideRocket' }
-    its(:site_url) { should == 'http://sliderocket.com/' }
-    its(:image_url) { should == 'http://cdn.sliderocket.com/thumbnails/4/43/43b475a4-192e-455e-832f-4a40697d8d25.jpg' }
-    its(:image_data) { should be_a(StringIO) }
-    its(:image_content_type) { should == 'binary/octet-stream' }
-    its(:image_file_name) { should == '43b475a4-192e-455e-832f-4a40697d8d25.jpg' }
+
+    describe '#url' do
+      subject { super().url }
+      it { should == 'http://portal.sliderocket.com/SlideRocket-Presentations/Hoshyar-Foundation' }
+    end
+
+    describe '#title' do
+      subject { super().title }
+      it { should == %Q{Hoshyar-Foundation} }
+    end
+
+    describe '#description' do
+      subject { super().description }
+      it { should == %Q{Proudly crafted with SlideRocket.} }
+    end
+
+    describe '#site_name' do
+      subject { super().site_name }
+      it { should == 'SlideRocket' }
+    end
+
+    describe '#site_url' do
+      subject { super().site_url }
+      it { should == 'http://sliderocket.com/' }
+    end
+
+    describe '#image_url' do
+      subject { super().image_url }
+      it { should == 'http://cdn.sliderocket.com/thumbnails/4/43/43b475a4-192e-455e-832f-4a40697d8d25.jpg' }
+    end
+
+    describe '#image_data' do
+      subject { super().image_data }
+      it { should be_a(StringIO) }
+    end
+
+    describe '#image_content_type' do
+      subject { super().image_content_type }
+      it { should == 'binary/octet-stream' }
+    end
+
+    describe '#image_file_name' do
+      subject { super().image_file_name }
+      it { should == '43b475a4-192e-455e-832f-4a40697d8d25.jpg' }
+    end
 
     it 'should issue minimum number of requests' do
-      http_client.should_receive(:get).with('http://portal.sliderocket.com/SlideRocket-Presentations/Hoshyar-Foundation').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://portal.sliderocket.com/SlideRocket-Presentations/Hoshyar-Foundation').ordered.and_call_original
       content.title
-      http_client.should_receive(:get).with('http://cdn.sliderocket.com/thumbnails/4/43/43b475a4-192e-455e-832f-4a40697d8d25.jpg').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://cdn.sliderocket.com/thumbnails/4/43/43b475a4-192e-455e-832f-4a40697d8d25.jpg').ordered.and_call_original
       content.image_data
-      http_client.should_receive(:get).with('http://app.sliderocket.com/app/oEmbed.aspx?url=http%3A%2F%2Fapp.sliderocket.com%2Fapp%2Ffullplayer.aspx%3Fid%3Df614ec65-0f9b-4167-bb2a-b384dad535f3&maxwidth=420').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://app.sliderocket.com/app/oEmbed.aspx?url=http%3A%2F%2Fapp.sliderocket.com%2Fapp%2Ffullplayer.aspx%3Fid%3Df614ec65-0f9b-4167-bb2a-b384dad535f3&maxwidth=420').ordered.and_call_original
       content.as_oembed
     end
 
@@ -197,18 +341,54 @@ describe LinkPreview do
     end
 
     it { should be_a(LinkPreview::Content) }
-    its(:url) { should == 'http://support.apple.com/kb/HT5642' }
-    its(:title) { should == %Q{About the security content of iOS 6.1 Software Update} }
-    its(:description) { should == %Q{This document describes the security content of iOS 6.1.\nFor the protection of our customers, Apple does not disclose, discuss, or confirm security issues until a full investigation has occurred and any necessary patches or releases are available. To learn more about Apple Product Security, see the Apple Product Security website.\nFor information about the Apple Product Security PGP Key, see How to use the Apple Product Security PGP Key.\nWhere possible, CVE IDs are used to reference the vulnerabilities for further information.\nTo learn about other Security Updates, see Apple Security Updates.} }
-    its(:site_name) { should == 'support.apple.com' }
-    its(:site_url) { should == 'http://support.apple.com' }
-    its(:image_url) { should be_nil }
-    its(:image_data) { should be_nil }
-    its(:image_content_type) { should be_nil }
-    its(:image_file_name) { should be_nil }
+
+    describe '#url' do
+      subject { super().url }
+      it { should == 'http://support.apple.com/kb/HT5642' }
+    end
+
+    describe '#title' do
+      subject { super().title }
+      it { should == %Q{About the security content of iOS 6.1 Software Update} }
+    end
+
+    describe '#description' do
+      subject { super().description }
+      it { should == %Q{This document describes the security content of iOS 6.1.\nFor the protection of our customers, Apple does not disclose, discuss, or confirm security issues until a full investigation has occurred and any necessary patches or releases are available. To learn more about Apple Product Security, see the Apple Product Security website.\nFor information about the Apple Product Security PGP Key, see How to use the Apple Product Security PGP Key.\nWhere possible, CVE IDs are used to reference the vulnerabilities for further information.\nTo learn about other Security Updates, see Apple Security Updates.} }
+    end
+
+    describe '#site_name' do
+      subject { super().site_name }
+      it { should == 'support.apple.com' }
+    end
+
+    describe '#site_url' do
+      subject { super().site_url }
+      it { should == 'http://support.apple.com' }
+    end
+
+    describe '#image_url' do
+      subject { super().image_url }
+      it { should be_nil }
+    end
+
+    describe '#image_data' do
+      subject { super().image_data }
+      it { should be_nil }
+    end
+
+    describe '#image_content_type' do
+      subject { super().image_content_type }
+      it { should be_nil }
+    end
+
+    describe '#image_file_name' do
+      subject { super().image_file_name }
+      it { should be_nil }
+    end
 
     it 'should issue minimum number of requests' do
-      http_client.should_receive(:get).with('http://support.apple.com/kb/HT5642').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://support.apple.com/kb/HT5642').ordered.and_call_original
       content.title
       content.image_data
     end
@@ -235,15 +415,51 @@ describe LinkPreview do
     end
 
     it { should be_a(LinkPreview::Content) }
-    its(:url) { should == 'http://www.golden-gate-park.com/wp-content/uploads/2011/02/Golden_Gate_Park_Logo_Header.png' }
-    its(:title) { should == 'http://www.golden-gate-park.com/wp-content/uploads/2011/02/Golden_Gate_Park_Logo_Header.png' }
-    its(:description) { should be_nil }
-    its(:site_name) { should == 'www.golden-gate-park.com' }
-    its(:site_url) { should == 'http://www.golden-gate-park.com' }
-    its(:image_url) { should == 'http://www.golden-gate-park.com/wp-content/uploads/2011/02/Golden_Gate_Park_Logo_Header.png' }
-    its(:image_data) { should be_a(StringIO) }
-    its(:image_content_type) { should == 'image/png' }
-    its(:image_file_name) { should == 'Golden_Gate_Park_Logo_Header.png' }
+
+    describe '#url' do
+      subject { super().url }
+      it { should == 'http://www.golden-gate-park.com/wp-content/uploads/2011/02/Golden_Gate_Park_Logo_Header.png' }
+    end
+
+    describe '#title' do
+      subject { super().title }
+      it { should == 'http://www.golden-gate-park.com/wp-content/uploads/2011/02/Golden_Gate_Park_Logo_Header.png' }
+    end
+
+    describe '#description' do
+      subject { super().description }
+      it { should be_nil }
+    end
+
+    describe '#site_name' do
+      subject { super().site_name }
+      it { should == 'www.golden-gate-park.com' }
+    end
+
+    describe '#site_url' do
+      subject { super().site_url }
+      it { should == 'http://www.golden-gate-park.com' }
+    end
+
+    describe '#image_url' do
+      subject { super().image_url }
+      it { should == 'http://www.golden-gate-park.com/wp-content/uploads/2011/02/Golden_Gate_Park_Logo_Header.png' }
+    end
+
+    describe '#image_data' do
+      subject { super().image_data }
+      it { should be_a(StringIO) }
+    end
+
+    describe '#image_content_type' do
+      subject { super().image_content_type }
+      it { should == 'image/png' }
+    end
+
+    describe '#image_file_name' do
+      subject { super().image_file_name }
+      it { should == 'Golden_Gate_Park_Logo_Header.png' }
+    end
 
     # FIXME should convert to photo via paperclip
     context '#as_oembed' do
@@ -269,8 +485,8 @@ describe LinkPreview do
 
     it { should_not be_found }
     it 'should issue minimum number of requests' do
-      http_client.should_receive(:get).with('http://www.youtube.com/oembed?format=json&url=http%3A%2F%2Fyoutube.com%2Fwatch%3Fv%3D1').ordered.and_call_original
-      http_client.should_receive(:get).with('http://youtube.com/watch?v=1').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://www.youtube.com/oembed?format=json&url=http%3A%2F%2Fyoutube.com%2Fwatch%3Fv%3D1').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://youtube.com/watch?v=1').ordered.and_call_original
       content.title
     end
 
@@ -294,21 +510,57 @@ describe LinkPreview do
     end
 
     it { should be_a(LinkPreview::Content) }
-    its(:url) { should == 'http://media.mediaspace.kaltura.com/media/Despicable+Me/0_w2zsofdj' }
-    its(:title) { should == %Q{Despicable Me} }
-    its(:description) { should == %Q{In a happy suburban neighborhood surrounded by white picket fences with flowering rose bushes, sits a black house with a dead lawn. Unbeknownst to the neighbors, hidden beneath this home is a vast secret hideout. Surrounded by a small army of minions, we discover Gru planning the biggest heist in the history of the world. He is going to steal the moon, yes, the moon. Gru delights in all things wicked. Armed with his arsenal of shrink rays, freeze rays, and battle-ready vehicles for land and air, he vanquishes all who stand in his way. Until the day he encounters the immense will of three little orphaned girls who look at him and see something that no one else has ever seen: a potential Dad. The world's greatest villain has just met his greatest challenge: three little girls named Margo, Edith and Agnes.} }
-    its(:site_name) { should == 'MediaSpace Demo Site' }
-    its(:site_url) { should == 'http://media.mediaspace.kaltura.com' }
-    its(:image_url) { should == 'https://cdnbakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/0_w2zsofdj/version/100021/width/400' }
-    its(:image_data) { should be_a(StringIO) }
-    its(:image_content_type) { should == 'image/jpeg' }
-    its(:image_file_name) { should == '400' }
+
+    describe '#url' do
+      subject { super().url }
+      it { should == 'http://media.mediaspace.kaltura.com/media/Despicable+Me/0_w2zsofdj' }
+    end
+
+    describe '#title' do
+      subject { super().title }
+      it { should == %Q{Despicable Me} }
+    end
+
+    describe '#description' do
+      subject { super().description }
+      it { should == %Q{In a happy suburban neighborhood surrounded by white picket fences with flowering rose bushes, sits a black house with a dead lawn. Unbeknownst to the neighbors, hidden beneath this home is a vast secret hideout. Surrounded by a small army of minions, we discover Gru planning the biggest heist in the history of the world. He is going to steal the moon, yes, the moon. Gru delights in all things wicked. Armed with his arsenal of shrink rays, freeze rays, and battle-ready vehicles for land and air, he vanquishes all who stand in his way. Until the day he encounters the immense will of three little orphaned girls who look at him and see something that no one else has ever seen: a potential Dad. The world's greatest villain has just met his greatest challenge: three little girls named Margo, Edith and Agnes.} }
+    end
+
+    describe '#site_name' do
+      subject { super().site_name }
+      it { should == 'MediaSpace Demo Site' }
+    end
+
+    describe '#site_url' do
+      subject { super().site_url }
+      it { should == 'http://media.mediaspace.kaltura.com' }
+    end
+
+    describe '#image_url' do
+      subject { super().image_url }
+      it { should == 'https://cdnbakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/0_w2zsofdj/version/100021/width/400' }
+    end
+
+    describe '#image_data' do
+      subject { super().image_data }
+      it { should be_a(StringIO) }
+    end
+
+    describe '#image_content_type' do
+      subject { super().image_content_type }
+      it { should == 'image/jpeg' }
+    end
+
+    describe '#image_file_name' do
+      subject { super().image_file_name }
+      it { should == '400' }
+    end
 
     it 'should issue minimum number of requests' do
-      http_client.should_receive(:get).with('https://media.mediaspace.kaltura.com/media/Despicable+Me/0_w2zsofdj/6065172').ordered.and_call_original
+      expect(http_client).to receive(:get).with('https://media.mediaspace.kaltura.com/media/Despicable+Me/0_w2zsofdj/6065172').ordered.and_call_original
       content.title
-      http_client.should_receive(:get).with('https://cdnbakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/0_w2zsofdj/version/100021/width/400').ordered.and_call_original
-      http_client.should_receive(:get).with('http://cdnbakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/0_w2zsofdj/version/100021/width/400').ordered.and_call_original
+      expect(http_client).to receive(:get).with('https://cdnbakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/0_w2zsofdj/version/100021/width/400').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://cdnbakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/0_w2zsofdj/version/100021/width/400').ordered.and_call_original
       content.image_data
       content.description
     end
@@ -340,15 +592,50 @@ describe LinkPreview do
       LinkPreview.fetch(url)
     end
 
-    its(:url) { should == url }
-    its(:title) { should == %Q{Hadoop | Elasticsearch} }
-    its(:description) { should == %Q{Search your Hadoop Data and Get Real-Time Results Deep API integration makes searching data in Hadoop easy Elasticsearch for Apache Hadoop enables real-time searching against data stored in Apache Hadoop. It provides native integration with Map/Reduce, Hive, Pig, and Cascading, all with no customization. Download Elasticsearch for Apache Hadoop Documentation Great fit for “Big Data” [...]} }
-    its(:site_name) { should == 'Elasticsearch.org' }
-    its(:site_url) { should_not be_nil }
-    its(:image_url) { should == 'http://www.elasticsearch.org/content/uploads/2013/10/blank_hero.png' }
-    its(:image_data) { should be_a(StringIO) }
-    its(:image_content_type) { should == 'image/png' }
-    its(:image_file_name) { should == 'blank_hero.png' }
+    describe '#url' do
+      subject { super().url }
+      it { should == url }
+    end
+
+    describe '#title' do
+      subject { super().title }
+      it { should == %Q{Hadoop | Elasticsearch} }
+    end
+
+    describe '#description' do
+      subject { super().description }
+      it { should == %Q{Search your Hadoop Data and Get Real-Time Results Deep API integration makes searching data in Hadoop easy Elasticsearch for Apache Hadoop enables real-time searching against data stored in Apache Hadoop. It provides native integration with Map/Reduce, Hive, Pig, and Cascading, all with no customization. Download Elasticsearch for Apache Hadoop Documentation Great fit for “Big Data” [...]} }
+    end
+
+    describe '#site_name' do
+      subject { super().site_name }
+      it { should == 'Elasticsearch.org' }
+    end
+
+    describe '#site_url' do
+      subject { super().site_url }
+      it { should_not be_nil }
+    end
+
+    describe '#image_url' do
+      subject { super().image_url }
+      it { should == 'http://www.elasticsearch.org/content/uploads/2013/10/blank_hero.png' }
+    end
+
+    describe '#image_data' do
+      subject { super().image_data }
+      it { should be_a(StringIO) }
+    end
+
+    describe '#image_content_type' do
+      subject { super().image_content_type }
+      it { should == 'image/png' }
+    end
+
+    describe '#image_file_name' do
+      subject { super().image_file_name }
+      it { should == 'blank_hero.png' }
+    end
 
     context '#as_oembed' do
       subject(:oembed) { content.as_oembed }
@@ -373,11 +660,34 @@ describe LinkPreview do
       LinkPreview.fetch(url)
     end
 
-    its(:url) { should == url }
-    its(:title) { should == url }
-    its(:description) { should be_nil }
-    its(:site_name) { should == 's.taobao.com' }
-    its(:site_url) { should == url }
-    its(:image_url) { should be_nil }
+    describe '#url' do
+      subject { super().url }
+      it { should == url }
+    end
+
+    describe '#title' do
+      subject { super().title }
+      it { should == url }
+    end
+
+    describe '#description' do
+      subject { super().description }
+      it { should be_nil }
+    end
+
+    describe '#site_name' do
+      subject { super().site_name }
+      it { should == 's.taobao.com' }
+    end
+
+    describe '#site_url' do
+      subject { super().site_url }
+      it { should == url }
+    end
+
+    describe '#image_url' do
+      subject { super().image_url }
+      it { should be_nil }
+    end
   end
 end
