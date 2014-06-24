@@ -109,6 +109,14 @@ module LinkPreview
       end
     end
 
+    def oembed_uri?
+      query_values.present? && path =~ /oembed/i && query_values['url']
+    end
+
+    def kaltura_uri?
+      query_values.present? && query_values['playerId'] && query_values['entryId']
+    end
+
     private
 
     def merge_query(query)
@@ -122,14 +130,6 @@ module LinkPreview
         self.path += '/' unless self.path =~ %r{/\z}
       end
       self
-    end
-
-    def oembed_uri?
-      query_values.present? && path =~ /oembed/i && query_values['url']
-    end
-
-    def kaltura_uri?
-      query_values.present? && query_values['playerId'] && query_values['entryId']
     end
 
     def oembed_query
