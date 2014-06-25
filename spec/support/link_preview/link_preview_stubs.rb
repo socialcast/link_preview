@@ -12,8 +12,8 @@ module LinkPreviewStubs
     simple_properties = properties.reject { |k, v| v.is_a?(Hash) }
 
     content = double('content', DEFAULT_PROPERTIES.merge(:found? => true).merge(simple_properties))
-    content.stub(:sources).and_return(nested_properties)
-    content.stub(:as_oembed).and_return({ :version => '1.0', :type => 'link' }.merge(nested_properties[:oembed]))
+    allow(content).to receive(:sources).and_return(nested_properties)
+    allow(content).to receive(:as_oembed).and_return({ :version => '1.0', :type => 'link' }.merge(nested_properties[:oembed]))
 
     stub_content_helper uri, content
   end
@@ -21,6 +21,6 @@ module LinkPreviewStubs
   private
 
   def stub_content_helper(uri, content)
-    LinkPreview.stub(:fetch).with(uri, an_instance_of(Hash), an_instance_of(Hash)).and_return(content)
+    allow(LinkPreview).to receive(:fetch).with(uri, an_instance_of(Hash), an_instance_of(Hash)).and_return(content)
   end
 end

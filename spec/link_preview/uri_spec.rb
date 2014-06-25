@@ -30,41 +30,41 @@ describe LinkPreview::URI do
 
     context 'with nil' do
       let(:uri) { nil }
-      it { parsed_uri.should be_nil }
+      it { expect(parsed_uri).to be_nil }
     end
 
     context 'with parsed LinkPreview::URI' do
       let(:uri) { LinkPreview::URI.parse('http://socialcast.com') }
 
-      it { parsed_uri.should be_a(LinkPreview::URI) }
-      it { parsed_uri.to_s.should == 'http://socialcast.com/' }
-      it { parsed_uri.should_not be_a_kaltura_uri }
-      it { parsed_uri.should_not be_a_oembed_uri }
+      it { expect(parsed_uri).to be_a(LinkPreview::URI) }
+      it { expect(parsed_uri.to_s).to eq('http://socialcast.com/') }
+      it { expect(parsed_uri).not_to be_a_kaltura_uri }
+      it { expect(parsed_uri).not_to be_a_oembed_uri }
     end
 
     context 'with common uri' do
       let(:uri) { 'http://socialcast.com' }
 
-      it { parsed_uri.should be_a(LinkPreview::URI) }
-      it { parsed_uri.to_s.should == 'http://socialcast.com/' }
-      it { parsed_uri.should_not be_a_kaltura_uri }
-      it { parsed_uri.should_not be_a_oembed_uri }
+      it { expect(parsed_uri).to be_a(LinkPreview::URI) }
+      it { expect(parsed_uri.to_s).to eq('http://socialcast.com/') }
+      it { expect(parsed_uri).not_to be_a_kaltura_uri }
+      it { expect(parsed_uri).not_to be_a_oembed_uri }
     end
 
     context 'with kaltura uri' do
       let(:uri) { 'http://demo.kaltura.com/mediaspace/media/index.php/action/oembed?url=http%3A%2F%2Fdemo.kaltura.com%2Fmediaspace%2Fmedia%2F%2Fid%2F1_h9tin5on&playerId=3073841&entryId=1_h9tin5on' }
-      it { parsed_uri.should be_a(LinkPreview::URI) }
-      it { parsed_uri.to_s.should == 'http://demo.kaltura.com/mediaspace/media/index.php/action/oembed/?url=http%3A%2F%2Fdemo.kaltura.com%2Fmediaspace%2Fmedia%2F%2Fid%2F1_h9tin5on&playerId=3073841&entryId=1_h9tin5on&width=420' }
-      it { parsed_uri.should be_a_kaltura_uri }
-      it { parsed_uri.should be_a_oembed_uri }
+      it { expect(parsed_uri).to be_a(LinkPreview::URI) }
+      it { expect(parsed_uri.to_s).to eq('http://demo.kaltura.com/mediaspace/media/index.php/action/oembed/?url=http%3A%2F%2Fdemo.kaltura.com%2Fmediaspace%2Fmedia%2F%2Fid%2F1_h9tin5on&playerId=3073841&entryId=1_h9tin5on&width=420') }
+      it { expect(parsed_uri).to be_a_kaltura_uri }
+      it { expect(parsed_uri).to be_a_oembed_uri }
     end
 
     context 'with kaltura uri with space error' do
       let(:uri) { 'https://cdnsecakmi.kaltura.com/ index.php/kwidget/wid/_1257971/uiconf_id//entry_id/0_aivu6h6k' }
-      it { parsed_uri.should be_a(LinkPreview::URI) }
-      it { parsed_uri.to_s.should == 'https://cdnsecakmi.kaltura.com/%20index.php/kwidget/wid/_1257971/uiconf_id//entry_id/0_aivu6h6k' }
-      it { parsed_uri.should_not be_a_kaltura_uri }
-      it { parsed_uri.should_not be_a_oembed_uri }
+      it { expect(parsed_uri).to be_a(LinkPreview::URI) }
+      it { expect(parsed_uri.to_s).to eq('https://cdnsecakmi.kaltura.com/%20index.php/kwidget/wid/_1257971/uiconf_id//entry_id/0_aivu6h6k') }
+      it { expect(parsed_uri).not_to be_a_kaltura_uri }
+      it { expect(parsed_uri).not_to be_a_oembed_uri }
     end
   end
 
@@ -78,22 +78,22 @@ describe LinkPreview::URI do
     context 'with absolute uri ' do
       let(:uri) { 'http://socialcast.com/a/b/c' }
 
-      it { absolute_uri.should be_a(LinkPreview::URI) }
-      it { absolute_uri.to_s.should == 'http://socialcast.com/a/b/c' }
+      it { expect(absolute_uri).to be_a(LinkPreview::URI) }
+      it { expect(absolute_uri.to_s).to eq('http://socialcast.com/a/b/c') }
     end
 
     context 'with relative uri' do
       let(:uri) { 'a/b/c' }
 
-      it { absolute_uri.should be_a(LinkPreview::URI) }
-      it { absolute_uri.to_s.should == 'http://socialcast.com/a/b/c' }
+      it { expect(absolute_uri).to be_a(LinkPreview::URI) }
+      it { expect(absolute_uri.to_s).to eq('http://socialcast.com/a/b/c') }
     end
 
     context 'with another relative uri' do
       let(:uri) { 'a/b/../../z' }
 
-      it { absolute_uri.should be_a(LinkPreview::URI) }
-      it { absolute_uri.to_s.should == 'http://socialcast.com/z' }
+      it { expect(absolute_uri).to be_a(LinkPreview::URI) }
+      it { expect(absolute_uri.to_s).to eq('http://socialcast.com/z') }
     end
   end
 end

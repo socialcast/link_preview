@@ -34,8 +34,8 @@ describe LinkPreview::HTTPCrawler do
 
     context 'when http_client.get raises an exception' do
       before do
-        config.http_client.stub(:get).and_raise(Timeout::Error)
-        config.error_handler.should_receive(:call).once.and_return { 'something' }
+        allow(config.http_client).to receive(:get).and_raise(Timeout::Error)
+        expect(config.error_handler).to receive(:call).once { 'something' }
       end
 
       subject(:response) { crawler.dequeue! }
