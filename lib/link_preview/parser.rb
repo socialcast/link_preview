@@ -115,8 +115,9 @@ module LinkPreview
     end
 
     def parse_image_file_name(data)
-      if filename = parse_content_disposition_filename(data)
-        filename
+      content_disposition_filename = parse_content_disposition_filename(data)
+      if content_disposition_filename.present?
+        content_disposition_filename
       elsif data.url
         parsed_uri = LinkPreview::URI.parse(data.url, @options)
         parsed_uri.path.split('/').last || parsed_uri.hostname.gsub('.', '_')
