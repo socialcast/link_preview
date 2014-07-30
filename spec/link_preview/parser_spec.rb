@@ -25,7 +25,7 @@ require 'spec_helper'
 describe LinkPreview::Parser do
   describe '#parse_image_file_name' do
     let(:config) { double(LinkPreview::Configuration) }
-    let(:parser) { LinkPreview::Parser.new(nil) }
+    let(:parser) { LinkPreview::Parser.new(config) }
     let(:response) do
       Faraday::Response.new.tap do |response|
         allow(response).to receive(:headers).and_return({
