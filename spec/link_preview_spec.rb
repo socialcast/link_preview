@@ -105,7 +105,7 @@ describe LinkPreview do
     end
   end
 
-  context 'youtube oembed', :vcr => {:cassette_name => 'youtube', :record => :new_episodes} do
+  context 'youtube oembed', :vcr => {:cassette_name => 'youtube'} do
     subject(:content) do
       LinkPreview.fetch('http://youtube.com/watch?v=M3r2XDceM6A')
     end
