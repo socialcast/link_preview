@@ -77,7 +77,6 @@ module LinkPreview
       @faraday_connection ||= Faraday.new do |builder|
         builder.options[:timeout] = @config.timeout
         builder.options[:open_timeout] = @config.open_timeout
-        builder.ssl.verify = false
 
         builder.use ExtraEnv
         builder.use Faraday::FollowRedirects, limit: @config.max_redirects if @config.follow_redirects
