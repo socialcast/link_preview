@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-# Copyright (c) 2014-2015, VMware, Inc. All Rights Reserved.
+# Copyright (c) 2014-2016, VMware, Inc. All Rights Reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -134,12 +134,12 @@ describe LinkPreview do
 
     describe '#site_url' do
       subject { content.site_url }
-      it { should == 'http://www.youtube.com/' }
+      it { should == 'https://www.youtube.com/' }
     end
 
     describe '#image_url' do
       subject { content.image_url }
-      it { should == 'http://i1.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg' }
+      it { should == 'https://i.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg' }
     end
 
     describe '#image_data' do
@@ -158,11 +158,11 @@ describe LinkPreview do
     end
 
     it 'should issue minimum number of requests' do
-      expect(http_client).to receive(:get).with('http://www.youtube.com/oembed?format=json&url=http%3A%2F%2Fyoutube.com%2Fwatch%3Fv%3DM3r2XDceM6A').ordered.and_call_original
+      expect(http_client).to receive(:get).with('https://www.youtube.com/oembed?scheme=https&format=json&url=http%3A%2F%2Fyoutube.com%2Fwatch%3Fv%3DM3r2XDceM6A').ordered.and_call_original
       content.title
       expect(http_client).to receive(:get).with('http://youtube.com/watch?v=M3r2XDceM6A').ordered.and_call_original
       content.description
-      expect(http_client).to receive(:get).with('http://i1.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg').ordered.and_call_original
+      expect(http_client).to receive(:get).with('https://i.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg').ordered.and_call_original
       content.image_data
     end
 
@@ -173,19 +173,19 @@ describe LinkPreview do
         should == {
           :version          => '1.0',
           :provider_name    => %Q{YouTube},
-          :provider_url     => 'http://www.youtube.com/',
+          :provider_url     => 'https://www.youtube.com/',
           :url              => "http://youtube.com/watch?v=M3r2XDceM6A",
           :title            => %Q{Amazing Nintendo Facts},
           :description      => %Q{Learn about the history of Nintendo, its gaming systems, and Mario! It's 21 amazing facts about Nintendo you may have never known. Update: As of late 2008, W...},
           :type             => 'video',
-          :thumbnail_url    => 'http://i1.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg',
+          :thumbnail_url    => 'https://i.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg',
           :thumbnail_width  => 480,
           :thumbnail_height => 360,
-          :html             => %Q{<iframe width="480" height="270" src="http://www.youtube.com/embed/M3r2XDceM6A?feature=oembed" frameborder="0" allowfullscreen></iframe>},
+          :html             => %Q{<iframe width="480" height="270" src="https://www.youtube.com/embed/M3r2XDceM6A?feature=oembed" frameborder="0" allowfullscreen></iframe>},
           :width            => 480,
           :height           => 270,
           :author_name      => 'ZackScott',
-          :author_url       => 'http://www.youtube.com/user/ZackScott',
+          :author_url       => 'https://www.youtube.com/user/ZackScott',
         }
       end
     end
@@ -485,7 +485,7 @@ describe LinkPreview do
 
     it { should_not be_found }
     it 'should issue minimum number of requests' do
-      expect(http_client).to receive(:get).with('http://www.youtube.com/oembed?format=json&url=http%3A%2F%2Fyoutube.com%2Fwatch%3Fv%3D1').ordered.and_call_original
+      expect(http_client).to receive(:get).with('https://www.youtube.com/oembed?scheme=https&format=json&url=http%3A%2F%2Fyoutube.com%2Fwatch%3Fv%3D1').ordered.and_call_original
       expect(http_client).to receive(:get).with('http://youtube.com/watch?v=1').ordered.and_call_original
       content.title
     end
@@ -560,7 +560,6 @@ describe LinkPreview do
       expect(http_client).to receive(:get).with('https://media.mediaspace.kaltura.com/media/Despicable+Me/0_w2zsofdj/6065172').ordered.and_call_original
       content.title
       expect(http_client).to receive(:get).with('https://cdnbakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/0_w2zsofdj/version/100021/width/400').ordered.and_call_original
-      expect(http_client).to receive(:get).with('http://cdnbakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/0_w2zsofdj/version/100021/width/400').ordered.and_call_original
       content.image_data
       content.description
     end
@@ -576,7 +575,7 @@ describe LinkPreview do
           :title          => %Q{Despicable Me},
           :description    => %Q{In a happy suburban neighborhood surrounded by white picket fences with flowering rose bushes, sits a black house with a dead lawn. Unbeknownst to the neighbors, hidden beneath this home is a vast secret hideout. Surrounded by a small army of minions, we discover Gru planning the biggest heist in the history of the world. He is going to steal the moon, yes, the moon. Gru delights in all things wicked. Armed with his arsenal of shrink rays, freeze rays, and battle-ready vehicles for land and air, he vanquishes all who stand in his way. Until the day he encounters the immense will of three little orphaned girls who look at him and see something that no one else has ever seen: a potential Dad. The world's greatest villain has just met his greatest challenge: three little girls named Margo, Edith and Agnes.},
           :type           => 'video',
-          :thumbnail_url  => "http://cdnbakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/0_w2zsofdj/version/100021/width/400",
+          :thumbnail_url  => "https://cdnbakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/0_w2zsofdj/version/100021/width/400",
           :html           => %Q{<object width=\"400\" height=\"333\"><param name=\"movie\" value=\"https://www.kaltura.com/index.php/kwidget/wid/_1059491/uiconf_id/16199142/entry_id/0_w2zsofdj\"></param><param name=\"allowScriptAccess\" value=\"always\"></param><param name=\"allowFullScreen\" value=\"true\"></param><embed src=\"https://www.kaltura.com/index.php/kwidget/wid/_1059491/uiconf_id/16199142/entry_id/0_w2zsofdj\" type=\"application/x-shockwave-flash\" allowscriptaccess=\"always\" allowfullscreen=\"true\" width=\"400\" height=\"333\"></embed></object>},
           :width          => 400,
           :height         => 333

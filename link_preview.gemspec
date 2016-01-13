@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.files = Dir['{lib,spec/support/link_preview}/**/*'] + ['LICENSE.txt', 'Rakefile', 'README.md']
   s.test_files = Dir['spec/**/*']
 
-  s.add_dependency('ruby-oembed')
+  s.add_dependency('ruby-oembed', '~> 0.9.0')
   s.add_dependency('addressable')
   s.add_dependency('faraday', '~> 0.9.0')
   s.add_dependency('nokogiri')
