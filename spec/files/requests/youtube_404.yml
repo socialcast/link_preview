@@ -12,7 +12,7 @@ http_interactions:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
-      - '*/*'
+      - "*/*"
   response:
     status:
       code: 404
@@ -43,8 +43,9 @@ http_interactions:
       - 80:quic
     body:
       encoding: UTF-8
-      base64_string: |
-        Tm90IEZvdW5k
+      base64_string: 'Tm90IEZvdW5k
+
+'
     http_version: 
   recorded_at: Sun, 16 Mar 2014 16:28:45 GMT
 - request:
@@ -59,7 +60,7 @@ http_interactions:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
-      - '*/*'
+      - "*/*"
   response:
     status:
       code: 301
@@ -98,7 +99,7 @@ http_interactions:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
-      - '*/*'
+      - "*/*"
   response:
     status:
       code: 404
@@ -1052,4 +1053,52 @@ http_interactions:
         cHQ+PC9ib2R5PjwvaHRtbD4KCgo=
     http_version: 
   recorded_at: Sun, 16 Mar 2014 16:28:45 GMT
-recorded_with: VCR 2.8.0
+- request:
+    method: get
+    uri: https://www.youtube.com/oembed?format=json&scheme=https&url=http%3A%2F%2Fyoutube.com%2Fwatch%3Fv%3D1
+    body:
+      encoding: US-ASCII
+      base64_string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.9.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      Date:
+      - Wed, 13 Jan 2016 19:20:25 GMT
+      Server:
+      - gwiseguy/2.0
+      X-Xss-Protection:
+      - 1; mode=block; report=https://www.google.com/appserve/security-bugs/log/youtube
+      X-Content-Type-Options:
+      - nosniff
+      P3p:
+      - CP="This is not a P3P policy! See http://support.google.com/accounts/answer/151657?hl=en
+        for more info."
+      Expires:
+      - Tue, 27 Apr 1971 19:44:06 EST
+      Cache-Control:
+      - no-cache
+      Content-Type:
+      - text/html; charset=utf-8
+      Content-Length:
+      - '9'
+      Alternate-Protocol:
+      - 443:quic,p=1
+      Alt-Svc:
+      - quic=":443"; ma=604800; v="30,29,28,27,26,25"
+    body:
+      encoding: UTF-8
+      base64_string: 'Tm90IEZvdW5k
+
+'
+    http_version: 
+  recorded_at: Wed, 13 Jan 2016 19:20:25 GMT
+recorded_with: VCR 2.9.3

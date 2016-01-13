@@ -105,7 +105,7 @@ describe LinkPreview do
     end
   end
 
-  context 'youtube oembed', :vcr => {:cassette_name => 'youtube'} do
+  context 'youtube oembed', :vcr => {:cassette_name => 'youtube', :record => :new_episodes} do
     subject(:content) do
       LinkPreview.fetch('http://youtube.com/watch?v=M3r2XDceM6A')
     end
@@ -134,12 +134,12 @@ describe LinkPreview do
 
     describe '#site_url' do
       subject { content.site_url }
-      it { should == 'http://www.youtube.com/' }
+      it { should == 'https://www.youtube.com/' }
     end
 
     describe '#image_url' do
       subject { content.image_url }
-      it { should == 'http://i1.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg' }
+      it { should == 'https://i.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg' }
     end
 
     describe '#image_data' do
@@ -158,11 +158,11 @@ describe LinkPreview do
     end
 
     it 'should issue minimum number of requests' do
-      expect(http_client).to receive(:get).with('http://www.youtube.com/oembed?format=json&url=http%3A%2F%2Fyoutube.com%2Fwatch%3Fv%3DM3r2XDceM6A').ordered.and_call_original
+      expect(http_client).to receive(:get).with('https://www.youtube.com/oembed?scheme=https&format=json&url=http%3A%2F%2Fyoutube.com%2Fwatch%3Fv%3DM3r2XDceM6A').ordered.and_call_original
       content.title
       expect(http_client).to receive(:get).with('http://youtube.com/watch?v=M3r2XDceM6A').ordered.and_call_original
       content.description
-      expect(http_client).to receive(:get).with('http://i1.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg').ordered.and_call_original
+      expect(http_client).to receive(:get).with('https://i.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg').ordered.and_call_original
       content.image_data
     end
 
@@ -173,19 +173,19 @@ describe LinkPreview do
         should == {
           :version          => '1.0',
           :provider_name    => %Q{YouTube},
-          :provider_url     => 'http://www.youtube.com/',
+          :provider_url     => 'https://www.youtube.com/',
           :url              => "http://youtube.com/watch?v=M3r2XDceM6A",
           :title            => %Q{Amazing Nintendo Facts},
           :description      => %Q{Learn about the history of Nintendo, its gaming systems, and Mario! It's 21 amazing facts about Nintendo you may have never known. Update: As of late 2008, W...},
           :type             => 'video',
-          :thumbnail_url    => 'http://i1.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg',
+          :thumbnail_url    => 'https://i.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg',
           :thumbnail_width  => 480,
           :thumbnail_height => 360,
-          :html             => %Q{<iframe width="480" height="270" src="http://www.youtube.com/embed/M3r2XDceM6A?feature=oembed" frameborder="0" allowfullscreen></iframe>},
+          :html             => %Q{<iframe width="480" height="270" src="https://www.youtube.com/embed/M3r2XDceM6A?feature=oembed" frameborder="0" allowfullscreen></iframe>},
           :width            => 480,
           :height           => 270,
           :author_name      => 'ZackScott',
-          :author_url       => 'http://www.youtube.com/user/ZackScott',
+          :author_url       => 'https://www.youtube.com/user/ZackScott',
         }
       end
     end
@@ -485,7 +485,7 @@ describe LinkPreview do
 
     it { should_not be_found }
     it 'should issue minimum number of requests' do
-      expect(http_client).to receive(:get).with('http://www.youtube.com/oembed?format=json&url=http%3A%2F%2Fyoutube.com%2Fwatch%3Fv%3D1').ordered.and_call_original
+      expect(http_client).to receive(:get).with('https://www.youtube.com/oembed?scheme=https&format=json&url=http%3A%2F%2Fyoutube.com%2Fwatch%3Fv%3D1').ordered.and_call_original
       expect(http_client).to receive(:get).with('http://youtube.com/watch?v=1').ordered.and_call_original
       content.title
     end
