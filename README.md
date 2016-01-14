@@ -105,5 +105,5 @@ See CONTRIBUTORS.txt for list of project contributors
 
 Copyright
 ---------
-Copyright (c) 2014-2015, VMware, Inc. All Rights Reserved.
+Copyright (c) 2014-2016, VMware, Inc. All Rights Reserved.
 See LICENSE.txt for further details.
