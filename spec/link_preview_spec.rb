@@ -689,4 +689,75 @@ describe LinkPreview do
       it { should be_nil }
     end
   end
+
+  context 'kaltura with html5 response', :vcr => {:cassette_name => 'kalture_html5'} do
+    let(:url) { 'http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html' }
+    subject(:content) do
+      LinkPreview.fetch(url)
+    end
+
+    describe '#url' do
+      subject { content.url }
+      it { should == url }
+    end
+
+    describe '#title' do
+      subject { content.title }
+      it { should == %Q{Kaltura Player: Share Plugin example} }
+    end
+
+    describe '#description' do
+      subject { content.description }
+      it { should == %Q{Kaltura Player: Share plugin demonstrates the ease of which social share can be configured with the kaltura player toolkit.} }
+    end
+
+    describe '#site_name' do
+      subject { content.site_name }
+      it { should == 'Kaltura' }
+    end
+
+    describe '#site_url' do
+      subject { content.site_url }
+      it { should == 'http://player.kaltura.com' }
+    end
+
+    describe '#image_url' do
+      subject { content.image_url }
+      it { should == 'http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400' }
+    end
+
+    describe '#image_data' do
+      subject { content.image_data }
+      it { should be_a(StringIO) }
+    end
+
+    describe '#image_content_type' do
+      subject { content.image_content_type }
+      it { should == 'image/jpeg' }
+    end
+
+    describe '#image_file_name' do
+      subject { content.image_file_name }
+      it { should == '400' }
+    end
+
+    context '#as_oembed' do
+      subject(:oembed) { content.as_oembed }
+
+      it 'should convert opengraph to oembed' do
+        should == {
+          :version        => '1.0',
+          :provider_name  => %Q{Kaltura},
+          :provider_url   => 'http://player.kaltura.com',
+          :title          => %Q{Kaltura Player: Share Plugin example},
+          :description    => %Q{Kaltura Player: Share plugin demonstrates the ease of which social share can be configured with the kaltura player toolkit.},
+          :type           => 'video',
+          :thumbnail_url  => 'http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400',
+          :html           => %Q{<video width="560" height="395"><source src="https://cdnapisec.kaltura.com/p/243342/sp/24334200/embedIframeJs/uiconf_id/28685261/partner_id/243342?iframeembed=true&playerId=kaltura_player&entry_id=1_sf5ovm7u" type="video/mp4" /></video>},
+          :width          => 560,
+          :height         => 395
+        }
+      end
+    end
+  end
 end
