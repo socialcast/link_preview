@@ -210,7 +210,7 @@ module LinkPreview
       end.compact.first || default_property(property)
     end
 
-    def has_property?(property)
+    def property?(property)
       SOURCES.map do |source|
         @sources[source][property_alias(source, property)]
       end.any?(&:present?)
@@ -258,7 +258,7 @@ module LinkPreview
 
     def extract(property)
       until crawler.finished?
-        break if has_property?(property)
+        break if property?(property)
         data = crawler.dequeue!(property_source_priority(property))
         properties = parser.parse(data)
         add_source_properties!(properties)
