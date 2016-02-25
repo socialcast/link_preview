@@ -23,19 +23,21 @@ require 'delegate'
 require 'oembed'
 
 require 'addressable/uri'
-class Addressable::URI
-  alias_method :normalize_without_encoded_query, :normalize
-  # NOTE hack to correctly escape URI query parameters after normalization
-  # see https://github.com/sporkmonger/addressable/issues/50
-  def normalize_with_encoded_query
-    normalize_without_encoded_query.tap do |uri|
-      if uri.query_values.present?
-        uri.query_values = uri.query_values.map { |key, value| [key, value] }
+module Addressable
+  class URI
+    alias_method :normalize_without_encoded_query, :normalize
+    # NOTE hack to correctly escape URI query parameters after normalization
+    # see https://github.com/sporkmonger/addressable/issues/50
+    def normalize_with_encoded_query
+      normalize_without_encoded_query.tap do |uri|
+        if uri.query_values.present?
+          uri.query_values = uri.query_values.map { |key, value| [key, value] }
+        end
+        uri
       end
-      uri
     end
+    alias_method :normalize, :normalize_with_encoded_query
   end
-  alias_method :normalize, :normalize_with_encoded_query
 end
 
 module LinkPreview
