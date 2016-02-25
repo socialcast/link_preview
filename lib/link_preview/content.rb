@@ -118,9 +118,7 @@ module LinkPreview
     protected
 
     def crawler
-      @crawler ||= @options.fetch(:allow_requests, true) ?
-        LinkPreview::HTTPCrawler.new(@config, @options) :
-        LinkPreview::NullCrawler.new(@config, @options)
+      @crawler ||= crawler_class.new(@config, @options)
     end
 
     def parser
@@ -360,6 +358,12 @@ module LinkPreview
       else
         content_height.to_i
       end
+    end
+
+    private
+
+    def crawler_class
+      @crawler_class ||= @options.fetch(:allow_requests, true) ? LinkPreview::HTTPCrawler : LinkPreview::NullCrawler
     end
   end
 end
