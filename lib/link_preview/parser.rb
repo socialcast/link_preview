@@ -59,6 +59,18 @@ module LinkPreview
       }
     end
 
+    def parse_image_file_name(data)
+      content_disposition_filename = parse_content_disposition_filename(data)
+      if content_disposition_filename.present?
+        content_disposition_filename
+      elsif data.url
+        parsed_uri = LinkPreview::URI.parse(data.url, @options)
+        parsed_uri.path.split('/').last || parsed_uri.hostname.tr('.', '_')
+      end
+    end
+
+    private
+
     def valid_data?(data)
       data && data.headers[:content_type] && data.body
     end
@@ -119,16 +131,6 @@ module LinkPreview
 
     def parse_image_data(data)
       StringIO.new(data.body.dup) if data.body
-    end
-
-    def parse_image_file_name(data)
-      content_disposition_filename = parse_content_disposition_filename(data)
-      if content_disposition_filename.present?
-        content_disposition_filename
-      elsif data.url
-        parsed_uri = LinkPreview::URI.parse(data.url, @options)
-        parsed_uri.path.split('/').last || parsed_uri.hostname.tr('.', '_')
-      end
     end
 
     # see http://www.ietf.org/rfc/rfc1806.txt
