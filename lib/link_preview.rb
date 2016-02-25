@@ -41,11 +41,11 @@ module LinkPreview
   end
 
   extend Forwardable
-  extend self
 
   def default_client
     @default_client ||= Client.new
   end
 
   def_delegators :default_client, :fetch, :load_content, :configure, :configuration
+  module_function :default_client, :fetch, :load_content, :configure, :configuration
 end
