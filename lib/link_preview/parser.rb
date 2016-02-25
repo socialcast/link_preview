@@ -33,7 +33,7 @@ module LinkPreview
     end
 
     def parse(data)
-      return {} unless data && data.headers[:content_type] && data.body
+      return {} unless valid_data?(data)
       case data.headers[:content_type]
       when /image/, 'binary/octet-stream'
         parse_image(data)
@@ -57,6 +57,10 @@ module LinkPreview
           image_file_name: parse_image_file_name(data)
         }
       }
+    end
+
+    def valid_data?(data)
+      data && data.headers[:content_type] && data.body
     end
 
     # FIXME: currently secure_url is favored over url via implicit ordering of keys
