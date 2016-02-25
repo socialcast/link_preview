@@ -31,7 +31,7 @@ module LinkPreview
       @config = config
       @options = options
       @status = {}
-      @queue = Hash.new { |h,k| h[k] = [] }
+      @queue = Hash.new { |h, k| h[k] = [] }
     end
 
     # @param [String] URI of content to crawl
@@ -39,14 +39,8 @@ module LinkPreview
       return if full?
       return unless uri
       parsed_uri = LinkPreview::URI.parse(uri, @options)
-
-      if oembed_uri = parsed_uri.as_oembed_uri
-        enqueue_uri(oembed_uri, :oembed)
-      end
-
-      if content_uri = parsed_uri.as_content_uri
-        enqueue_uri(content_uri, priority)
-      end
+      enqueue_uri(parsed_uri.as_oembed_uri, :oembed)
+      enqueue_uri(parsed_uri.as_content_uri, priority)
     end
 
     # @return [Hash] latest normalized content discovered by crawling
@@ -84,27 +78,26 @@ module LinkPreview
     private
 
     def dequeue_by_priority(priority_order)
-      priority = priority_order.detect { |priority| @queue[priority].any? }
-      priority ||= @queue.keys.detect { |priority| @queue[priority].any? }
+      priority = priority_order.detect { |p| @queue[p].any? }
+      priority ||= @queue.keys.detect { |p| @queue[p].any? }
       @queue[priority].shift
     end
 
     def enqueue_uri(parsed_uri, priority = :default)
+      return unless parsed_uri
       uri = parsed_uri.to_s
-      if !(processed?(uri) || enqueued?(uri))
-        @queue[priority] << uri
-      end
+      @queue[priority] << uri unless processed?(uri) || enqueued?(uri)
     end
 
     def processed?(uri)
-      @status.has_key?(uri)
+      @status.key?(uri)
     end
 
     def enqueued?(uri)
       @queue.values.flatten.uniq.include?(uri)
     end
 
-    def with_extra_env(&block)
+    def with_extra_env(&_block)
       LinkPreview::ExtraEnv.extra = @options
       yield
     ensure

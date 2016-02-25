@@ -47,17 +47,16 @@ module LinkPreview
       return if env[:body].encoding == Encoding::UTF_8 && env[:body].valid_encoding?
       return unless env[:response_headers][:content_type] =~ /text/
       env[:body].encode!('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
-      unless env[:body].valid_encoding?
-        # cleanse untrusted invalid bytes with a double transcode as suggested here:
-        # http://stackoverflow.com/questions/2982677/ruby-1-9-invalid-byte-sequence-in-utf-8
-        env[:body].encode!('UTF-16', 'binary', invalid: :replace, undef: :replace, replace: '')
-        env[:body].encode!('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
-      end
+      return if env[:body].valid_encoding?
+      # cleanse untrusted invalid bytes with a double transcode as suggested here:
+      # http://stackoverflow.com/questions/2982677/ruby-1-9-invalid-byte-sequence-in-utf-8
+      env[:body].encode!('UTF-16', 'binary', invalid: :replace, undef: :replace, replace: '')
+      env[:body].encode!('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
     end
 
     def call(env)
-      @app.call(env).on_complete do |env|
-        force_utf8_body!(env)
+      @app.call(env).on_complete do |response_env|
+        force_utf8_body!(response_env)
       end
     end
   end

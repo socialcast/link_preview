@@ -23,18 +23,25 @@
 require 'spec_helper'
 
 describe LinkPreview do
-  it { should be_a(Module) }
+  it { expect(described_class).to be_a(Module) }
 
   let(:http_client) { LinkPreview.configuration.http_client }
 
-  context 'open graph data', :vcr => {:cassette_name => 'ogp.me'} do
+  let(:url) { nil }
+  let(:options) { {} }
+
+  subject(:content) do
+    LinkPreview.fetch(url, options)
+  end
+
+  shared_context 'link_preview' do
+    it { should be_a(LinkPreview::Content) }
+  end
+
+  context 'open graph data', vcr: { cassette_name: 'ogp.me' } do
     let(:url) { 'http://ogp.me' }
 
-    subject(:content) do
-      LinkPreview.fetch(url)
-    end
-
-    it { should be_a(LinkPreview::Content) }
+    it_behaves_like 'link_preview'
 
     describe '#url' do
       subject { content.url }
@@ -43,12 +50,12 @@ describe LinkPreview do
 
     describe '#title' do
       subject { content.title }
-      it { should == %Q{Open Graph protocol} }
+      it { should == %(Open Graph protocol) }
     end
 
     describe '#description' do
       subject { content.description }
-      it { should == %Q{The Open Graph protocol enables any web page to become a rich object in a social graph.} }
+      it { should == %(The Open Graph protocol enables any web page to become a rich object in a social graph.) }
     end
 
     describe '#site_name' do
@@ -93,38 +100,36 @@ describe LinkPreview do
 
       it 'should encode as link' do
         should == {
-          :version        => '1.0',
-          :provider_name  => %Q{ogp.me},
-          :provider_url   => 'http://ogp.me',
-          :title          => %Q{Open Graph protocol},
-          :description    => %Q{The Open Graph protocol enables any web page to become a rich object in a social graph.},
-          :type           => 'link',
-          :thumbnail_url  => 'http://ogp.me/logo.png'
+          version: '1.0',
+          provider_name: %(ogp.me),
+          provider_url: 'http://ogp.me',
+          title: %(Open Graph protocol),
+          description: %(The Open Graph protocol enables any web page to become a rich object in a social graph.),
+          type: 'link',
+          thumbnail_url: 'http://ogp.me/logo.png'
         }
       end
     end
   end
 
-  context 'youtube oembed', :vcr => {:cassette_name => 'youtube'} do
-    subject(:content) do
-      LinkPreview.fetch('http://youtube.com/watch?v=M3r2XDceM6A')
-    end
+  context 'youtube oembed', vcr: { cassette_name: 'youtube' } do
+    let(:url) { 'http://youtube.com/watch?v=M3r2XDceM6A' }
 
-    it { should be_a(LinkPreview::Content) }
+    it_behaves_like 'link_preview'
 
     describe '#url' do
       subject { content.url }
-      it { should == 'http://youtube.com/watch?v=M3r2XDceM6A' }
+      it { should == url }
     end
 
     describe '#title' do
       subject { content.title }
-      it { should == %Q{Amazing Nintendo Facts} }
+      it { should == %(Amazing Nintendo Facts) }
     end
 
     describe '#description' do
       subject { content.description }
-      it { should == %Q{Learn about the history of Nintendo, its gaming systems, and Mario! It's 21 amazing facts about Nintendo you may have never known. Update: As of late 2008, W...} }
+      it { should == %(Learn about the history of Nintendo, its gaming systems, and Mario! It's 21 amazing facts about Nintendo you may have never known. Update: As of late 2008, W...) }
     end
 
     describe '#site_name' do
@@ -171,32 +176,31 @@ describe LinkPreview do
 
       it 'should proxy oembed content' do
         should == {
-          :version          => '1.0',
-          :provider_name    => %Q{YouTube},
-          :provider_url     => 'https://www.youtube.com/',
-          :url              => "http://youtube.com/watch?v=M3r2XDceM6A",
-          :title            => %Q{Amazing Nintendo Facts},
-          :description      => %Q{Learn about the history of Nintendo, its gaming systems, and Mario! It's 21 amazing facts about Nintendo you may have never known. Update: As of late 2008, W...},
-          :type             => 'video',
-          :thumbnail_url    => 'https://i.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg',
-          :thumbnail_width  => 480,
-          :thumbnail_height => 360,
-          :html             => %Q{<iframe width="480" height="270" src="https://www.youtube.com/embed/M3r2XDceM6A?feature=oembed" frameborder="0" allowfullscreen></iframe>},
-          :width            => 480,
-          :height           => 270,
-          :author_name      => 'ZackScott',
-          :author_url       => 'https://www.youtube.com/user/ZackScott',
+          version: '1.0',
+          provider_name: %(YouTube),
+          provider_url: 'https://www.youtube.com/',
+          url: 'http://youtube.com/watch?v=M3r2XDceM6A',
+          title: %(Amazing Nintendo Facts),
+          description: %(Learn about the history of Nintendo, its gaming systems, and Mario! It's 21 amazing facts about Nintendo you may have never known. Update: As of late 2008, W...),
+          type: 'video',
+          thumbnail_url: 'https://i.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg',
+          thumbnail_width: 480,
+          thumbnail_height: 360,
+          html: %(<iframe width="480" height="270" src="https://www.youtube.com/embed/M3r2XDceM6A?feature=oembed" frameborder="0" allowfullscreen></iframe>),
+          width: 480,
+          height: 270,
+          author_name: 'ZackScott',
+          author_url: 'https://www.youtube.com/user/ZackScott'
         }
       end
     end
   end
 
-  context 'kaltura oembed', :vcr => {:cassette_name => 'kaltura'} do
-    subject(:content) do
-      LinkPreview.fetch('http://videos.kaltura.com/oembed?url=http%3A%2F%2Fvideos.kaltura.com%2Fmedia%2F%2Fid%2F1_abxlxlll&playerId=3073841&entryId=1_abxlxlll', :width => 420)
-    end
+  context 'kaltura oembed', vcr: { cassette_name: 'kaltura' } do
+    let(:url) { 'http://videos.kaltura.com/oembed?url=http%3A%2F%2Fvideos.kaltura.com%2Fmedia%2F%2Fid%2F1_abxlxlll&playerId=3073841&entryId=1_abxlxlll' }
+    let(:options) { { width: 420 } }
 
-    it { should be_a(LinkPreview::Content) }
+    it_behaves_like 'link_preview'
 
     describe '#url' do
       subject { content.url }
@@ -205,7 +209,7 @@ describe LinkPreview do
 
     describe '#title' do
       subject { content.title }
-      it { should == %Q{KMC Overview | Kaltura KMC Tutorial} }
+      it { should == %(KMC Overview | Kaltura KMC Tutorial) }
     end
 
     describe '#description' do
@@ -225,7 +229,7 @@ describe LinkPreview do
 
     describe '#image_url' do
       subject { content.image_url }
-      it { should == "http://cdnbakmi.kaltura.com/p/811441/sp/81144100/thumbnail/entry_id/1_abxlxlll/version/100012/width//height/" }
+      it { should == 'http://cdnbakmi.kaltura.com/p/811441/sp/81144100/thumbnail/entry_id/1_abxlxlll/version/100012/width//height/' }
     end
 
     describe '#image_data' do
@@ -253,12 +257,11 @@ describe LinkPreview do
     end
   end
 
-  context 'sliderocket oembed discovery', :vcr => {:cassette_name => 'sliderocket'} do
-    subject(:content) do
-      LinkPreview.fetch('http://portal.sliderocket.com/SlideRocket-Presentations/Hoshyar-Foundation', :width => 420)
-    end
+  context 'sliderocket oembed discovery', vcr: { cassette_name: 'sliderocket' } do
+    let(:url) { 'http://portal.sliderocket.com/SlideRocket-Presentations/Hoshyar-Foundation' }
+    let(:options) { { width: 420 } }
 
-    it { should be_a(LinkPreview::Content) }
+    it_behaves_like 'link_preview'
 
     describe '#url' do
       subject { content.url }
@@ -267,12 +270,12 @@ describe LinkPreview do
 
     describe '#title' do
       subject { content.title }
-      it { should == %Q{Hoshyar-Foundation} }
+      it { should == %(Hoshyar-Foundation) }
     end
 
     describe '#description' do
       subject { content.description }
-      it { should == %Q{Proudly crafted with SlideRocket.} }
+      it { should == %(Proudly crafted with SlideRocket.) }
     end
 
     describe '#site_name' do
@@ -319,42 +322,40 @@ describe LinkPreview do
 
       it 'should proxy oembed content' do
         should == {
-          :version          => '1.0',
-          :provider_name    => %Q{SlideRocket},
-          :provider_url     => 'http://sliderocket.com/',
-          :url              => 'http://app.sliderocket.com/app/fullplayer.aspx?id=f614ec65-0f9b-4167-bb2a-b384dad535f3',
-          :title            => %Q{Hoshyar-Foundation},
-          :description      => %Q{Proudly crafted with SlideRocket.},
-          :thumbnail_url    => 'http://cdn.sliderocket.com/thumbnails/4/43/43b475a4-192e-455e-832f-4a40697d8d25.jpg',
-          :type             => 'rich',
-          :html             => %Q{<iframe src="http://app.sliderocket.com/app/fullplayer.aspx?id=f614ec65-0f9b-4167-bb2a-b384dad535f3" width="420" height="315" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>},
-          :width            => 420,
-          :height           => 315
+          version: '1.0',
+          provider_name: %(SlideRocket),
+          provider_url: 'http://sliderocket.com/',
+          url: 'http://app.sliderocket.com/app/fullplayer.aspx?id=f614ec65-0f9b-4167-bb2a-b384dad535f3',
+          title: %(Hoshyar-Foundation),
+          description: %(Proudly crafted with SlideRocket.),
+          thumbnail_url: 'http://cdn.sliderocket.com/thumbnails/4/43/43b475a4-192e-455e-832f-4a40697d8d25.jpg',
+          type: 'rich',
+          html: %(<iframe src="http://app.sliderocket.com/app/fullplayer.aspx?id=f614ec65-0f9b-4167-bb2a-b384dad535f3" width="420" height="315" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>),
+          width: 420,
+          height: 315
         }
       end
     end
   end
 
-  context 'html data with unescaped html', :vcr => {:cassette_name => 'support.apple.com'} do
-    subject(:content) do
-      LinkPreview.fetch('http://support.apple.com/kb/HT5642')
-    end
+  context 'html data with unescaped html', vcr: { cassette_name: 'support.apple.com' } do
+    let(:url) { 'http://support.apple.com/kb/HT5642' }
 
-    it { should be_a(LinkPreview::Content) }
+    it_behaves_like 'link_preview'
 
     describe '#url' do
       subject { content.url }
-      it { should == 'http://support.apple.com/kb/HT5642' }
+      it { should == url }
     end
 
     describe '#title' do
       subject { content.title }
-      it { should == %Q{About the security content of iOS 6.1 Software Update} }
+      it { should == %(About the security content of iOS 6.1 Software Update) }
     end
 
     describe '#description' do
       subject { content.description }
-      it { should == %Q{This document describes the security content of iOS 6.1.\nFor the protection of our customers, Apple does not disclose, discuss, or confirm security issues until a full investigation has occurred and any necessary patches or releases are available. To learn more about Apple Product Security, see the Apple Product Security website.\nFor information about the Apple Product Security PGP Key, see How to use the Apple Product Security PGP Key.\nWhere possible, CVE IDs are used to reference the vulnerabilities for further information.\nTo learn about other Security Updates, see Apple Security Updates.} }
+      it { should == %(This document describes the security content of iOS 6.1.\nFor the protection of our customers, Apple does not disclose, discuss, or confirm security issues until a full investigation has occurred and any necessary patches or releases are available. To learn more about Apple Product Security, see the Apple Product Security website.\nFor information about the Apple Product Security PGP Key, see How to use the Apple Product Security PGP Key.\nWhere possible, CVE IDs are used to reference the vulnerabilities for further information.\nTo learn about other Security Updates, see Apple Security Updates.) }
     end
 
     describe '#site_name' do
@@ -398,27 +399,25 @@ describe LinkPreview do
 
       it 'should convert to oembed link' do
         should == {
-          :version        => '1.0',
-          :provider_name  => %Q{support.apple.com},
-          :provider_url   => 'http://support.apple.com',
-          :title          => %Q{About the security content of iOS 6.1 Software Update},
-          :description    => %Q{This document describes the security content of iOS 6.1.\nFor the protection of our customers, Apple does not disclose, discuss, or confirm security issues until a full investigation has occurred and any necessary patches or releases are available. To learn more about Apple Product Security, see the Apple Product Security website.\nFor information about the Apple Product Security PGP Key, see How to use the Apple Product Security PGP Key.\nWhere possible, CVE IDs are used to reference the vulnerabilities for further information.\nTo learn about other Security Updates, see Apple Security Updates.},
-          :type           => 'link'
+          version: '1.0',
+          provider_name: %(support.apple.com),
+          provider_url: 'http://support.apple.com',
+          title: %(About the security content of iOS 6.1 Software Update),
+          description: %(This document describes the security content of iOS 6.1.\nFor the protection of our customers, Apple does not disclose, discuss, or confirm security issues until a full investigation has occurred and any necessary patches or releases are available. To learn more about Apple Product Security, see the Apple Product Security website.\nFor information about the Apple Product Security PGP Key, see How to use the Apple Product Security PGP Key.\nWhere possible, CVE IDs are used to reference the vulnerabilities for further information.\nTo learn about other Security Updates, see Apple Security Updates.),
+          type: 'link'
         }
       end
     end
   end
 
-  context 'image data', :vcr => {:cassette_name => 'ggp.png'} do
-    subject(:content) do
-      LinkPreview.fetch('http://www.golden-gate-park.com/wp-content/uploads/2011/02/Golden_Gate_Park_Logo_Header.png')
-    end
+  context 'image data', vcr: { cassette_name: 'ggp.png' } do
+    let(:url) { 'http://www.golden-gate-park.com/wp-content/uploads/2011/02/Golden_Gate_Park_Logo_Header.png' }
 
-    it { should be_a(LinkPreview::Content) }
+    it_behaves_like 'link_preview'
 
     describe '#url' do
       subject { content.url }
-      it { should == 'http://www.golden-gate-park.com/wp-content/uploads/2011/02/Golden_Gate_Park_Logo_Header.png' }
+      it { should == url }
     end
 
     describe '#title' do
@@ -461,28 +460,27 @@ describe LinkPreview do
       it { should == 'Golden_Gate_Park_Logo_Header.png' }
     end
 
-    # FIXME should convert to photo via paperclip
+    # FIXME: should convert to photo via paperclip
     context '#as_oembed' do
       subject(:oembed) { content.as_oembed }
 
       it 'should convert to oembed link' do
         should == {
-          :version        => '1.0',
-          :provider_name  => %Q{www.golden-gate-park.com},
-          :provider_url   => 'http://www.golden-gate-park.com',
-          :title          => %Q{http://www.golden-gate-park.com/wp-content/uploads/2011/02/Golden_Gate_Park_Logo_Header.png},
-          :type           => 'link',
-          :thumbnail_url  => 'http://www.golden-gate-park.com/wp-content/uploads/2011/02/Golden_Gate_Park_Logo_Header.png'
+          version: '1.0',
+          provider_name: %(www.golden-gate-park.com),
+          provider_url: 'http://www.golden-gate-park.com',
+          title: %(http://www.golden-gate-park.com/wp-content/uploads/2011/02/Golden_Gate_Park_Logo_Header.png),
+          type: 'link',
+          thumbnail_url: 'http://www.golden-gate-park.com/wp-content/uploads/2011/02/Golden_Gate_Park_Logo_Header.png'
         }
       end
     end
   end
 
-  context 'youtube oembed 404', :vcr => {:cassette_name => 'youtube 404'} do
-    subject(:content) do
-      LinkPreview.fetch('http://youtube.com/watch?v=1')
-    end
+  context 'youtube oembed 404', vcr: { cassette_name: 'youtube 404' } do
+    let(:url) { 'http://youtube.com/watch?v=1' }
 
+    it_behaves_like 'link_preview'
     it { should_not be_found }
     it 'should issue minimum number of requests' do
       expect(http_client).to receive(:get).with('https://www.youtube.com/oembed?scheme=https&format=json&url=http%3A%2F%2Fyoutube.com%2Fwatch%3Fv%3D1').ordered.and_call_original
@@ -494,22 +492,20 @@ describe LinkPreview do
       subject(:oembed) { content.as_oembed }
       it 'should return basic oembed' do
         should == {
-          :version       => '1.0',
-          :provider_name => 'youtube.com',
-          :provider_url  => 'http://youtube.com',
-          :title         => 'YouTube',
-          :type          => 'link'
+          version: '1.0',
+          provider_name: 'youtube.com',
+          provider_url: 'http://youtube.com',
+          title: 'YouTube',
+          type: 'link'
         }
       end
     end
   end
 
-  context 'kaltura opengraph', :vcr => {:cassette_name => 'kaltura_opengraph'} do
-    subject(:content) do
-      LinkPreview.fetch('https://media.mediaspace.kaltura.com/media/Despicable+Me/0_w2zsofdj/6065172')
-    end
+  context 'kaltura opengraph', vcr: { cassette_name: 'kaltura_opengraph' } do
+    let(:url) { 'https://media.mediaspace.kaltura.com/media/Despicable+Me/0_w2zsofdj/6065172' }
 
-    it { should be_a(LinkPreview::Content) }
+    it_behaves_like 'link_preview'
 
     describe '#url' do
       subject { content.url }
@@ -518,12 +514,12 @@ describe LinkPreview do
 
     describe '#title' do
       subject { content.title }
-      it { should == %Q{Despicable Me} }
+      it { should == %(Despicable Me) }
     end
 
     describe '#description' do
       subject { content.description }
-      it { should == %Q{In a happy suburban neighborhood surrounded by white picket fences with flowering rose bushes, sits a black house with a dead lawn. Unbeknownst to the neighbors, hidden beneath this home is a vast secret hideout. Surrounded by a small army of minions, we discover Gru planning the biggest heist in the history of the world. He is going to steal the moon, yes, the moon. Gru delights in all things wicked. Armed with his arsenal of shrink rays, freeze rays, and battle-ready vehicles for land and air, he vanquishes all who stand in his way. Until the day he encounters the immense will of three little orphaned girls who look at him and see something that no one else has ever seen: a potential Dad. The world's greatest villain has just met his greatest challenge: three little girls named Margo, Edith and Agnes.} }
+      it { should == %(In a happy suburban neighborhood surrounded by white picket fences with flowering rose bushes, sits a black house with a dead lawn. Unbeknownst to the neighbors, hidden beneath this home is a vast secret hideout. Surrounded by a small army of minions, we discover Gru planning the biggest heist in the history of the world. He is going to steal the moon, yes, the moon. Gru delights in all things wicked. Armed with his arsenal of shrink rays, freeze rays, and battle-ready vehicles for land and air, he vanquishes all who stand in his way. Until the day he encounters the immense will of three little orphaned girls who look at him and see something that no one else has ever seen: a potential Dad. The world's greatest villain has just met his greatest challenge: three little girls named Margo, Edith and Agnes.) }
     end
 
     describe '#site_name' do
@@ -569,27 +565,25 @@ describe LinkPreview do
 
       it 'should convert opengraph to oembed' do
         should == {
-          :version        => '1.0',
-          :provider_name  => %Q{MediaSpace Demo Site},
-          :provider_url   => 'http://media.mediaspace.kaltura.com',
-          :title          => %Q{Despicable Me},
-          :description    => %Q{In a happy suburban neighborhood surrounded by white picket fences with flowering rose bushes, sits a black house with a dead lawn. Unbeknownst to the neighbors, hidden beneath this home is a vast secret hideout. Surrounded by a small army of minions, we discover Gru planning the biggest heist in the history of the world. He is going to steal the moon, yes, the moon. Gru delights in all things wicked. Armed with his arsenal of shrink rays, freeze rays, and battle-ready vehicles for land and air, he vanquishes all who stand in his way. Until the day he encounters the immense will of three little orphaned girls who look at him and see something that no one else has ever seen: a potential Dad. The world's greatest villain has just met his greatest challenge: three little girls named Margo, Edith and Agnes.},
-          :type           => 'video',
-          :thumbnail_url  => "https://cdnbakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/0_w2zsofdj/version/100021/width/400",
-          :html           => %Q{<object width=\"400\" height=\"333\"><param name=\"movie\" value=\"https://www.kaltura.com/index.php/kwidget/wid/_1059491/uiconf_id/16199142/entry_id/0_w2zsofdj\"></param><param name=\"allowScriptAccess\" value=\"always\"></param><param name=\"allowFullScreen\" value=\"true\"></param><embed src=\"https://www.kaltura.com/index.php/kwidget/wid/_1059491/uiconf_id/16199142/entry_id/0_w2zsofdj\" type=\"application/x-shockwave-flash\" allowscriptaccess=\"always\" allowfullscreen=\"true\" width=\"400\" height=\"333\"></embed></object>},
-          :width          => 400,
-          :height         => 333
+          version: '1.0',
+          provider_name: %(MediaSpace Demo Site),
+          provider_url: 'http://media.mediaspace.kaltura.com',
+          title: %(Despicable Me),
+          description: %(In a happy suburban neighborhood surrounded by white picket fences with flowering rose bushes, sits a black house with a dead lawn. Unbeknownst to the neighbors, hidden beneath this home is a vast secret hideout. Surrounded by a small army of minions, we discover Gru planning the biggest heist in the history of the world. He is going to steal the moon, yes, the moon. Gru delights in all things wicked. Armed with his arsenal of shrink rays, freeze rays, and battle-ready vehicles for land and air, he vanquishes all who stand in his way. Until the day he encounters the immense will of three little orphaned girls who look at him and see something that no one else has ever seen: a potential Dad. The world's greatest villain has just met his greatest challenge: three little girls named Margo, Edith and Agnes.),
+          type: 'video',
+          thumbnail_url: 'https://cdnbakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/0_w2zsofdj/version/100021/width/400',
+          html: %(<object width=\"400\" height=\"333\"><param name=\"movie\" value=\"https://www.kaltura.com/index.php/kwidget/wid/_1059491/uiconf_id/16199142/entry_id/0_w2zsofdj\"></param><param name=\"allowScriptAccess\" value=\"always\"></param><param name=\"allowFullScreen\" value=\"true\"></param><embed src=\"https://www.kaltura.com/index.php/kwidget/wid/_1059491/uiconf_id/16199142/entry_id/0_w2zsofdj\" type=\"application/x-shockwave-flash\" allowscriptaccess=\"always\" allowfullscreen=\"true\" width=\"400\" height=\"333\"></embed></object>),
+          width: 400,
+          height: 333
         }
       end
     end
   end
 
-  context 'elasticsearch', :vcr => {:cassette_name => 'elasticsearch'} do
+  context 'elasticsearch', vcr: { cassette_name: 'elasticsearch' } do
     let(:url) { 'http://www.elasticsearch.org/overview/hadoop' }
 
-    subject(:content) do
-      LinkPreview.fetch(url)
-    end
+    it_behaves_like 'link_preview'
 
     describe '#url' do
       subject { content.url }
@@ -598,12 +592,12 @@ describe LinkPreview do
 
     describe '#title' do
       subject { content.title }
-      it { should == %Q{Hadoop | Elasticsearch} }
+      it { should == %(Hadoop | Elasticsearch) }
     end
 
     describe '#description' do
       subject { content.description }
-      it { should == %Q{Search your Hadoop Data and Get Real-Time Results Deep API integration makes searching data in Hadoop easy Elasticsearch for Apache Hadoop enables real-time searching against data stored in Apache Hadoop. It provides native integration with Map/Reduce, Hive, Pig, and Cascading, all with no customization. Download Elasticsearch for Apache Hadoop Documentation Great fit for “Big Data” [...]} }
+      it { should == %(Search your Hadoop Data and Get Real-Time Results Deep API integration makes searching data in Hadoop easy Elasticsearch for Apache Hadoop enables real-time searching against data stored in Apache Hadoop. It provides native integration with Map/Reduce, Hive, Pig, and Cascading, all with no customization. Download Elasticsearch for Apache Hadoop Documentation Great fit for “Big Data” [...]) }
     end
 
     describe '#site_name' do
@@ -641,23 +635,22 @@ describe LinkPreview do
 
       it 'should encode as link' do
         should == {
-          :version        => '1.0',
-          :provider_name  => %Q{Elasticsearch.org},
-          :provider_url   => 'http://www.elasticsearch.org',
-          :title          => %Q{Hadoop | Elasticsearch},
-          :description    => %Q{Search your Hadoop Data and Get Real-Time Results Deep API integration makes searching data in Hadoop easy Elasticsearch for Apache Hadoop enables real-time searching against data stored in Apache Hadoop. It provides native integration with Map/Reduce, Hive, Pig, and Cascading, all with no customization. Download Elasticsearch for Apache Hadoop Documentation Great fit for “Big Data” [...]},
-          :type           => 'link',
-          :thumbnail_url  => 'http://www.elasticsearch.org/content/uploads/2013/10/blank_hero.png'
+          version: '1.0',
+          provider_name: %(Elasticsearch.org),
+          provider_url: 'http://www.elasticsearch.org',
+          title: %(Hadoop | Elasticsearch),
+          description: %(Search your Hadoop Data and Get Real-Time Results Deep API integration makes searching data in Hadoop easy Elasticsearch for Apache Hadoop enables real-time searching against data stored in Apache Hadoop. It provides native integration with Map/Reduce, Hive, Pig, and Cascading, all with no customization. Download Elasticsearch for Apache Hadoop Documentation Great fit for “Big Data” [...]),
+          type: 'link',
+          thumbnail_url: 'http://www.elasticsearch.org/content/uploads/2013/10/blank_hero.png'
         }
       end
     end
   end
 
-  context 'resource with bad utf-8 in response', :vcr => {:cassette_name => 'bad_utf8'} do
+  context 'resource with bad utf-8 in response', vcr: { cassette_name: 'bad_utf8' } do
     let(:url) { 'http://s.taobao.com' }
-    subject(:content) do
-      LinkPreview.fetch(url)
-    end
+
+    it_behaves_like 'link_preview'
 
     describe '#url' do
       subject { content.url }
@@ -690,11 +683,10 @@ describe LinkPreview do
     end
   end
 
-  context 'kaltura with html5 response', :vcr => {:cassette_name => 'kalture_html5'} do
+  context 'kaltura with html5 response', vcr: { cassette_name: 'kalture_html5' } do
     let(:url) { 'http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html' }
-    subject(:content) do
-      LinkPreview.fetch(url)
-    end
+
+    it_behaves_like 'link_preview'
 
     describe '#url' do
       subject { content.url }
@@ -703,12 +695,12 @@ describe LinkPreview do
 
     describe '#title' do
       subject { content.title }
-      it { should == %Q{Kaltura Player: Share Plugin example} }
+      it { should == %(Kaltura Player: Share Plugin example) }
     end
 
     describe '#description' do
       subject { content.description }
-      it { should == %Q{Kaltura Player: Share plugin demonstrates the ease of which social share can be configured with the kaltura player toolkit.} }
+      it { should == %(Kaltura Player: Share plugin demonstrates the ease of which social share can be configured with the kaltura player toolkit.) }
     end
 
     describe '#site_name' do
@@ -746,16 +738,16 @@ describe LinkPreview do
 
       it 'should convert opengraph to oembed' do
         should == {
-          :version        => '1.0',
-          :provider_name  => %Q{Kaltura},
-          :provider_url   => 'http://player.kaltura.com',
-          :title          => %Q{Kaltura Player: Share Plugin example},
-          :description    => %Q{Kaltura Player: Share plugin demonstrates the ease of which social share can be configured with the kaltura player toolkit.},
-          :type           => 'video',
-          :thumbnail_url  => 'http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400',
-          :html           => %Q{<video width="560" height="395"><source src="https://cdnapisec.kaltura.com/p/243342/sp/24334200/embedIframeJs/uiconf_id/28685261/partner_id/243342?iframeembed=true&playerId=kaltura_player&entry_id=1_sf5ovm7u" type="video/mp4" /></video>},
-          :width          => 560,
-          :height         => 395
+          version: '1.0',
+          provider_name: %(Kaltura),
+          provider_url: 'http://player.kaltura.com',
+          title: %(Kaltura Player: Share Plugin example),
+          description: %(Kaltura Player: Share plugin demonstrates the ease of which social share can be configured with the kaltura player toolkit.),
+          type: 'video',
+          thumbnail_url: 'http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400',
+          html: %(<video width="560" height="395"><source src="https://cdnapisec.kaltura.com/p/243342/sp/24334200/embedIframeJs/uiconf_id/28685261/partner_id/243342?iframeembed=true&playerId=kaltura_player&entry_id=1_sf5ovm7u" type="video/mp4" /></video>),
+          width: 560,
+          height: 395
         }
       end
     end

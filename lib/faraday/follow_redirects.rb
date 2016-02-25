@@ -91,11 +91,10 @@ module Faraday
       request_body = env[:body]
       response = @app.call(env)
 
-      response.on_complete do |env|
-        if follow_redirect?(env, response)
+      response.on_complete do |response_env|
+        if follow_redirect?(response_env, response)
           raise RedirectLimitReached, response if follows.zero?
-          env = update_env(env, request_body, response)
-          response = perform_with_redirection(env, follows - 1)
+          response = perform_with_redirection(update_env(response_env, request_body, response), follows - 1)
         end
       end
       response
@@ -115,14 +114,14 @@ module Faraday
         env[:body] = request_body
       end
 
-      ENV_TO_CLEAR.each {|key| env.delete key }
+      ENV_TO_CLEAR.each { |key| env.delete key }
 
       env
     end
 
     def follow_redirect?(env, response)
-      ALLOWED_METHODS.include? env[:method] and
-        REDIRECT_CODES.include? response.status
+      ALLOWED_METHODS.include?(env[:method]) &&
+        REDIRECT_CODES.include?(response.status)
     end
 
     def follow_limit
@@ -140,7 +139,7 @@ module Faraday
     end
 
     def selected_cookies(cookies)
-      "".tap do |cookie_string|
+      ''.tap do |cookie_string|
         @options[:cookies].each do |cookie|
           string = /#{cookie}=?[^;]*/.match(cookies)[0] + ';'
           cookie_string << string
