@@ -152,16 +152,26 @@ module LinkPreview
     def enum_meta_pair(doc, key, value)
       Enumerator.new do |e|
         doc.search('head/meta').each do |node|
-          next unless node
-          next unless node.respond_to?(:attributes)
-          next unless node.attributes[key]
-          next unless node.attributes[key].value
-          next unless node.attributes[key].value.downcase == value.downcase
-          next unless node.attributes['content']
-          next unless node.attributes['content'].value
+          next unless matching_meta_pair?(node, key, value)
           e.yield node.attributes['content'].value
         end
       end
+    end
+
+    def matching_meta_pair?(node, key, value)
+      return false unless valid_meta_node?(node)
+      return false unless node.attributes[key]
+      return false unless node.attributes[key].value
+      return false unless node.attributes[key].value.downcase == value.downcase
+      true
+    end
+
+    def valid_meta_node?(node)
+      return false unless node
+      return false unless node.respond_to?(:attributes)
+      return false unless node.attributes['content']
+      return false unless node.attributes['content'].value
+      true
     end
 
     def find_meta_description(doc)
