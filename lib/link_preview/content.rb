@@ -6,10 +6,10 @@
 # use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
 # of the Software, and to permit persons to whom the Software is furnished to do
 # so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -112,7 +112,7 @@ module LinkPreview
     end
 
     def as_oembed
-      if content_type == 'application/x-shockwave-flash'
+      if content_type_video? || content_type_flash?
         @sources[:oembed].reverse_merge(as_oembed_video)
       else
         @sources[:oembed].reverse_merge(as_oembed_link)
@@ -306,9 +306,32 @@ module LinkPreview
           :height          => content_height_scaled.to_i})
     end
 
-    def content_html
-      return nil unless content_url.present?
+    def content_type_video?
+      content_type =~ %r{\Avideo/.*}
+    end
 
+    def content_type_flash?
+       content_type == 'application/x-shockwave-flash'
+    end
+
+    def content_html
+      return unless content_url.present?
+      return content_html_video if content_type_video?
+      return content_html_flash if content_type_flash?
+    end
+
+    def content_html_video
+      return unless content_url.present?
+      <<-EOF.strip.gsub(/\s+/, ' ').gsub(/>\s+</, '><')
+          <video width="#{content_width_scaled}" height="#{content_height_scaled}">
+            <source src="#{content_url}"
+                    type="#{content_type}" />
+          </video>
+      EOF
+    end
+
+    def content_html_flash
+      return unless content_url.present?
       <<-EOF.strip.gsub(/\s+/, ' ').gsub(/>\s+</, '><')
           <object width="#{content_width_scaled}" height="#{content_height_scaled}">
             <param name="movie" value="#{content_url}"></param>
