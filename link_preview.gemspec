@@ -30,6 +30,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency('rspec', '>= 2.9')
   s.add_development_dependency('vcr')
   s.add_development_dependency('webmock')
-  s.add_development_dependency('debugger') if RUBY_VERSION =~ /\A1/
-  s.add_development_dependency('byebug') if RUBY_VERSION =~ /\A2/
+  s.add_development_dependency('debugger') if RUBY_VERSION.start_with?('1')
+  s.add_development_dependency('byebug') if RUBY_VERSION.start_with?('2')
 end

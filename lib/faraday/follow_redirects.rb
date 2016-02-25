@@ -93,7 +93,7 @@ module Faraday
 
       response.on_complete do |response_env|
         if follow_redirect?(response_env, response)
-          fail RedirectLimitReached, response if follows.zero?
+          raise RedirectLimitReached, response if follows.zero?
           response = perform_with_redirection(update_env(response_env, request_body, response), follows - 1)
         end
       end

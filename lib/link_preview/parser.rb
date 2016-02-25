@@ -168,7 +168,7 @@ module LinkPreview
       return false unless valid_meta_node?(node)
       return false unless node.attributes[key]
       return false unless node.attributes[key].value
-      return false unless node.attributes[key].value.downcase == value.downcase
+      return false unless node.attributes[key].value.casecmp(value.downcase).zero?
       true
     end
 

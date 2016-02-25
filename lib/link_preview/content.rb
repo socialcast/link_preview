@@ -39,9 +39,9 @@ module LinkPreview
       :content_url,
       :content_type,
       :content_width,
-      :content_height]
+      :content_height].freeze
 
-    SOURCES = [:initial, :image, :oembed, :opengraph, :html]
+    SOURCES = [:initial, :image, :oembed, :opengraph, :html].freeze
 
     SOURCE_PROPERTIES_TABLE =
       {
@@ -57,7 +57,7 @@ module LinkPreview
           content_width: :video_width,
           content_height: :video_height
         }
-      }
+      }.freeze
 
     PROPERTIES_SOURCE_TABLE =
       Hash.new { |h, k| h[k] = {} }.tap do |reverse_property_table|

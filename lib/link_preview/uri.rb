@@ -25,7 +25,7 @@ require 'oembed'
 require 'addressable/uri'
 module Addressable
   class URI
-    alias_method :normalize_without_encoded_query, :normalize
+    alias normalize_without_encoded_query normalize
     # NOTE hack to correctly escape URI query parameters after normalization
     # see https://github.com/sporkmonger/addressable/issues/50
     def normalize_with_encoded_query
@@ -36,7 +36,7 @@ module Addressable
         uri
       end
     end
-    alias_method :normalize, :normalize_with_encoded_query
+    alias normalize normalize_with_encoded_query
   end
 end
 
