@@ -28,7 +28,7 @@ describe LinkPreview::Parser do
     let(:parser) { LinkPreview::Parser.new(config) }
     let(:response) do
       Faraday::Response.new.tap do |response|
-        allow(response).to receive(:headers).and_return('content-disposition': content_disposition)
+        allow(response).to receive(:headers).and_return('content-disposition' => content_disposition)
 
         allow(response).to receive(:url).and_return('http://example.com/image-url.jpg')
       end
