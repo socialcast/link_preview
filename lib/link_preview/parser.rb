@@ -94,14 +94,17 @@ module LinkPreview
     end
 
     def parse_oembed(data)
-      oembed_data = case data.headers[:content_type]
-                    when /xml/
-                      Hash.from_xml(Nokogiri::XML.parse(data.body, nil, 'UTF-8').to_s)['oembed']
-                    when /json/
-                      MultiJson.load(data.body)
-      end
       # TODO: validate oembed response
-      { oembed: (oembed_data || {}).merge(url: parse_oembed_content_url(data)) }
+      { oembed: (parse_oembed_data(data) || {}).merge(url: parse_oembed_content_url(data)) }
+    end
+
+    def parse_oembed_data(data)
+      case data.headers[:content_type]
+      when /xml/
+        Hash.from_xml(Nokogiri::XML.parse(data.body, nil, 'UTF-8').to_s)['oembed']
+      when /json/
+        MultiJson.load(data.body)
+      end
     end
 
     def parse_oembed_content_url(data)
