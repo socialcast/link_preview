@@ -23,18 +23,25 @@
 require 'spec_helper'
 
 describe LinkPreview do
-  it { should be_a(Module) }
+  it { expect(described_class).to be_a(Module) }
 
   let(:http_client) { LinkPreview.configuration.http_client }
+
+  let(:url) { nil }
+  let(:options) { {} }
+
+  subject(:content) do
+    LinkPreview.fetch(url, options)
+  end
+
+  shared_context 'link_preview' do
+    it { should be_a(LinkPreview::Content) }
+  end
 
   context 'open graph data', :vcr => {:cassette_name => 'ogp.me'} do
     let(:url) { 'http://ogp.me' }
 
-    subject(:content) do
-      LinkPreview.fetch(url)
-    end
-
-    it { should be_a(LinkPreview::Content) }
+    it_behaves_like 'link_preview'
 
     describe '#url' do
       subject { content.url }
@@ -106,15 +113,13 @@ describe LinkPreview do
   end
 
   context 'youtube oembed', :vcr => {:cassette_name => 'youtube'} do
-    subject(:content) do
-      LinkPreview.fetch('http://youtube.com/watch?v=M3r2XDceM6A')
-    end
+    let(:url) { 'http://youtube.com/watch?v=M3r2XDceM6A'}
 
-    it { should be_a(LinkPreview::Content) }
+    it_behaves_like 'link_preview'
 
     describe '#url' do
       subject { content.url }
-      it { should == 'http://youtube.com/watch?v=M3r2XDceM6A' }
+      it { should == url }
     end
 
     describe '#title' do
@@ -192,11 +197,10 @@ describe LinkPreview do
   end
 
   context 'kaltura oembed', :vcr => {:cassette_name => 'kaltura'} do
-    subject(:content) do
-      LinkPreview.fetch('http://videos.kaltura.com/oembed?url=http%3A%2F%2Fvideos.kaltura.com%2Fmedia%2F%2Fid%2F1_abxlxlll&playerId=3073841&entryId=1_abxlxlll', :width => 420)
-    end
+    let(:url) { 'http://videos.kaltura.com/oembed?url=http%3A%2F%2Fvideos.kaltura.com%2Fmedia%2F%2Fid%2F1_abxlxlll&playerId=3073841&entryId=1_abxlxlll' }
+    let(:options) { { :width => 420 } }
 
-    it { should be_a(LinkPreview::Content) }
+    it_behaves_like 'link_preview'
 
     describe '#url' do
       subject { content.url }
@@ -254,11 +258,10 @@ describe LinkPreview do
   end
 
   context 'sliderocket oembed discovery', :vcr => {:cassette_name => 'sliderocket'} do
-    subject(:content) do
-      LinkPreview.fetch('http://portal.sliderocket.com/SlideRocket-Presentations/Hoshyar-Foundation', :width => 420)
-    end
+    let(:url) { 'http://portal.sliderocket.com/SlideRocket-Presentations/Hoshyar-Foundation' }
+    let(:options) { { :width => 420 } }
 
-    it { should be_a(LinkPreview::Content) }
+    it_behaves_like 'link_preview'
 
     describe '#url' do
       subject { content.url }
@@ -336,15 +339,13 @@ describe LinkPreview do
   end
 
   context 'html data with unescaped html', :vcr => {:cassette_name => 'support.apple.com'} do
-    subject(:content) do
-      LinkPreview.fetch('http://support.apple.com/kb/HT5642')
-    end
+    let(:url) { 'http://support.apple.com/kb/HT5642' }
 
-    it { should be_a(LinkPreview::Content) }
+    it_behaves_like 'link_preview'
 
     describe '#url' do
       subject { content.url }
-      it { should == 'http://support.apple.com/kb/HT5642' }
+      it { should == url }
     end
 
     describe '#title' do
@@ -410,15 +411,13 @@ describe LinkPreview do
   end
 
   context 'image data', :vcr => {:cassette_name => 'ggp.png'} do
-    subject(:content) do
-      LinkPreview.fetch('http://www.golden-gate-park.com/wp-content/uploads/2011/02/Golden_Gate_Park_Logo_Header.png')
-    end
+    let(:url) { 'http://www.golden-gate-park.com/wp-content/uploads/2011/02/Golden_Gate_Park_Logo_Header.png' }
 
-    it { should be_a(LinkPreview::Content) }
+    it_behaves_like 'link_preview'
 
     describe '#url' do
       subject { content.url }
-      it { should == 'http://www.golden-gate-park.com/wp-content/uploads/2011/02/Golden_Gate_Park_Logo_Header.png' }
+      it { should == url }
     end
 
     describe '#title' do
@@ -479,10 +478,9 @@ describe LinkPreview do
   end
 
   context 'youtube oembed 404', :vcr => {:cassette_name => 'youtube 404'} do
-    subject(:content) do
-      LinkPreview.fetch('http://youtube.com/watch?v=1')
-    end
+    let(:url) { 'http://youtube.com/watch?v=1' }
 
+    it_behaves_like 'link_preview'
     it { should_not be_found }
     it 'should issue minimum number of requests' do
       expect(http_client).to receive(:get).with('https://www.youtube.com/oembed?scheme=https&format=json&url=http%3A%2F%2Fyoutube.com%2Fwatch%3Fv%3D1').ordered.and_call_original
@@ -505,11 +503,9 @@ describe LinkPreview do
   end
 
   context 'kaltura opengraph', :vcr => {:cassette_name => 'kaltura_opengraph'} do
-    subject(:content) do
-      LinkPreview.fetch('https://media.mediaspace.kaltura.com/media/Despicable+Me/0_w2zsofdj/6065172')
-    end
+    let(:url) { 'https://media.mediaspace.kaltura.com/media/Despicable+Me/0_w2zsofdj/6065172' }
 
-    it { should be_a(LinkPreview::Content) }
+    it_behaves_like 'link_preview'
 
     describe '#url' do
       subject { content.url }
@@ -587,9 +583,7 @@ describe LinkPreview do
   context 'elasticsearch', :vcr => {:cassette_name => 'elasticsearch'} do
     let(:url) { 'http://www.elasticsearch.org/overview/hadoop' }
 
-    subject(:content) do
-      LinkPreview.fetch(url)
-    end
+    it_behaves_like 'link_preview'
 
     describe '#url' do
       subject { content.url }
@@ -655,9 +649,8 @@ describe LinkPreview do
 
   context 'resource with bad utf-8 in response', :vcr => {:cassette_name => 'bad_utf8'} do
     let(:url) { 'http://s.taobao.com' }
-    subject(:content) do
-      LinkPreview.fetch(url)
-    end
+
+    it_behaves_like 'link_preview'
 
     describe '#url' do
       subject { content.url }
@@ -692,9 +685,8 @@ describe LinkPreview do
 
   context 'kaltura with html5 response', :vcr => {:cassette_name => 'kalture_html5'} do
     let(:url) { 'http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html' }
-    subject(:content) do
-      LinkPreview.fetch(url)
-    end
+
+    it_behaves_like 'link_preview'
 
     describe '#url' do
       subject { content.url }
