@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
 
   # Development
   s.add_development_dependency('rake')
+  s.add_development_dependency('rubocop')
 
   # Testing
   s.add_development_dependency('rspec', '>= 2.9')
