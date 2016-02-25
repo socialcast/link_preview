@@ -220,7 +220,7 @@ module LinkPreview
     end
 
     def property_alias(source, property)
-      property_aliases(source, property).detect { |property| @sources[source].key?(property) }
+      property_aliases(source, property).detect { |p| @sources[source].key?(p) }
     end
 
     def property_aliases(source, property)

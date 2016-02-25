@@ -84,8 +84,8 @@ module LinkPreview
     private
 
     def dequeue_by_priority(priority_order)
-      priority = priority_order.detect { |priority| @queue[priority].any? }
-      priority ||= @queue.keys.detect { |priority| @queue[priority].any? }
+      priority = priority_order.detect { |p| @queue[p].any? }
+      priority ||= @queue.keys.detect { |p| @queue[p].any? }
       @queue[priority].shift
     end
 

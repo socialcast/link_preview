@@ -56,8 +56,8 @@ module LinkPreview
     end
 
     def call(env)
-      @app.call(env).on_complete do |env|
-        force_utf8_body!(env)
+      @app.call(env).on_complete do |response_env|
+        force_utf8_body!(response_env)
       end
     end
   end
