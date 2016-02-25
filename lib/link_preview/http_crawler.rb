@@ -31,7 +31,7 @@ module LinkPreview
       @config = config
       @options = options
       @status = {}
-      @queue = Hash.new { |h,k| h[k] = [] }
+      @queue = Hash.new { |h, k| h[k] = [] }
     end
 
     # @param [String] URI of content to crawl
@@ -91,20 +91,18 @@ module LinkPreview
 
     def enqueue_uri(parsed_uri, priority = :default)
       uri = parsed_uri.to_s
-      if !(processed?(uri) || enqueued?(uri))
-        @queue[priority] << uri
-      end
+      @queue[priority] << uri unless processed?(uri) || enqueued?(uri)
     end
 
     def processed?(uri)
-      @status.has_key?(uri)
+      @status.key?(uri)
     end
 
     def enqueued?(uri)
       @queue.values.flatten.uniq.include?(uri)
     end
 
-    def with_extra_env(&block)
+    def with_extra_env(&_block)
       LinkPreview::ExtraEnv.extra = @options
       yield
     ensure

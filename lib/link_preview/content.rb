@@ -39,30 +39,28 @@ module LinkPreview
       :content_url,
       :content_type,
       :content_width,
-      :content_height ]
+      :content_height]
 
     SOURCES = [:initial, :image, :oembed, :opengraph, :html]
 
     SOURCE_PROPERTIES_TABLE =
       {
-        :oembed =>
-        {
-          :site_name => :provider_name,
-          :site_url => :provider_url,
-          :image_url => :thumbnail_url
+        oembed:         {
+          site_name: :provider_name,
+          site_url: :provider_url,
+          image_url: :thumbnail_url
         },
-        :opengraph =>
-        {
-          :image_url => [:image_secure_url, :image, :image_url],
-          :content_url => [:video_secure_url, :video, :video_url],
-          :content_type => :video_type,
-          :content_width => :video_width,
-          :content_height => :video_height
+        opengraph:         {
+          image_url: [:image_secure_url, :image, :image_url],
+          content_url: [:video_secure_url, :video, :video_url],
+          content_type: :video_type,
+          content_width: :video_width,
+          content_height: :video_height
         }
       }
 
     PROPERTIES_SOURCE_TABLE =
-      Hash.new { |h,k| h[k] = {} }.tap do |reverse_property_table|
+      Hash.new { |h, k| h[k] = {} }.tap do |reverse_property_table|
         SOURCE_PROPERTIES_TABLE.each do |source, table|
           table.invert.each_pair do |keys, val|
             Array.wrap(keys).each do |key|
@@ -76,7 +74,7 @@ module LinkPreview
       @config = config
       @content_uri = content_uri
       @options = options
-      @sources = Hash.new { |h,k| h[k] = {} }
+      @sources = Hash.new { |h, k| h[k] = {} }
       crawler.enqueue!(@content_uri)
 
       add_source_properties!(sources)
@@ -107,9 +105,7 @@ module LinkPreview
       end
     end
 
-    def sources
-      @sources
-    end
+    attr_reader :sources
 
     def as_oembed
       if content_type_video? || content_type_flash?
@@ -136,9 +132,7 @@ module LinkPreview
     end
 
     def default_property(property)
-      if respond_to?("default_#{property}", true)
-        send("default_#{property}")
-      end
+      send("default_#{property}") if respond_to?("default_#{property}", true)
     end
 
     # called via default_property
@@ -171,7 +165,7 @@ module LinkPreview
       when String
         strip_html(value.strip)
       when Array
-        value.compact.map { |elem| normalize_property(property, elem ) }
+        value.compact.map { |elem| normalize_property(property, elem) }
       else
         value
       end
@@ -226,7 +220,7 @@ module LinkPreview
     end
 
     def property_alias(source, property)
-      property_aliases(source,property).detect { |property| @sources[source].has_key?(property) }
+      property_aliases(source, property).detect { |property| @sources[source].key?(property) }
     end
 
     def property_aliases(source, property)
@@ -250,11 +244,11 @@ module LinkPreview
 
     def add_source_properties!(sources)
       sources.symbolize_keys!
-      sources.reject!{ |_, properties| properties.empty? }
-      sources.select! { |source,_| SOURCES.include?(source) }
+      sources.reject! { |_, properties| properties.empty? }
+      sources.select! { |source, _| SOURCES.include?(source) }
       sources.each do |source, properties|
         properties.symbolize_keys!
-        properties.reject!{ |_, value| value.blank? }
+        properties.reject! { |_, value| value.blank? }
         properties.each do |property, value|
           next if @sources[source][property]
           @sources[source][property] = normalize_property(property_unalias(source, property), value)
@@ -266,7 +260,7 @@ module LinkPreview
     end
 
     def extract(property)
-      while !crawler.finished? do
+      until crawler.finished?
         break if has_property?(property)
         data = crawler.dequeue!(property_source_priority(property))
         properties = parser.parse(data)
@@ -281,29 +275,28 @@ module LinkPreview
       end
     end
 
-    # FIXME this is expensive
+    # FIXME: this is expensive
     def strip_html(value)
       Nokogiri::HTML(value).xpath('//text()').remove.to_s
     end
 
     def as_oembed_link
       {
-        :version         => '1.0',
-        :provider_name   => site_name,
-        :provider_url    => site_url,
-        :title           => title,
-        :description     => description,
-        :type            => 'link',
-        :thumbnail_url   => image_url
-      }.reject { |_,v| v.nil? }
+        version: '1.0',
+        provider_name: site_name,
+        provider_url: site_url,
+        title: title,
+        description: description,
+        type: 'link',
+        thumbnail_url: image_url
+      }.reject { |_, v| v.nil? }
     end
 
     def as_oembed_video
-      as_oembed_link.merge({
-          :type            => 'video',
-          :html            => content_html,
-          :width           => content_width_scaled.to_i,
-          :height          => content_height_scaled.to_i})
+      as_oembed_link.merge(type: 'video',
+                           html: content_html,
+                           width: content_width_scaled.to_i,
+                           height: content_height_scaled.to_i)
     end
 
     def content_type_video?
@@ -311,7 +304,7 @@ module LinkPreview
     end
 
     def content_type_flash?
-       content_type == 'application/x-shockwave-flash'
+      content_type == 'application/x-shockwave-flash'
     end
 
     def content_html

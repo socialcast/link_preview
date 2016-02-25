@@ -24,7 +24,7 @@ require 'oembed'
 
 require 'addressable/uri'
 class Addressable::URI
-  alias :normalize_without_encoded_query :normalize
+  alias_method :normalize_without_encoded_query, :normalize
   # NOTE hack to correctly escape URI query parameters after normalization
   # see https://github.com/sporkmonger/addressable/issues/50
   def normalize_with_encoded_query
@@ -35,7 +35,7 @@ class Addressable::URI
       uri
     end
   end
-  alias :normalize :normalize_with_encoded_query
+  alias_method :normalize, :normalize_with_encoded_query
 end
 
 module LinkPreview
@@ -59,35 +59,35 @@ module LinkPreview
     def as_oembed_uri
       return self if kaltura_uri? || oembed_uri?
       register_default_oembed_providers!
-      if provider = OEmbed::Providers.find(self.to_s)
-        self.class.parse(provider.build(self.to_s), @options)
+      if provider = OEmbed::Providers.find(to_s)
+        self.class.parse(provider.build(to_s), @options)
       end
     end
 
     def as_content_uri
       return self unless kaltura_uri? || oembed_uri?
-      if content_url = self.query_values['url']
+      if content_url = query_values['url']
         self.class.parse(content_url, @options)
       end
     end
 
     def to_absolute(reference_uri)
       return self if absolute?
-      self.class.parse(::URI.join(reference_uri, self.path), @options)
+      self.class.parse(::URI.join(reference_uri, path), @options)
     end
 
     def for_display
-      self.path.sub!(%r{/\z}, '')
-      self.path = nil if self.path.blank?
-      self.query = nil if self.query.blank?
-      self.fragment = nil if self.fragment.blank?
+      path.sub!(%r{/\z}, '')
+      self.path = nil if path.blank?
+      self.query = nil if query.blank?
+      self.fragment = nil if fragment.blank?
       self
     end
 
     class << self
       def parse(uri, options = {})
         return unless uri
-        self.new(Addressable::URI.parse(safe_escape(uri)), options).normalize
+        new(Addressable::URI.parse(safe_escape(uri)), options).normalize
       end
 
       def unescape(uri)
@@ -100,9 +100,9 @@ module LinkPreview
 
       def safe_escape(uri)
         parsed_uri = Addressable::URI.parse(uri)
-        unescaped = self.unescape(parsed_uri)
+        unescaped = unescape(parsed_uri)
         if unescaped.to_s == parsed_uri.to_s
-          self.escape(parsed_uri)
+          escape(parsed_uri)
         else
           parsed_uri
         end
@@ -125,19 +125,16 @@ module LinkPreview
     end
 
     def normalize_path
-      self.path += '/' if self.path.empty?
-      if kaltura_uri?
-        self.path += '/' unless self.path =~ %r{/\z}
-      end
-      self
+      self.path += '/' if path.empty?
+      self.path += '/' if kaltura_uri? && self.path !~ %r{/\z}
     end
 
     def oembed_query
-      {:maxwidth => @options[:width], :maxheight => @options[:height]}.reject { |_,value| value.nil? }
+      { maxwidth: @options[:width], maxheight: @options[:height] }.reject { |_, value| value.nil? }
     end
 
     def kaltura_query
-      {:width => @options[:width], :height => @options[:height]}.reject { |_,value| value.nil? }
+      { width: @options[:width], height: @options[:height] }.reject { |_, value| value.nil? }
     end
 
     def register_default_oembed_providers!

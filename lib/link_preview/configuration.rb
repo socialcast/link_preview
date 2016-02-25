@@ -6,10 +6,10 @@
 # use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
 # of the Software, and to permit persons to whom the Software is furnished to do
 # so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -36,24 +36,19 @@ module LinkPreview
       @http_client ||= HTTPClient.new(self)
     end
 
-    def http_client=(http_client)
-      @http_client = http_client
-    end
+    attr_writer :http_client
 
     def http_adapter
       @http_adapter ||= Faraday::Adapter::NetHttp
     end
 
-    def http_adapter=(http_adapter)
-      @http_adapter = http_adapter
-    end
+    attr_writer :http_adapter
+
     def follow_redirects
       @follow_redirects ||= true
     end
 
-    def follow_redirects=(follow_redirects)
-      @follow_redirects = follow_redirects
-    end
+    attr_writer :follow_redirects
 
     def max_redirects
       @max_redirects || 3
@@ -72,7 +67,7 @@ module LinkPreview
     end
 
     def error_handler
-      @error_handler ||= Proc.new() { |_| }
+      @error_handler ||= proc { |_| }
     end
 
     def middleware
