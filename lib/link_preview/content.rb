@@ -147,9 +147,8 @@ module LinkPreview
 
     # called via default_property
     def default_site_url
-      if parsed_url.scheme && parsed_url.host
-        "#{parsed_url.scheme}://#{parsed_url.host}"
-      end
+      return unless parsed_url.scheme && parsed_url.host
+      "#{parsed_url.scheme}://#{parsed_url.host}"
     end
 
     def normalize_property(property, value)

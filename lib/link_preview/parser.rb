@@ -61,35 +61,36 @@ module LinkPreview
 
     # FIXME: currently secure_url is favored over url via implicit ordering of keys
     def parse_html(data)
-      if doc = Nokogiri::HTML.parse(data.body, nil, 'UTF-8')
-        enum_oembed_link(doc) do |link_rel|
-          discovered_uris << LinkPreview::URI.parse(link_rel, @options)
-        end
-        {
-          opengraph: {
-            title: find_meta_property(doc, 'og:title'),
-            description: find_meta_property(doc, 'og:description'),
-            image_secure_url: find_meta_property(doc, 'og:image:secure_url'),
-            image: find_meta_property(doc, 'og:image'),
-            image_url: find_meta_property(doc, 'og:image:url'),
-            tag: find_meta_property(doc, 'og:tag'),
-            url: find_meta_property(doc, 'og:url'),
-            type: find_meta_property(doc, 'og:type'),
-            site_name: find_meta_property(doc, 'og:site_name'),
-            video_secure_url: find_meta_property(doc, 'og:video:secure_url'),
-            video: find_meta_property(doc, 'og:video'),
-            video_url: find_meta_property(doc, 'og:video:url'),
-            video_type: find_meta_property(doc, 'og:video:type'),
-            video_width: find_meta_property(doc, 'og:video:width'),
-            video_height: find_meta_property(doc, 'og:video:height')
-          },
-          html: {
-            title: find_title(doc),
-            description: find_meta_description(doc),
-            tags: Array.wrap(find_rel_tags(doc))
-          }
-        }
+      doc = Nokogiri::HTML.parse(data.body, nil, 'UTF-8')
+      return unless doc
+
+      enum_oembed_link(doc) do |link_rel|
+        discovered_uris << LinkPreview::URI.parse(link_rel, @options)
       end
+      {
+        opengraph: {
+          title: find_meta_property(doc, 'og:title'),
+          description: find_meta_property(doc, 'og:description'),
+          image_secure_url: find_meta_property(doc, 'og:image:secure_url'),
+          image: find_meta_property(doc, 'og:image'),
+          image_url: find_meta_property(doc, 'og:image:url'),
+          tag: find_meta_property(doc, 'og:tag'),
+          url: find_meta_property(doc, 'og:url'),
+          type: find_meta_property(doc, 'og:type'),
+          site_name: find_meta_property(doc, 'og:site_name'),
+          video_secure_url: find_meta_property(doc, 'og:video:secure_url'),
+          video: find_meta_property(doc, 'og:video'),
+          video_url: find_meta_property(doc, 'og:video:url'),
+          video_type: find_meta_property(doc, 'og:video:type'),
+          video_width: find_meta_property(doc, 'og:video:width'),
+          video_height: find_meta_property(doc, 'og:video:height')
+        },
+        html: {
+          title: find_title(doc),
+          description: find_meta_description(doc),
+          tags: Array.wrap(find_rel_tags(doc))
+        }
+      }
     end
 
     def parse_oembed(data)
@@ -104,10 +105,9 @@ module LinkPreview
     end
 
     def parse_oembed_content_url(data)
-      if data.url
-        parsed_uri = LinkPreview::URI.parse(data.url, @options)
-        parsed_uri.as_content_uri.to_s
-      end
+      return unless data.url
+      parsed_uri = LinkPreview::URI.parse(data.url, @options)
+      parsed_uri.as_content_uri.to_s
     end
 
     def parse_image_data(data)
@@ -126,9 +126,8 @@ module LinkPreview
 
     # see http://www.ietf.org/rfc/rfc1806.txt
     def parse_content_disposition_filename(data)
-      if data.headers[:'content-disposition'] =~ /filename=(.*?)\z/
-        Regexp.last_match(1).gsub(/\A['"]+|['"]+\z/, '')
-      end
+      return unless data.headers[:'content-disposition'] =~ /filename=(.*?)\z/
+      Regexp.last_match(1).gsub(/\A['"]+|['"]+\z/, '')
     end
 
     def enum_oembed_link(doc, &_block)

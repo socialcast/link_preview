@@ -61,16 +61,14 @@ module LinkPreview
     def as_oembed_uri
       return self if kaltura_uri? || oembed_uri?
       register_default_oembed_providers!
-      if provider = OEmbed::Providers.find(to_s)
-        self.class.parse(provider.build(to_s), @options)
-      end
+      return unless oembed_provider
+      self.class.parse(oembed_provider.build(to_s), @options)
     end
 
     def as_content_uri
       return self unless kaltura_uri? || oembed_uri?
-      if content_url = query_values['url']
-        self.class.parse(content_url, @options)
-      end
+      return self unless query_values['url']
+      self.class.parse(query_values['url'], @options)
     end
 
     def to_absolute(reference_uri)
@@ -143,6 +141,10 @@ module LinkPreview
       return if OEmbed::Providers.urls.any?
       OEmbed::Providers.register_all
       OEmbed::Providers.register_fallback(OEmbed::ProviderDiscovery)
+    end
+
+    def oembed_provider
+      @oembed_provider ||= OEmbed::Providers.find(to_s)
     end
   end
 end
