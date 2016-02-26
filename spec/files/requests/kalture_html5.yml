@@ -20,10 +20,12 @@ http_interactions:
     headers:
       Server:
       - Apache/2.4.7 (Ubuntu)
+      Etag:
+      - '"2419-52c939f3d9ad5"'
+      X-N:
+      - S
       Last-Modified:
       - Thu, 25 Feb 2016 08:03:46 GMT
-      Etag:
-      - '"2419-52c939f3d9ad5-gzip"'
       Access-Control-Allow-Origin:
       - "*"
       Content-Type:
@@ -31,11 +33,11 @@ http_interactions:
       Vary:
       - Accept-Encoding
       Cache-Control:
-      - max-age=590
+      - max-age=148
       Expires:
-      - Thu, 25 Feb 2016 18:54:31 GMT
+      - Fri, 26 Feb 2016 01:43:39 GMT
       Date:
-      - Thu, 25 Feb 2016 18:44:41 GMT
+      - Fri, 26 Feb 2016 01:41:11 GMT
       Content-Length:
       - '9241'
       Connection:
@@ -250,7 +252,7 @@ http_interactions:
         dCZxdW90OyBjb250ZW50PSZxdW90OzM3MCZxdW90OyAvJmd0OwkKPC9wcmU+
         CjwvYm9keT4KPC9odG1sPg==
     http_version: 
-  recorded_at: Thu, 25 Feb 2016 18:44:41 GMT
+  recorded_at: Fri, 26 Feb 2016 01:41:11 GMT
 - request:
     method: get
     uri: http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400
@@ -271,38 +273,40 @@ http_interactions:
     headers:
       Server:
       - nginx/1.8.0
+      Vary:
+      - Accept-Encoding
+      X-Vod-Me:
+      - pa-front-origin102
+      X-Vod-Session:
+      - '380955972'
+      Last-Modified:
+      - Sun, 19 Nov 2000 08:52:00 GMT
+      Etag:
+      - '"11092ea89-1e4f-0"'
       Content-Type:
       - image/jpeg
       Content-Length:
       - '7759'
       X-Me:
-      - pa-front-thumb2
+      - pa-front-thumb1
       X-Kaltura-Session:
-      - '890700395'
+      - '991505528'
       Pragma:
       - ''
       X-Kaltura:
       - cached-thumb-exists,19a8ef605b30ba4ada8be6b8a425ea6e
-      Last-Modified:
-      - Sun, 19 Nov 2000 08:52:00 GMT
       Accept-Ranges:
       - bytes
       Access-Control-Allow-Origin:
       - "*"
       X-Kaltura-Sendfile:
       - ''
-      Etag:
-      - '"11092ea89-1e4f-0"'
-      X-Vod-Me:
-      - pa-front-origin104
-      X-Vod-Session:
-      - '2120171211'
       Cache-Control:
-      - public, max-age=3526
+      - public, max-age=488
       Expires:
-      - Thu, 25 Feb 2016 19:43:27 GMT
+      - Fri, 26 Feb 2016 01:49:19 GMT
       Date:
-      - Thu, 25 Feb 2016 18:44:41 GMT
+      - Fri, 26 Feb 2016 01:41:11 GMT
       Connection:
       - keep-alive
     body:
@@ -482,5 +486,5 @@ http_interactions:
         chCCPWlQhCCOxQhCCD2qp3IQgqqFCEFHblQoQgW5JchCBTkp25CECXpTt6EI
         FpbtyEIKlVduQhBUb1JQhB//2Q==
     http_version: 
-  recorded_at: Thu, 25 Feb 2016 18:44:41 GMT
+  recorded_at: Fri, 26 Feb 2016 01:41:11 GMT
 recorded_with: VCR 3.0.1
