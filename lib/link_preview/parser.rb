@@ -207,14 +207,21 @@ module LinkPreview
     end
 
     def find_meta_property_array(doc, property)
-      a = [{}]
-      i = -1
-      enum_meta_pair(doc, 'property', /\A#{Regexp.escape(property)}/).each do |pair|
-        i += 1 if pair.key == property || pair.key == "#{property}:url"
-        a[i] ||= {}
-        a[i].merge!(pair.key => pair.value)
+      [].tap do |property_array|
+        property_group = {}
+        enum_meta_pair(doc, 'property', /\A#{Regexp.escape(property)}/).each do |pair|
+          if property_array_delimiter?(property, pair) && property_group.any?
+            property_array.push(property_group.dup)
+            property_group.clear
+          end
+          property_group.merge!(pair.key => pair.value)
+        end
+        property_array.push(property_group)
       end
-      a
+    end
+
+    def property_array_delimiter?(property, pair)
+      pair.key == property || pair.key == "#{property}:url"
     end
   end
 end
