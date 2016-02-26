@@ -83,23 +83,27 @@ module LinkPreview
       enum_oembed_link(doc) do |link_rel|
         discovered_uris << LinkPreview::URI.parse(link_rel, @options)
       end
+
+      opengraph_image_array_first_elem = find_meta_property_array(doc, 'og:image').first
+      opengraph_video_array_first_elem = find_meta_property_array(doc, 'og:video').first
+
       {
         opengraph: {
           title: find_meta_property(doc, 'og:title'),
           description: find_meta_property(doc, 'og:description'),
-          image_secure_url: find_meta_property(doc, 'og:image:secure_url'),
-          image: find_meta_property(doc, 'og:image'),
-          image_url: find_meta_property(doc, 'og:image:url'),
+          image_secure_url: opengraph_image_array_first_elem['og:image:secure_url'],
+          image: opengraph_image_array_first_elem['og:image'],
+          image_url: opengraph_image_array_first_elem['og:image:url'],
           tag: find_meta_property(doc, 'og:tag'),
           url: find_meta_property(doc, 'og:url'),
           type: find_meta_property(doc, 'og:type'),
           site_name: find_meta_property(doc, 'og:site_name'),
-          video_secure_url: find_meta_property(doc, 'og:video:secure_url'),
-          video: find_meta_property(doc, 'og:video'),
-          video_url: find_meta_property(doc, 'og:video:url'),
-          video_type: find_meta_property(doc, 'og:video:type'),
-          video_width: find_meta_property(doc, 'og:video:width'),
-          video_height: find_meta_property(doc, 'og:video:height')
+          video_secure_url: opengraph_video_array_first_elem['og:video:secure_url'],
+          video: opengraph_video_array_first_elem['og:video'],
+          video_url: opengraph_video_array_first_elem['og:video:url'],
+          video_type: opengraph_video_array_first_elem['og:video:type'],
+          video_width: opengraph_video_array_first_elem['og:video:width'],
+          video_height: opengraph_video_array_first_elem['og:video:height']
         },
         html: {
           title: find_title(doc),
@@ -159,7 +163,7 @@ module LinkPreview
       Enumerator.new do |e|
         doc.search('head/meta').each do |node|
           next unless matching_meta_pair?(node, key, value)
-          e.yield node.attributes['content'].value
+          e.yield OpenStruct.new(key: node.attributes['property'].value, value: node.attributes['content'].value)
         end
       end
     end
@@ -168,8 +172,17 @@ module LinkPreview
       return false unless valid_meta_node?(node)
       return false unless node.attributes[key]
       return false unless node.attributes[key].value
-      return false unless node.attributes[key].value.casecmp(value.downcase).zero?
+      return false unless matching_meta_value?(node, key, value)
       true
+    end
+
+    def matching_meta_value?(node, key, value)
+      case value
+      when String
+        node.attributes[key].value.casecmp(value.downcase).zero?
+      when Regexp
+        node.attributes[key].value =~ value
+      end
     end
 
     def valid_meta_node?(node)
@@ -181,11 +194,34 @@ module LinkPreview
     end
 
     def find_meta_description(doc)
-      enum_meta_pair(doc, 'name', 'description').detect(&:present?)
+      Enumerator.new do |e|
+        doc.search('head/meta[name=description]').each do |node|
+          next unless matching_meta_pair?(node, 'name', 'description')
+          e.yield node.attributes['content'].value
+        end
+      end.first
     end
 
     def find_meta_property(doc, property)
-      enum_meta_pair(doc, 'property', property).detect(&:present?)
+      enum_meta_pair(doc, 'property', property).first.try(:value)
+    end
+
+    def find_meta_property_array(doc, property)
+      [].tap do |property_array|
+        property_group = {}
+        enum_meta_pair(doc, 'property', /\A#{Regexp.escape(property)}/).each do |pair|
+          if property_array_delimiter?(property, pair) && property_group.any?
+            property_array.push(property_group.dup)
+            property_group.clear
+          end
+          property_group.merge!(pair.key => pair.value)
+        end
+        property_array.push(property_group)
+      end
+    end
+
+    def property_array_delimiter?(property, pair)
+      pair.key == property || pair.key == "#{property}:url"
     end
   end
 end

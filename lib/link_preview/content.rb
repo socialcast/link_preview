@@ -312,8 +312,10 @@ module LinkPreview
 
     def content_html_video
       return unless content_url.present?
+      width_attribute = %(width="#{content_width_scaled}") if content_width_scaled > 0
+      height_attribute = %(height="#{content_height_scaled}") if content_height_scaled > 0
       <<-EOF.strip.gsub(/\s+/, ' ').gsub(/>\s+</, '><')
-          <video width="#{content_width_scaled}" height="#{content_height_scaled}">
+          <video #{width_attribute} #{height_attribute} controls>
             <source src="#{content_url}"
                     type="#{content_type}" />
           </video>
