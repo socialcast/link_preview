@@ -683,7 +683,7 @@ describe LinkPreview do
     end
   end
 
-  context 'kaltura with html5 response', vcr: { cassette_name: 'kalture_html5', record: :all } do
+  context 'kaltura with html5 response', vcr: { cassette_name: 'kalture_html5' } do
     let(:url) { 'http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html' }
 
     it_behaves_like 'link_preview'
