@@ -752,4 +752,86 @@ describe LinkPreview do
       end
     end
   end
+
+  context 'flickr with oembed response', vcr: { cassette_name: 'flickr_oembed', record: :all } do
+    let(:url) { 'https://www.flickr.com/photos/bees/2341623661' }
+    let(:options) { { width: 600 } }
+
+    it_behaves_like 'link_preview'
+
+    describe '#url' do
+      subject { content.url }
+      it { should == 'https://farm4.staticflickr.com/3123/2341623661_7c99f48bbf_n.jpg' }
+    end
+
+    describe '#title' do
+      subject { content.title }
+      it { should == %(ZB8T0193) }
+    end
+
+    describe '#description' do
+      subject { content.description }
+      it { should == %(Explore bees's photos on Flickr. bees has uploaded 10229 photos to Flickr.) }
+    end
+
+    describe '#site_name' do
+      subject { content.site_name }
+      it { should == 'Flickr' }
+    end
+
+    describe '#site_url' do
+      subject { content.site_url }
+      it { should == 'https://www.flickr.com/' }
+    end
+
+    describe '#image_url' do
+      subject { content.image_url }
+      it { should == 'https://farm4.staticflickr.com/3123/2341623661_7c99f48bbf_q.jpg' }
+    end
+
+    describe '#image_data' do
+      subject { content.image_data }
+      it { should be_a(StringIO) }
+    end
+
+    describe '#image_content_type' do
+      subject { content.image_content_type }
+      it { should == 'image/jpeg' }
+    end
+
+    describe '#image_file_name' do
+      subject { content.image_file_name }
+      it { should == '2341623661_7c99f48bbf_q.jpg' }
+    end
+
+    context '#as_oembed' do
+      subject(:oembed) { content.as_oembed }
+
+      it 'should convert opengraph to oembed' do
+        should == {
+          author_name: "\u202e\u202d\u202cbees\u202c",
+          author_url: 'https://www.flickr.com/photos/bees/',
+          cache_age: 3600,
+          description: "Explore bees's photos on Flickr. bees has uploaded 10229 photos to Flickr.",
+          flickr_type: 'photo',
+          height: 213,
+          html: %(<a data-flickr-embed="true" href="https://www.flickr.com/photos/bees/2341623661/" title="ZB8T0193 by \u202e\u202d\u202cbees\u202c, on Flickr"><img src="https://farm4.staticflickr.com/3123/2341623661_7c99f48bbf_n.jpg" width="320" height="213" alt="ZB8T0193"></a><script async src="https://embedr.flickr.com/assets/client-code.js" charset="utf-8"></script>),
+          license: 'All Rights Reserved',
+          license_id: 0,
+          provider_name: 'Flickr',
+          provider_url: 'https://www.flickr.com/',
+          thumbnail_height: 150,
+          thumbnail_url: 'https://farm4.staticflickr.com/3123/2341623661_7c99f48bbf_q.jpg',
+          thumbnail_width: 150,
+          title: 'ZB8T0193',
+          type: 'photo',
+          url: 'https://farm4.staticflickr.com/3123/2341623661_7c99f48bbf_n.jpg',
+          version: '1.0',
+          web_page: 'https://www.flickr.com/photos/bees/2341623661/',
+          web_page_short_url: 'https://flic.kr/p/4yVr8K',
+          width: '320'
+        }
+      end
+    end
+  end
 end
