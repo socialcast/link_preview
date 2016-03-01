@@ -51,8 +51,8 @@ module LinkPreview
           image_url: :thumbnail_url
         },
         opengraph:         {
-          image_url: [:image_secure_url, :image, :image_url],
-          content_url: [:video_secure_url, :video, :video_url],
+          image_url: [:image_secure_url, :image_url],
+          content_url: [:video_secure_url, :video_url],
           content_type: :video_type,
           content_width: :video_width,
           content_height: :video_height
