@@ -753,7 +753,7 @@ describe LinkPreview do
     end
   end
 
-  context 'flickr with oembed response', vcr: { cassette_name: 'flickr_oembed', record: :all } do
+  context 'flickr with oembed response', vcr: { cassette_name: 'flickr_oembed' } do
     let(:url) { 'https://www.flickr.com/photos/bees/2341623661' }
     let(:options) { { width: 600 } }
 
