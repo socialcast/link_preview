@@ -830,9 +830,14 @@ describe LinkPreview do
     end
   end
 
-  context 'kaltura with html5 video response with options {opengraph: { ignore_video_type_html: true } }', vcr: { cassette_name: 'kaltura_html5_ignore_video_type_html', record: :all } do
+  context 'kaltura with html5 video response with configuration ignore_opengraph_video_type_html', vcr: { cassette_name: 'kaltura_html5_ignore_video_type_html' } do
     let(:url) { 'http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html' }
-    let(:options) { { opengraph: { ignore_video_type_html: true } } }
+
+    around do |example|
+      LinkPreview.configuration.ignore_opengraph_video_type_html = true
+      example.run
+      LinkPreview.configuration.ignore_opengraph_video_type_html = nil
+    end
 
     it_behaves_like 'link_preview'
 
@@ -885,8 +890,8 @@ describe LinkPreview do
       subject(:oembed) { content.as_oembed }
 
       it 'should issue minimum number of requests convert opengraph to oembed' do
-        expect(http_client).to receive(:get).with('http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html', opengraph: { ignore_video_type_html: true }).ordered.and_call_original
-        expect(http_client).to receive(:get).with('http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400', opengraph: { ignore_video_type_html: true }).ordered.and_call_original
+        expect(http_client).to receive(:get).with('http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html', {}).ordered.and_call_original
+        expect(http_client).to receive(:get).with('http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400', {}).ordered.and_call_original
         should == {
           version: '1.0',
           provider_name: %(Kaltura),

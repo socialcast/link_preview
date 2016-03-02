@@ -72,7 +72,7 @@ module LinkPreview
     private
 
     def ignore_opengraph_video_type_html?
-      @options[:opengraph] && @options[:opengraph].fetch(:ignore_video_type_html, false)
+      @config.ignore_opengraph_video_type_html
     end
 
     def valid_data?(data)

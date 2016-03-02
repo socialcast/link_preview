@@ -32,6 +32,7 @@ module LinkPreview
     attr_accessor :error_handler
     attr_accessor :middleware
     attr_accessor :default_content_aspect_ratio
+    attr_accessor :ignore_opengraph_video_type_html
 
     def http_client
       @http_client ||= HTTPClient.new(self)
@@ -81,6 +82,10 @@ module LinkPreview
 
     def default_content_aspect_ratio
       @default_content_aspect_ratio ||= (3.0 / 4.0)
+    end
+
+    def ignore_opengraph_video_type_html
+      @ignore_opengraph_video_type_html ||= false
     end
   end
 end
