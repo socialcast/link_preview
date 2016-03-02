@@ -366,10 +366,9 @@ module LinkPreview
       end
     end
 
-    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def content_height_scaled
       # Width takes precedence over height
-      if @options[:width].to_i > 0 && content_width.to_i > 0 && @options[:height].to_i > 0 && content_height.to_i > 0
+      if @options[:width].to_i > 0 && content_width.to_i > 0 && content_height.to_i > 0
         # Compute scaled height using the ratio of requested width to actual width, round up to prevent truncation
         (((@options[:width].to_i * 1.0) / (content_width.to_i * 1.0)) * content_height.to_i).ceil
       elsif @options[:height].to_i > 0
@@ -380,7 +379,6 @@ module LinkPreview
         content_height.to_i
       end
     end
-    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     private
 
