@@ -47,7 +47,7 @@ module LinkPreview
     def dequeue!(priority_order = [])
       return if finished?
       uri = dequeue_by_priority(priority_order)
-      @config.http_client.get(uri).tap do |response|
+      @config.http_client.get(uri, @options).tap do |response|
         @status[uri] = response.status.to_i
       end
     end

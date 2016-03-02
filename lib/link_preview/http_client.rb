@@ -66,8 +66,8 @@ module LinkPreview
       @config = config
     end
 
-    def get(uri)
-      with_extra_env do
+    def get(uri, options = {})
+      with_extra_env(options) do
         connection.get(uri).tap do |response|
           response.extend ResponseWithURL
           response.url = uri
@@ -95,8 +95,8 @@ module LinkPreview
 
     private
 
-    def with_extra_env(&_block)
-      LinkPreview::ExtraEnv.extra = @options
+    def with_extra_env(options = {}, &_block)
+      LinkPreview::ExtraEnv.extra = options
       yield
     ensure
       LinkPreview::ExtraEnv.extra = nil

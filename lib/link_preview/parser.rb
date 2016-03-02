@@ -144,7 +144,7 @@ module LinkPreview
 
     def parse_video_url_content(uri)
       url = LinkPreview::URI.parse(uri, @options)
-      @config.http_client.get(url.to_s)
+      @config.http_client.get(url.to_s, @options)
     end
 
     def parse_oembed_data(data)

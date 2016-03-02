@@ -89,9 +89,9 @@ describe LinkPreview do
     end
 
     it 'should issue minimum number of requests' do
-      expect(http_client).to receive(:get).with('http://ogp.me/').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://ogp.me/', {}).ordered.and_call_original
       content.title
-      expect(http_client).to receive(:get).with('http://ogp.me/logo.png').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://ogp.me/logo.png', {}).ordered.and_call_original
       content.image_data
     end
 
@@ -163,11 +163,11 @@ describe LinkPreview do
     end
 
     it 'should issue minimum number of requests' do
-      expect(http_client).to receive(:get).with('https://www.youtube.com/oembed?scheme=https&format=json&url=http%3A%2F%2Fyoutube.com%2Fwatch%3Fv%3DM3r2XDceM6A').ordered.and_call_original
+      expect(http_client).to receive(:get).with('https://www.youtube.com/oembed?scheme=https&format=json&url=http%3A%2F%2Fyoutube.com%2Fwatch%3Fv%3DM3r2XDceM6A', {}).ordered.and_call_original
       content.title
-      expect(http_client).to receive(:get).with('http://youtube.com/watch?v=M3r2XDceM6A').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://youtube.com/watch?v=M3r2XDceM6A', {}).ordered.and_call_original
       content.description
-      expect(http_client).to receive(:get).with('https://i.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg').ordered.and_call_original
+      expect(http_client).to receive(:get).with('https://i.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg', {}).ordered.and_call_original
       content.image_data
     end
 
@@ -248,11 +248,11 @@ describe LinkPreview do
     end
 
     it 'should issue minimum number of requests' do
-      expect(http_client).to receive(:get).with('http://videos.kaltura.com/oembed/?url=http%3A%2F%2Fvideos.kaltura.com%2Fmedia%2F%2Fid%2F1_abxlxlll&playerId=3073841&entryId=1_abxlxlll&width=420').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://videos.kaltura.com/oembed/?url=http%3A%2F%2Fvideos.kaltura.com%2Fmedia%2F%2Fid%2F1_abxlxlll&playerId=3073841&entryId=1_abxlxlll&width=420', width: 420).ordered.and_call_original
       content.title
-      expect(http_client).to receive(:get).with('http://cdnbakmi.kaltura.com/p/811441/sp/81144100/thumbnail/entry_id/1_abxlxlll/version/100012/width//height/').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://cdnbakmi.kaltura.com/p/811441/sp/81144100/thumbnail/entry_id/1_abxlxlll/version/100012/width//height/', width: 420).ordered.and_call_original
       content.image_data
-      expect(http_client).to receive(:get).with('http://videos.kaltura.com/media//id/1_abxlxlll').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://videos.kaltura.com/media//id/1_abxlxlll', width: 420).ordered.and_call_original
       content.description
     end
   end
@@ -309,11 +309,11 @@ describe LinkPreview do
     end
 
     it 'should issue minimum number of requests' do
-      expect(http_client).to receive(:get).with('http://portal.sliderocket.com/SlideRocket-Presentations/Hoshyar-Foundation').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://portal.sliderocket.com/SlideRocket-Presentations/Hoshyar-Foundation', width: 420).ordered.and_call_original
       content.title
-      expect(http_client).to receive(:get).with('http://cdn.sliderocket.com/thumbnails/4/43/43b475a4-192e-455e-832f-4a40697d8d25.jpg').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://cdn.sliderocket.com/thumbnails/4/43/43b475a4-192e-455e-832f-4a40697d8d25.jpg', width: 420).ordered.and_call_original
       content.image_data
-      expect(http_client).to receive(:get).with('http://app.sliderocket.com/app/oEmbed.aspx?url=http%3A%2F%2Fapp.sliderocket.com%2Fapp%2Ffullplayer.aspx%3Fid%3Df614ec65-0f9b-4167-bb2a-b384dad535f3&maxwidth=420').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://app.sliderocket.com/app/oEmbed.aspx?url=http%3A%2F%2Fapp.sliderocket.com%2Fapp%2Ffullplayer.aspx%3Fid%3Df614ec65-0f9b-4167-bb2a-b384dad535f3&maxwidth=420', width: 420).ordered.and_call_original
       content.as_oembed
     end
 
@@ -389,7 +389,7 @@ describe LinkPreview do
     end
 
     it 'should issue minimum number of requests' do
-      expect(http_client).to receive(:get).with('http://support.apple.com/kb/HT5642').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://support.apple.com/kb/HT5642', {}).ordered.and_call_original
       content.title
       content.image_data
     end
@@ -483,8 +483,8 @@ describe LinkPreview do
     it_behaves_like 'link_preview'
     it { should_not be_found }
     it 'should issue minimum number of requests' do
-      expect(http_client).to receive(:get).with('https://www.youtube.com/oembed?scheme=https&format=json&url=http%3A%2F%2Fyoutube.com%2Fwatch%3Fv%3D1').ordered.and_call_original
-      expect(http_client).to receive(:get).with('http://youtube.com/watch?v=1').ordered.and_call_original
+      expect(http_client).to receive(:get).with('https://www.youtube.com/oembed?scheme=https&format=json&url=http%3A%2F%2Fyoutube.com%2Fwatch%3Fv%3D1', {}).ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://youtube.com/watch?v=1', {}).ordered.and_call_original
       content.title
     end
 
@@ -553,9 +553,9 @@ describe LinkPreview do
     end
 
     it 'should issue minimum number of requests' do
-      expect(http_client).to receive(:get).with('https://media.mediaspace.kaltura.com/media/Despicable+Me/0_w2zsofdj/6065172').ordered.and_call_original
+      expect(http_client).to receive(:get).with('https://media.mediaspace.kaltura.com/media/Despicable+Me/0_w2zsofdj/6065172', {}).ordered.and_call_original
       content.title
-      expect(http_client).to receive(:get).with('https://cdnbakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/0_w2zsofdj/version/100021/width/400').ordered.and_call_original
+      expect(http_client).to receive(:get).with('https://cdnbakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/0_w2zsofdj/version/100021/width/400', {}).ordered.and_call_original
       content.image_data
       content.description
     end
@@ -737,9 +737,9 @@ describe LinkPreview do
       subject(:oembed) { content.as_oembed }
 
       it 'should issue minimum number of requests convert opengraph to oembed' do
-        expect(http_client).to receive(:get).with('http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html').ordered.and_call_original
-        expect(http_client).to receive(:get).with('https://cdnapisec.kaltura.com/p/243342/sp/24334200/embedIframeJs/uiconf_id/28685261/partner_id/243342?iframeembed=true&playerId=kaltura_player&entry_id=1_sf5ovm7u').ordered.and_return(Faraday::Response.new(status: 404))
-        expect(http_client).to receive(:get).with('http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400').ordered.and_call_original
+        expect(http_client).to receive(:get).with('http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html', {}).ordered.and_call_original
+        expect(http_client).to receive(:get).with('https://cdnapisec.kaltura.com/p/243342/sp/24334200/embedIframeJs/uiconf_id/28685261/partner_id/243342?iframeembed=true&playerId=kaltura_player&entry_id=1_sf5ovm7u', {}).ordered.and_return(Faraday::Response.new(status: 404))
+        expect(http_client).to receive(:get).with('http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400', {}).ordered.and_call_original
         should == {
           version: '1.0',
           provider_name: %(Kaltura),
@@ -810,9 +810,9 @@ describe LinkPreview do
       subject(:oembed) { content.as_oembed }
 
       it 'should issue minimum number of requests convert opengraph to oembed' do
-        expect(http_client).to receive(:get).with('http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html').ordered.and_call_original
-        expect(http_client).to receive(:get).with('https://cdnapisec.kaltura.com/p/243342/sp/24334200/embedIframeJs/uiconf_id/28685261/partner_id/243342?iframeembed=true&playerId=kaltura_player&entry_id=1_sf5ovm7u').ordered.and_call_original
-        expect(http_client).to receive(:get).with('http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400').ordered.and_call_original
+        expect(http_client).to receive(:get).with('http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html', {}).ordered.and_call_original
+        expect(http_client).to receive(:get).with('https://cdnapisec.kaltura.com/p/243342/sp/24334200/embedIframeJs/uiconf_id/28685261/partner_id/243342?iframeembed=true&playerId=kaltura_player&entry_id=1_sf5ovm7u', {}).ordered.and_call_original
+        expect(http_client).to receive(:get).with('http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400', {}).ordered.and_call_original
         should == {
           version: '1.0',
           provider_name: %(Kaltura),
