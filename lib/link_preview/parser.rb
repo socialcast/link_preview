@@ -72,7 +72,7 @@ module LinkPreview
     private
 
     def valid_data?(data)
-      data && data.headers[:content_type] && data.body
+      data && data.headers && data.body && data.headers[:content_type]
     end
 
     def parse_html(data)
@@ -144,13 +144,7 @@ module LinkPreview
 
     def parse_video_url_content(uri)
       url = LinkPreview::URI.parse(uri, @options)
-      @config.http_client.get(url.to_s).tap do |response|
-        response.extend ResponseWithURL
-        response.url = url.to_s
-      end
-    rescue => e
-      @config.error_handler.call(e)
-      Faraday::Response.new
+      @config.http_client.get(url.to_s)
     end
 
     def parse_oembed_data(data)

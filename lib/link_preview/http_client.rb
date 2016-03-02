@@ -62,18 +62,24 @@ module LinkPreview
   end
 
   class HTTPClient
-    extend Forwardable
-
     def initialize(config)
       @config = config
     end
 
-    def_delegator :faraday_connection, :get
+    def get(uri)
+      with_extra_env do
+        connection.get(uri).tap do |response|
+          response.extend ResponseWithURL
+          response.url = uri
+        end
+      end
+    rescue => e
+      @config.error_handler.call(e)
+      Faraday::Response.new(status: 500)
+    end
 
-    private
-
-    def faraday_connection
-      @faraday_connection ||= Faraday.new do |builder|
+    def connection
+      @connection ||= Faraday.new do |builder|
         builder.options[:timeout] = @config.timeout
         builder.options[:open_timeout] = @config.open_timeout
 
@@ -85,6 +91,15 @@ module LinkPreview
 
         builder.use @config.http_adapter
       end
+    end
+
+    private
+
+    def with_extra_env(&_block)
+      LinkPreview::ExtraEnv.extra = @options
+      yield
+    ensure
+      LinkPreview::ExtraEnv.extra = nil
     end
   end
 end

@@ -47,17 +47,9 @@ module LinkPreview
     def dequeue!(priority_order = [])
       return if finished?
       uri = dequeue_by_priority(priority_order)
-      with_extra_env do
-        @config.http_client.get(uri).tap do |response|
-          response.extend ResponseWithURL
-          response.url = uri
-          @status[uri] = response.status.to_i
-        end
+      @config.http_client.get(uri).tap do |response|
+        @status[uri] = response.status.to_i
       end
-    rescue => e
-      @status[uri] ||= 500
-      @config.error_handler.call(e)
-      Faraday::Response.new
     end
 
     # @return [Boolean] true if any content discovered thus far has been successfully fetched
@@ -95,13 +87,6 @@ module LinkPreview
 
     def enqueued?(uri)
       @queue.values.flatten.uniq.include?(uri)
-    end
-
-    def with_extra_env(&_block)
-      LinkPreview::ExtraEnv.extra = @options
-      yield
-    ensure
-      LinkPreview::ExtraEnv.extra = nil
     end
   end
 end

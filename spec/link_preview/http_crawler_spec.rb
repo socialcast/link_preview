@@ -34,7 +34,7 @@ describe LinkPreview::HTTPCrawler do
 
     context 'when http_client.get raises an exception' do
       before do
-        allow(config.http_client).to receive(:get).and_raise(Timeout::Error)
+        allow(config.http_client.connection).to receive(:get).and_raise(Timeout::Error)
         expect(config.error_handler).to receive(:call).once { 'something' }
       end
 
