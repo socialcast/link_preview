@@ -1331,14 +1331,12 @@ http_interactions:
       code: 200
       message: OK
     headers:
-      Server:
-      - Apache/2.4.7 (Ubuntu)
-      Etag:
-      - '"2419-52ce442ded387"'
-      X-N:
-      - S
       Last-Modified:
       - Mon, 29 Feb 2016 08:16:09 GMT
+      Etag:
+      - '"2419-52ce442ded387"'
+      Server:
+      - Apache/2.4.7 (Ubuntu)
       Access-Control-Allow-Origin:
       - "*"
       Content-Type:
@@ -1346,11 +1344,11 @@ http_interactions:
       Vary:
       - Accept-Encoding
       Cache-Control:
-      - max-age=370
+      - max-age=599
       Expires:
-      - Wed, 02 Mar 2016 20:37:53 GMT
+      - Wed, 02 Mar 2016 20:49:51 GMT
       Date:
-      - Wed, 02 Mar 2016 20:31:43 GMT
+      - Wed, 02 Mar 2016 20:39:52 GMT
       Content-Length:
       - '9241'
       Connection:
@@ -1565,7 +1563,7 @@ http_interactions:
         dCZxdW90OyBjb250ZW50PSZxdW90OzM3MCZxdW90OyAvJmd0OwkKPC9wcmU+
         CjwvYm9keT4KPC9odG1sPg==
     http_version: 
-  recorded_at: Wed, 02 Mar 2016 20:31:43 GMT
+  recorded_at: Wed, 02 Mar 2016 20:39:52 GMT
 - request:
     method: get
     uri: http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400
@@ -1613,11 +1611,11 @@ http_interactions:
       Etag:
       - '"11092ea89-1e4f-0"'
       Cache-Control:
-      - public, max-age=3329
+      - public, max-age=2904
       Expires:
-      - Wed, 02 Mar 2016 21:27:12 GMT
+      - Wed, 02 Mar 2016 21:28:17 GMT
       Date:
-      - Wed, 02 Mar 2016 20:31:43 GMT
+      - Wed, 02 Mar 2016 20:39:53 GMT
       Connection:
       - keep-alive
     body:
@@ -1797,5 +1795,5 @@ http_interactions:
         chCCPWlQhCCOxQhCCD2qp3IQgqqFCEFHblQoQgW5JchCBTkp25CECXpTt6EI
         FpbtyEIKlVduQhBUb1JQhB//2Q==
     http_version: 
-  recorded_at: Wed, 02 Mar 2016 20:31:43 GMT
+  recorded_at: Wed, 02 Mar 2016 20:39:53 GMT
 recorded_with: VCR 3.0.1

@@ -31,6 +31,7 @@ module LinkPreview
     attr_accessor :open_timeout
     attr_accessor :error_handler
     attr_accessor :middleware
+    attr_accessor :default_content_aspect_ratio
 
     def http_client
       @http_client ||= HTTPClient.new(self)
@@ -76,6 +77,10 @@ module LinkPreview
 
     def middleware=(*middleware)
       @middleware = middleware
+    end
+
+    def default_content_aspect_ratio
+      @default_content_aspect_ratio ||= (3.0 / 4.0)
     end
   end
 end
