@@ -84,7 +84,8 @@ module LinkPreview
       end
 
       {
-        opengraph: parse_opengraph_data(doc),
+        opengraph: parse_opengraph_video_data(doc),
+        opengraph_embed: parse_opengraph_embed_data(doc),
         html: parse_html_data(doc)
       }
     end
@@ -98,10 +99,8 @@ module LinkPreview
     end
 
     # FIXME: currently secure_url is favored over url via implicit ordering of keys
-    def parse_opengraph_data(doc)
+    def parse_opengraph_common_data(doc)
       opengraph_image_array_first_elem = find_meta_property_array(doc, 'og:image').first
-      opengraph_video_array_first_elem = find_meta_property_array(doc, 'og:video').first
-
       {
         title: find_meta_property(doc, 'og:title'),
         description: find_meta_property(doc, 'og:description'),
@@ -110,18 +109,48 @@ module LinkPreview
         tag: find_meta_property(doc, 'og:tag'),
         url: find_meta_property(doc, 'og:url'),
         type: find_meta_property(doc, 'og:type'),
-        site_name: find_meta_property(doc, 'og:site_name'),
+        site_name: find_meta_property(doc, 'og:site_name')
+      }
+    end
+
+    def parse_opengraph_video_data(doc)
+      opengraph_video_array_first_elem = find_meta_property_array(doc, 'og:video').detect { |x| x['og:video:type'] != 'text/html' }
+      parse_opengraph_common_data(doc).merge(
         video_secure_url: opengraph_video_array_first_elem['og:video:secure_url'],
         video_url: opengraph_video_array_first_elem['og:video'] || opengraph_video_array_first_elem['og:video:url'],
         video_type: opengraph_video_array_first_elem['og:video:type'],
         video_width: opengraph_video_array_first_elem['og:video:width'],
         video_height: opengraph_video_array_first_elem['og:video:height']
-      }
+      )
+    end
+
+    def parse_opengraph_embed_data(doc)
+      opengraph_video_array_first_elem = find_meta_property_array(doc, 'og:video').detect { |x| x['og:video:type'] == 'text/html' }
+      opengraph_common_data = parse_opengraph_common_data(doc)
+      return {} unless opengraph_video_array_first_elem
+
+      video_secure_url = opengraph_video_array_first_elem['og:video:secure_url']
+      video_url = opengraph_video_array_first_elem['og:video:url']
+      html_response = parse_video_url_content(video_secure_url) || parse_video_url_content(video_url)
+      opengraph_common_data.merge(
+        html: html_response.try(:body)
+      )
     end
 
     def parse_oembed(data)
       # TODO: validate oembed response
       { oembed: (parse_oembed_data(data) || {}).merge(url: parse_oembed_content_url(data)) }
+    end
+
+    def parse_video_url_content(uri)
+      url = LinkPreview::URI.parse(uri, @options)
+      @config.http_client.get(url.to_s).tap do |response|
+        response.extend ResponseWithURL
+        response.url = url.to_s
+      end
+    rescue => e
+      @config.error_handler.call(e)
+      Faraday::Response.new
     end
 
     def parse_oembed_data(data)

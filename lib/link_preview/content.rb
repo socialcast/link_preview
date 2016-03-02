@@ -41,16 +41,23 @@ module LinkPreview
       :content_width,
       :content_height].freeze
 
-    SOURCES = [:initial, :image, :oembed, :opengraph, :html].freeze
+    SOURCES = [:initial, :image, :oembed, :opengraph, :opengraph_embed, :html].freeze
 
     SOURCE_PROPERTIES_TABLE =
       {
-        oembed:         {
+        oembed: {
           site_name: :provider_name,
           site_url: :provider_url,
           image_url: :thumbnail_url
         },
-        opengraph:         {
+        opengraph: {
+          image_url: [:image_secure_url, :image_url],
+          content_url: [:video_secure_url, :video_url],
+          content_type: :video_type,
+          content_width: :video_width,
+          content_height: :video_height
+        },
+        opengraph_embed: {
           image_url: [:image_secure_url, :image_url],
           content_url: [:video_secure_url, :video_url],
           content_type: :video_type,
@@ -291,7 +298,7 @@ module LinkPreview
 
     def as_oembed_video
       as_oembed_link.merge(type: 'video',
-                           html: content_html,
+                           html: get_property(:html) || content_html,
                            width: content_width_scaled.to_i,
                            height: content_height_scaled.to_i)
     end

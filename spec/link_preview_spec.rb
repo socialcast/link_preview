@@ -683,7 +683,7 @@ describe LinkPreview do
     end
   end
 
-  context 'kaltura with html5 response', vcr: { cassette_name: 'kaltura_html5' } do
+  context 'kaltura with html5 video response fallback', vcr: { cassette_name: 'kaltura_html5_video' } do
     let(:url) { 'http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html' }
 
     it_behaves_like 'link_preview'
@@ -736,7 +736,10 @@ describe LinkPreview do
     context '#as_oembed' do
       subject(:oembed) { content.as_oembed }
 
-      it 'should convert opengraph to oembed' do
+      it 'should issue minimum number of requests convert opengraph to oembed' do
+        expect(http_client).to receive(:get).with('http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html').ordered.and_call_original
+        expect(http_client).to receive(:get).with('https://cdnapisec.kaltura.com/p/243342/sp/24334200/embedIframeJs/uiconf_id/28685261/partner_id/243342?iframeembed=true&playerId=kaltura_player&entry_id=1_sf5ovm7u').ordered.and_raise('not found')
+        expect(http_client).to receive(:get).with('http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400').ordered.and_call_original
         should == {
           version: '1.0',
           provider_name: %(Kaltura),
@@ -746,6 +749,79 @@ describe LinkPreview do
           type: 'video',
           thumbnail_url: 'http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400',
           html: %(<video controls><source src="https://cdnapisec.kaltura.com/p/243342/sp/24334200/playManifest/entryId/1_sf5ovm7u/flavorId/1_d2uwy7vv/format/url/protocol/http/a.mp4" type="video/mp4" /></video>),
+          width: 0,
+          height: 0
+        }
+      end
+    end
+  end
+
+  context 'kaltura with html5 embed response', vcr: { cassette_name: 'kaltura_html5_embed' } do
+    let(:url) { 'http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html' }
+
+    it_behaves_like 'link_preview'
+
+    describe '#url' do
+      subject { content.url }
+      it { should == url }
+    end
+
+    describe '#title' do
+      subject { content.title }
+      it { should == %(Kaltura Player: Share Plugin example) }
+    end
+
+    describe '#description' do
+      subject { content.description }
+      it { should == %(Kaltura Player: Share plugin demonstrates the ease of which social share can be configured with the kaltura player toolkit.) }
+    end
+
+    describe '#site_name' do
+      subject { content.site_name }
+      it { should == 'Kaltura' }
+    end
+
+    describe '#site_url' do
+      subject { content.site_url }
+      it { should == 'http://player.kaltura.com' }
+    end
+
+    describe '#image_url' do
+      subject { content.image_url }
+      it { should == 'http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400' }
+    end
+
+    describe '#image_data' do
+      subject { content.image_data }
+      it { should be_a(StringIO) }
+    end
+
+    describe '#image_content_type' do
+      subject { content.image_content_type }
+      it { should == 'image/jpeg' }
+    end
+
+    describe '#image_file_name' do
+      subject { content.image_file_name }
+      it { should == '400' }
+    end
+
+    context '#as_oembed' do
+      subject(:oembed) { content.as_oembed }
+
+      it 'should issue minimum number of requests convert opengraph to oembed' do
+        expect(http_client).to receive(:get).with('http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html').ordered.and_call_original
+        expect(http_client).to receive(:get).with('https://cdnapisec.kaltura.com/p/243342/sp/24334200/embedIframeJs/uiconf_id/28685261/partner_id/243342?iframeembed=true&playerId=kaltura_player&entry_id=1_sf5ovm7u').ordered.and_call_original
+        expect(http_client).to receive(:get).with('http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400').ordered.and_call_original
+        should == {
+          version: '1.0',
+          provider_name: %(Kaltura),
+          provider_url: 'http://player.kaltura.com',
+          title: %(Kaltura Player: Share Plugin example),
+          description: %(Kaltura Player: Share plugin demonstrates the ease of which social share can be configured with the kaltura player toolkit.),
+          type: 'video',
+          thumbnail_url: 'http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400',
+          html: content.sources[:opengraph_embed][:html],
           width: 0,
           height: 0
         }
