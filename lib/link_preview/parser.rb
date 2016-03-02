@@ -137,8 +137,11 @@ module LinkPreview
       video_secure_url = opengraph_video_array_first_elem['og:video:secure_url']
       video_url = opengraph_video_array_first_elem['og:video:url']
       html_response = parse_video_url_content(video_secure_url) || parse_video_url_content(video_url)
+      return {} unless html_response && html_response.body
       opengraph_common_data.merge(
-        html: html_response.try(:body)
+        html: html_response.body,
+        video_width: opengraph_video_array_first_elem['og:video:width'],
+        video_height: opengraph_video_array_first_elem['og:video:height']
       )
     end
 

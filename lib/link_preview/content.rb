@@ -115,7 +115,7 @@ module LinkPreview
     attr_reader :sources
 
     def as_oembed
-      if content_type_video? || content_type_flash?
+      if content_type_video? || content_type_flash? || content_type_embed?
         @sources[:oembed].reverse_merge(as_oembed_video)
       else
         @sources[:oembed].reverse_merge(as_oembed_link)
@@ -298,7 +298,7 @@ module LinkPreview
 
     def as_oembed_video
       as_oembed_link.merge(type: 'video',
-                           html: get_property(:html) || content_html,
+                           html: content_html,
                            width: content_width_scaled.to_i,
                            height: content_height_scaled.to_i)
     end
@@ -311,10 +311,19 @@ module LinkPreview
       content_type == 'application/x-shockwave-flash'
     end
 
+    def content_type_embed?
+      get_property(:html)
+    end
+
     def content_html
       return unless content_url.present?
+      return content_html_embed if content_type_embed?
       return content_html_video if content_type_video?
       return content_html_flash if content_type_flash?
+    end
+
+    def content_html_embed
+      get_property(:html)
     end
 
     def content_html_video

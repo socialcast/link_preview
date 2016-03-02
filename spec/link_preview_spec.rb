@@ -685,6 +685,7 @@ describe LinkPreview do
 
   context 'kaltura with html5 video response fallback', vcr: { cassette_name: 'kaltura_html5_video' } do
     let(:url) { 'http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html' }
+    let(:options) { { width: 600 } }
 
     it_behaves_like 'link_preview'
 
@@ -737,9 +738,9 @@ describe LinkPreview do
       subject(:oembed) { content.as_oembed }
 
       it 'should issue minimum number of requests convert opengraph to oembed' do
-        expect(http_client).to receive(:get).with('http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html', {}).ordered.and_call_original
-        expect(http_client).to receive(:get).with('https://cdnapisec.kaltura.com/p/243342/sp/24334200/embedIframeJs/uiconf_id/28685261/partner_id/243342?iframeembed=true&playerId=kaltura_player&entry_id=1_sf5ovm7u', {}).ordered.and_return(Faraday::Response.new(status: 404))
-        expect(http_client).to receive(:get).with('http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400', {}).ordered.and_call_original
+        expect(http_client).to receive(:get).with('http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html', width: 600).ordered.and_call_original
+        expect(http_client).to receive(:get).with('https://cdnapisec.kaltura.com/p/243342/sp/24334200/embedIframeJs/uiconf_id/28685261/partner_id/243342?iframeembed=true&playerId=kaltura_player&entry_id=1_sf5ovm7u', width: 600).ordered.and_return(Faraday::Response.new(status: 404))
+        expect(http_client).to receive(:get).with('http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400', width: 600).ordered.and_call_original
         should == {
           version: '1.0',
           provider_name: %(Kaltura),
@@ -748,8 +749,8 @@ describe LinkPreview do
           description: %(Kaltura Player: Share plugin demonstrates the ease of which social share can be configured with the kaltura player toolkit.),
           type: 'video',
           thumbnail_url: 'http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400',
-          html: %(<video controls><source src="https://cdnapisec.kaltura.com/p/243342/sp/24334200/playManifest/entryId/1_sf5ovm7u/flavorId/1_d2uwy7vv/format/url/protocol/http/a.mp4" type="video/mp4" /></video>),
-          width: 0,
+          html: %(<video width="600" controls><source src="https://cdnapisec.kaltura.com/p/243342/sp/24334200/playManifest/entryId/1_sf5ovm7u/flavorId/1_d2uwy7vv/format/url/protocol/http/a.mp4" type="video/mp4" /></video>),
+          width: 600,
           height: 0
         }
       end
@@ -822,8 +823,8 @@ describe LinkPreview do
           type: 'video',
           thumbnail_url: 'http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400',
           html: content.sources[:opengraph_embed][:html],
-          width: 0,
-          height: 0
+          width: 560,
+          height: 395
         }
       end
     end
