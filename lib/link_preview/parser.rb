@@ -71,6 +71,10 @@ module LinkPreview
 
     private
 
+    def ignore_opengraph_video_type_html?
+      @options[:opengraph] && @options[:opengraph].fetch(:ignore_video_type_html, false)
+    end
+
     def valid_data?(data)
       data && data.headers && data.body && data.headers[:content_type]
     end
@@ -125,6 +129,7 @@ module LinkPreview
     end
 
     def parse_opengraph_embed_data(doc)
+      return {} if ignore_opengraph_video_type_html?
       opengraph_video_array_first_elem = find_meta_property_array(doc, 'og:video').detect { |x| x['og:video:type'] == 'text/html' }
       opengraph_common_data = parse_opengraph_common_data(doc)
       return {} unless opengraph_video_array_first_elem
