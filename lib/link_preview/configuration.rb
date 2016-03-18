@@ -31,6 +31,8 @@ module LinkPreview
     attr_accessor :open_timeout
     attr_accessor :error_handler
     attr_accessor :middleware
+    attr_accessor :default_content_aspect_ratio
+    attr_accessor :ignore_opengraph_video_type_html
 
     def http_client
       @http_client ||= HTTPClient.new(self)
@@ -76,6 +78,14 @@ module LinkPreview
 
     def middleware=(*middleware)
       @middleware = middleware
+    end
+
+    def default_content_aspect_ratio
+      @default_content_aspect_ratio ||= (16.0 / 9.0)
+    end
+
+    def ignore_opengraph_video_type_html
+      @ignore_opengraph_video_type_html ||= false
     end
   end
 end

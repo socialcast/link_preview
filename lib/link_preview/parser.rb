@@ -71,11 +71,14 @@ module LinkPreview
 
     private
 
-    def valid_data?(data)
-      data && data.headers[:content_type] && data.body
+    def ignore_opengraph_video_type_html?
+      @config.ignore_opengraph_video_type_html
     end
 
-    # FIXME: currently secure_url is favored over url via implicit ordering of keys
+    def valid_data?(data)
+      data && data.headers && data.body && data.headers[:content_type]
+    end
+
     def parse_html(data)
       doc = Nokogiri::HTML.parse(data.body, nil, 'UTF-8')
       return unless doc
@@ -84,36 +87,71 @@ module LinkPreview
         discovered_uris << LinkPreview::URI.parse(link_rel, @options)
       end
 
-      opengraph_image_array_first_elem = find_meta_property_array(doc, 'og:image').first
-      opengraph_video_array_first_elem = find_meta_property_array(doc, 'og:video').first
-
       {
-        opengraph: {
-          title: find_meta_property(doc, 'og:title'),
-          description: find_meta_property(doc, 'og:description'),
-          image_secure_url: opengraph_image_array_first_elem['og:image:secure_url'],
-          image_url: opengraph_image_array_first_elem['og:image'] || opengraph_image_array_first_elem['og:image:url'],
-          tag: find_meta_property(doc, 'og:tag'),
-          url: find_meta_property(doc, 'og:url'),
-          type: find_meta_property(doc, 'og:type'),
-          site_name: find_meta_property(doc, 'og:site_name'),
-          video_secure_url: opengraph_video_array_first_elem['og:video:secure_url'],
-          video_url: opengraph_video_array_first_elem['og:video'] || opengraph_video_array_first_elem['og:video:url'],
-          video_type: opengraph_video_array_first_elem['og:video:type'],
-          video_width: opengraph_video_array_first_elem['og:video:width'],
-          video_height: opengraph_video_array_first_elem['og:video:height']
-        },
-        html: {
-          title: find_title(doc),
-          description: find_meta_description(doc),
-          tags: Array.wrap(find_rel_tags(doc))
-        }
+        opengraph: parse_opengraph_video_data(doc),
+        opengraph_embed: parse_opengraph_embed_data(doc),
+        html: parse_html_data(doc)
       }
+    end
+
+    def parse_html_data(doc)
+      {
+        title: find_title(doc),
+        description: find_meta_description(doc),
+        tags: Array.wrap(find_rel_tags(doc))
+      }
+    end
+
+    def parse_opengraph_common_data(doc)
+      opengraph_image_array_first_elem = find_meta_property_array(doc, 'og:image').first
+      {
+        title: find_meta_property(doc, 'og:title'),
+        description: find_meta_property(doc, 'og:description'),
+        image_url: opengraph_image_array_first_elem['og:image'] || opengraph_image_array_first_elem['og:image:url'],
+        image_secure_url: opengraph_image_array_first_elem['og:image:secure_url'],
+        tag: find_meta_property(doc, 'og:tag'),
+        url: find_meta_property(doc, 'og:url'),
+        type: find_meta_property(doc, 'og:type'),
+        site_name: find_meta_property(doc, 'og:site_name')
+      }
+    end
+
+    def parse_opengraph_video_data(doc)
+      opengraph_video_array_first_elem = find_meta_property_array(doc, 'og:video').detect { |x| x['og:video:type'] != 'text/html' }
+      parse_opengraph_common_data(doc).merge(
+        video_url: opengraph_video_array_first_elem['og:video'] || opengraph_video_array_first_elem['og:video:url'],
+        video_secure_url: opengraph_video_array_first_elem['og:video:secure_url'],
+        video_type: opengraph_video_array_first_elem['og:video:type'],
+        video_width: opengraph_video_array_first_elem['og:video:width'],
+        video_height: opengraph_video_array_first_elem['og:video:height']
+      )
+    end
+
+    def parse_opengraph_embed_data(doc)
+      return {} if ignore_opengraph_video_type_html?
+      opengraph_video_array_first_elem = find_meta_property_array(doc, 'og:video').detect { |x| x['og:video:type'] == 'text/html' }
+      return {} unless opengraph_video_array_first_elem
+      opengraph_common_data = parse_opengraph_common_data(doc)
+
+      video_secure_url = opengraph_video_array_first_elem['og:video:secure_url']
+      video_url = opengraph_video_array_first_elem['og:video:url']
+      html_response = parse_video_url_content(video_secure_url) || parse_video_url_content(video_url)
+      return {} unless html_response && html_response.body
+      opengraph_common_data.merge(
+        html: html_response.body,
+        video_width: opengraph_video_array_first_elem['og:video:width'],
+        video_height: opengraph_video_array_first_elem['og:video:height']
+      )
     end
 
     def parse_oembed(data)
       # TODO: validate oembed response
       { oembed: (parse_oembed_data(data) || {}).merge(url: parse_oembed_content_url(data)) }
+    end
+
+    def parse_video_url_content(uri)
+      url = LinkPreview::URI.parse(uri, @options)
+      @config.http_client.get(url.to_s, @options)
     end
 
     def parse_oembed_data(data)

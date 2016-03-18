@@ -38,7 +38,7 @@ describe LinkPreview do
     it { should be_a(LinkPreview::Content) }
   end
 
-  context 'open graph data', vcr: { cassette_name: 'ogp.me' } do
+  context 'with open graph data', vcr: { cassette_name: 'ogp.me' } do
     let(:url) { 'http://ogp.me' }
 
     it_behaves_like 'link_preview'
@@ -89,13 +89,13 @@ describe LinkPreview do
     end
 
     it 'should issue minimum number of requests' do
-      expect(http_client).to receive(:get).with('http://ogp.me/').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://ogp.me/', {}).ordered.and_call_original
       content.title
-      expect(http_client).to receive(:get).with('http://ogp.me/logo.png').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://ogp.me/logo.png', {}).ordered.and_call_original
       content.image_data
     end
 
-    context '#as_oembed' do
+    describe '#as_oembed' do
       subject(:oembed) { content.as_oembed }
 
       it 'should encode as link' do
@@ -112,7 +112,7 @@ describe LinkPreview do
     end
   end
 
-  context 'youtube oembed', vcr: { cassette_name: 'youtube' } do
+  context 'with youtube oembed', vcr: { cassette_name: 'youtube' } do
     let(:url) { 'http://youtube.com/watch?v=M3r2XDceM6A' }
 
     it_behaves_like 'link_preview'
@@ -163,15 +163,15 @@ describe LinkPreview do
     end
 
     it 'should issue minimum number of requests' do
-      expect(http_client).to receive(:get).with('https://www.youtube.com/oembed?scheme=https&format=json&url=http%3A%2F%2Fyoutube.com%2Fwatch%3Fv%3DM3r2XDceM6A').ordered.and_call_original
+      expect(http_client).to receive(:get).with('https://www.youtube.com/oembed?scheme=https&format=json&url=http%3A%2F%2Fyoutube.com%2Fwatch%3Fv%3DM3r2XDceM6A', {}).ordered.and_call_original
       content.title
-      expect(http_client).to receive(:get).with('http://youtube.com/watch?v=M3r2XDceM6A').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://youtube.com/watch?v=M3r2XDceM6A', {}).ordered.and_call_original
       content.description
-      expect(http_client).to receive(:get).with('https://i.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg').ordered.and_call_original
+      expect(http_client).to receive(:get).with('https://i.ytimg.com/vi/M3r2XDceM6A/hqdefault.jpg', {}).ordered.and_call_original
       content.image_data
     end
 
-    context '#as_oembed' do
+    describe '#as_oembed' do
       subject(:oembed) { content.as_oembed }
 
       it 'should proxy oembed content' do
@@ -196,7 +196,7 @@ describe LinkPreview do
     end
   end
 
-  context 'kaltura oembed', vcr: { cassette_name: 'kaltura' } do
+  context 'with kaltura oembed', vcr: { cassette_name: 'kaltura' } do
     let(:url) { 'http://videos.kaltura.com/oembed?url=http%3A%2F%2Fvideos.kaltura.com%2Fmedia%2F%2Fid%2F1_abxlxlll&playerId=3073841&entryId=1_abxlxlll' }
     let(:options) { { width: 420 } }
 
@@ -248,16 +248,16 @@ describe LinkPreview do
     end
 
     it 'should issue minimum number of requests' do
-      expect(http_client).to receive(:get).with('http://videos.kaltura.com/oembed/?url=http%3A%2F%2Fvideos.kaltura.com%2Fmedia%2F%2Fid%2F1_abxlxlll&playerId=3073841&entryId=1_abxlxlll&width=420').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://videos.kaltura.com/oembed/?url=http%3A%2F%2Fvideos.kaltura.com%2Fmedia%2F%2Fid%2F1_abxlxlll&playerId=3073841&entryId=1_abxlxlll&width=420', width: 420).ordered.and_call_original
       content.title
-      expect(http_client).to receive(:get).with('http://cdnbakmi.kaltura.com/p/811441/sp/81144100/thumbnail/entry_id/1_abxlxlll/version/100012/width//height/').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://cdnbakmi.kaltura.com/p/811441/sp/81144100/thumbnail/entry_id/1_abxlxlll/version/100012/width//height/', width: 420).ordered.and_call_original
       content.image_data
-      expect(http_client).to receive(:get).with('http://videos.kaltura.com/media//id/1_abxlxlll').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://videos.kaltura.com/media//id/1_abxlxlll', width: 420).ordered.and_call_original
       content.description
     end
   end
 
-  context 'sliderocket oembed discovery', vcr: { cassette_name: 'sliderocket' } do
+  context 'with sliderocket oembed discovery', vcr: { cassette_name: 'sliderocket' } do
     let(:url) { 'http://portal.sliderocket.com/SlideRocket-Presentations/Hoshyar-Foundation' }
     let(:options) { { width: 420 } }
 
@@ -309,15 +309,15 @@ describe LinkPreview do
     end
 
     it 'should issue minimum number of requests' do
-      expect(http_client).to receive(:get).with('http://portal.sliderocket.com/SlideRocket-Presentations/Hoshyar-Foundation').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://portal.sliderocket.com/SlideRocket-Presentations/Hoshyar-Foundation', width: 420).ordered.and_call_original
       content.title
-      expect(http_client).to receive(:get).with('http://cdn.sliderocket.com/thumbnails/4/43/43b475a4-192e-455e-832f-4a40697d8d25.jpg').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://cdn.sliderocket.com/thumbnails/4/43/43b475a4-192e-455e-832f-4a40697d8d25.jpg', width: 420).ordered.and_call_original
       content.image_data
-      expect(http_client).to receive(:get).with('http://app.sliderocket.com/app/oEmbed.aspx?url=http%3A%2F%2Fapp.sliderocket.com%2Fapp%2Ffullplayer.aspx%3Fid%3Df614ec65-0f9b-4167-bb2a-b384dad535f3&maxwidth=420').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://app.sliderocket.com/app/oEmbed.aspx?url=http%3A%2F%2Fapp.sliderocket.com%2Fapp%2Ffullplayer.aspx%3Fid%3Df614ec65-0f9b-4167-bb2a-b384dad535f3&maxwidth=420', width: 420).ordered.and_call_original
       content.as_oembed
     end
 
-    context '#as_oembed' do
+    describe '#as_oembed' do
       subject(:oembed) { content.as_oembed }
 
       it 'should proxy oembed content' do
@@ -338,7 +338,7 @@ describe LinkPreview do
     end
   end
 
-  context 'html data with unescaped html', vcr: { cassette_name: 'support.apple.com' } do
+  context 'with html data with unescaped html', vcr: { cassette_name: 'support.apple.com' } do
     let(:url) { 'http://support.apple.com/kb/HT5642' }
 
     it_behaves_like 'link_preview'
@@ -389,12 +389,12 @@ describe LinkPreview do
     end
 
     it 'should issue minimum number of requests' do
-      expect(http_client).to receive(:get).with('http://support.apple.com/kb/HT5642').ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://support.apple.com/kb/HT5642', {}).ordered.and_call_original
       content.title
       content.image_data
     end
 
-    context '#as_oembed' do
+    describe '#as_oembed' do
       subject(:oembed) { content.as_oembed }
 
       it 'should convert to oembed link' do
@@ -410,7 +410,7 @@ describe LinkPreview do
     end
   end
 
-  context 'image data', vcr: { cassette_name: 'ggp.png' } do
+  context 'with image data', vcr: { cassette_name: 'ggp.png' } do
     let(:url) { 'http://www.golden-gate-park.com/wp-content/uploads/2011/02/Golden_Gate_Park_Logo_Header.png' }
 
     it_behaves_like 'link_preview'
@@ -461,7 +461,7 @@ describe LinkPreview do
     end
 
     # FIXME: should convert to photo via paperclip
-    context '#as_oembed' do
+    describe '#as_oembed' do
       subject(:oembed) { content.as_oembed }
 
       it 'should convert to oembed link' do
@@ -477,18 +477,18 @@ describe LinkPreview do
     end
   end
 
-  context 'youtube oembed 404', vcr: { cassette_name: 'youtube 404' } do
+  context 'with youtube oembed 404', vcr: { cassette_name: 'youtube 404' } do
     let(:url) { 'http://youtube.com/watch?v=1' }
 
     it_behaves_like 'link_preview'
     it { should_not be_found }
     it 'should issue minimum number of requests' do
-      expect(http_client).to receive(:get).with('https://www.youtube.com/oembed?scheme=https&format=json&url=http%3A%2F%2Fyoutube.com%2Fwatch%3Fv%3D1').ordered.and_call_original
-      expect(http_client).to receive(:get).with('http://youtube.com/watch?v=1').ordered.and_call_original
+      expect(http_client).to receive(:get).with('https://www.youtube.com/oembed?scheme=https&format=json&url=http%3A%2F%2Fyoutube.com%2Fwatch%3Fv%3D1', {}).ordered.and_call_original
+      expect(http_client).to receive(:get).with('http://youtube.com/watch?v=1', {}).ordered.and_call_original
       content.title
     end
 
-    context '#as_oembed' do
+    describe '#as_oembed' do
       subject(:oembed) { content.as_oembed }
       it 'should return basic oembed' do
         should == {
@@ -502,7 +502,7 @@ describe LinkPreview do
     end
   end
 
-  context 'kaltura opengraph', vcr: { cassette_name: 'kaltura_opengraph' } do
+  context 'with kaltura opengraph', vcr: { cassette_name: 'kaltura_opengraph' } do
     let(:url) { 'https://media.mediaspace.kaltura.com/media/Despicable+Me/0_w2zsofdj/6065172' }
 
     it_behaves_like 'link_preview'
@@ -553,14 +553,14 @@ describe LinkPreview do
     end
 
     it 'should issue minimum number of requests' do
-      expect(http_client).to receive(:get).with('https://media.mediaspace.kaltura.com/media/Despicable+Me/0_w2zsofdj/6065172').ordered.and_call_original
+      expect(http_client).to receive(:get).with('https://media.mediaspace.kaltura.com/media/Despicable+Me/0_w2zsofdj/6065172', {}).ordered.and_call_original
       content.title
-      expect(http_client).to receive(:get).with('https://cdnbakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/0_w2zsofdj/version/100021/width/400').ordered.and_call_original
+      expect(http_client).to receive(:get).with('https://cdnbakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/0_w2zsofdj/version/100021/width/400', {}).ordered.and_call_original
       content.image_data
       content.description
     end
 
-    context '#as_oembed' do
+    describe '#as_oembed' do
       subject(:oembed) { content.as_oembed }
 
       it 'should convert opengraph to oembed' do
@@ -580,7 +580,7 @@ describe LinkPreview do
     end
   end
 
-  context 'elasticsearch', vcr: { cassette_name: 'elasticsearch' } do
+  context 'with elasticsearch', vcr: { cassette_name: 'elasticsearch' } do
     let(:url) { 'http://www.elasticsearch.org/overview/hadoop' }
 
     it_behaves_like 'link_preview'
@@ -630,7 +630,7 @@ describe LinkPreview do
       it { should == 'blank_hero.png' }
     end
 
-    context '#as_oembed' do
+    describe '#as_oembed' do
       subject(:oembed) { content.as_oembed }
 
       it 'should encode as link' do
@@ -647,7 +647,7 @@ describe LinkPreview do
     end
   end
 
-  context 'resource with bad utf-8 in response', vcr: { cassette_name: 'bad_utf8' } do
+  context 'with resource with bad utf-8 in response', vcr: { cassette_name: 'bad_utf8' } do
     let(:url) { 'http://s.taobao.com' }
 
     it_behaves_like 'link_preview'
@@ -683,7 +683,81 @@ describe LinkPreview do
     end
   end
 
-  context 'kaltura with html5 response', vcr: { cassette_name: 'kalture_html5' } do
+  context 'with kaltura with html5 video response fallback', vcr: { cassette_name: 'kaltura_html5_video' } do
+    let(:url) { 'http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html' }
+    let(:options) { { width: 600 } }
+
+    it_behaves_like 'link_preview'
+
+    describe '#url' do
+      subject { content.url }
+      it { should == url }
+    end
+
+    describe '#title' do
+      subject { content.title }
+      it { should == %(Kaltura Player: Share Plugin example) }
+    end
+
+    describe '#description' do
+      subject { content.description }
+      it { should == %(Kaltura Player: Share plugin demonstrates the ease of which social share can be configured with the kaltura player toolkit.) }
+    end
+
+    describe '#site_name' do
+      subject { content.site_name }
+      it { should == 'Kaltura' }
+    end
+
+    describe '#site_url' do
+      subject { content.site_url }
+      it { should == 'http://player.kaltura.com' }
+    end
+
+    describe '#image_url' do
+      subject { content.image_url }
+      it { should == 'http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400' }
+    end
+
+    describe '#image_data' do
+      subject { content.image_data }
+      it { should be_a(StringIO) }
+    end
+
+    describe '#image_content_type' do
+      subject { content.image_content_type }
+      it { should == 'image/jpeg' }
+    end
+
+    describe '#image_file_name' do
+      subject { content.image_file_name }
+      it { should == '400' }
+    end
+
+    describe '#as_oembed' do
+      subject(:oembed) { content.as_oembed }
+
+      it 'should issue minimum number of requests convert opengraph to oembed' do
+        expect(http_client).to receive(:get).with('http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html', width: 600).ordered.and_call_original
+        expect(http_client).to receive(:get).with('https://cdnapisec.kaltura.com/p/243342/sp/24334200/embedIframeJs/uiconf_id/28685261/partner_id/243342?iframeembed=true&playerId=kaltura_player&entry_id=1_sf5ovm7u', width: 600).ordered.and_return(Faraday::Response.new(status: 404))
+        expect(http_client).to receive(:get).with('http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400', width: 600).ordered.and_call_original
+        should == {
+          version: '1.0',
+          provider_name: %(Kaltura),
+          provider_url: 'http://player.kaltura.com',
+          title: %(Kaltura Player: Share Plugin example),
+          description: %(Kaltura Player: Share plugin demonstrates the ease of which social share can be configured with the kaltura player toolkit.),
+          type: 'video',
+          thumbnail_url: 'http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400',
+          html: %(<video width="600" height="338" controls><source src="https://cdnapisec.kaltura.com/p/243342/sp/24334200/playManifest/entryId/1_sf5ovm7u/flavorId/1_d2uwy7vv/format/url/protocol/http/a.mp4" type="video/mp4" /></video>),
+          width: 600,
+          height: 338
+        }
+      end
+    end
+  end
+
+  context 'with kaltura with html5 embed response', vcr: { cassette_name: 'kaltura_html5_embed' } do
     let(:url) { 'http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html' }
 
     it_behaves_like 'link_preview'
@@ -733,10 +807,91 @@ describe LinkPreview do
       it { should == '400' }
     end
 
-    context '#as_oembed' do
+    describe '#as_oembed' do
       subject(:oembed) { content.as_oembed }
 
-      it 'should convert opengraph to oembed' do
+      it 'should issue minimum number of requests convert opengraph to oembed' do
+        expect(http_client).to receive(:get).with('http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html', {}).ordered.and_call_original
+        expect(http_client).to receive(:get).with('https://cdnapisec.kaltura.com/p/243342/sp/24334200/embedIframeJs/uiconf_id/28685261/partner_id/243342?iframeembed=true&playerId=kaltura_player&entry_id=1_sf5ovm7u', {}).ordered.and_call_original
+        expect(http_client).to receive(:get).with('http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400', {}).ordered.and_call_original
+        should == {
+          version: '1.0',
+          provider_name: %(Kaltura),
+          provider_url: 'http://player.kaltura.com',
+          title: %(Kaltura Player: Share Plugin example),
+          description: %(Kaltura Player: Share plugin demonstrates the ease of which social share can be configured with the kaltura player toolkit.),
+          type: 'video',
+          thumbnail_url: 'http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400',
+          html: content.sources[:opengraph_embed][:html],
+          width: 560,
+          height: 395
+        }
+      end
+    end
+  end
+
+  context 'with kaltura with html5 video response with configuration ignore_opengraph_video_type_html', vcr: { cassette_name: 'kaltura_html5_ignore_video_type_html' } do
+    let(:url) { 'http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html' }
+
+    around do |example|
+      LinkPreview.configuration.ignore_opengraph_video_type_html = true
+      example.run
+      LinkPreview.configuration.ignore_opengraph_video_type_html = nil
+    end
+
+    it_behaves_like 'link_preview'
+
+    describe '#url' do
+      subject { content.url }
+      it { should == url }
+    end
+
+    describe '#title' do
+      subject { content.title }
+      it { should == %(Kaltura Player: Share Plugin example) }
+    end
+
+    describe '#description' do
+      subject { content.description }
+      it { should == %(Kaltura Player: Share plugin demonstrates the ease of which social share can be configured with the kaltura player toolkit.) }
+    end
+
+    describe '#site_name' do
+      subject { content.site_name }
+      it { should == 'Kaltura' }
+    end
+
+    describe '#site_url' do
+      subject { content.site_url }
+      it { should == 'http://player.kaltura.com' }
+    end
+
+    describe '#image_url' do
+      subject { content.image_url }
+      it { should == 'http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400' }
+    end
+
+    describe '#image_data' do
+      subject { content.image_data }
+      it { should be_a(StringIO) }
+    end
+
+    describe '#image_content_type' do
+      subject { content.image_content_type }
+      it { should == 'image/jpeg' }
+    end
+
+    describe '#image_file_name' do
+      subject { content.image_file_name }
+      it { should == '400' }
+    end
+
+    describe '#as_oembed' do
+      subject(:oembed) { content.as_oembed }
+
+      it 'should issue minimum number of requests convert opengraph to oembed' do
+        expect(http_client).to receive(:get).with('http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html', {}).ordered.and_call_original
+        expect(http_client).to receive(:get).with('http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400', {}).ordered.and_call_original
         should == {
           version: '1.0',
           provider_name: %(Kaltura),
@@ -753,7 +908,7 @@ describe LinkPreview do
     end
   end
 
-  context 'flickr with oembed response', vcr: { cassette_name: 'flickr_oembed' } do
+  context 'with flickr with oembed response', vcr: { cassette_name: 'flickr_oembed' } do
     let(:url) { 'https://www.flickr.com/photos/bees/2341623661' }
     let(:options) { { width: 600 } }
 
@@ -804,7 +959,7 @@ describe LinkPreview do
       it { should == '2341623661_7c99f48bbf_q.jpg' }
     end
 
-    context '#as_oembed' do
+    describe '#as_oembed' do
       subject(:oembed) { content.as_oembed }
 
       it 'should convert opengraph to oembed' do

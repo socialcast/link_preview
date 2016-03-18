@@ -41,16 +41,23 @@ module LinkPreview
       :content_width,
       :content_height].freeze
 
-    SOURCES = [:initial, :image, :oembed, :opengraph, :html].freeze
+    SOURCES = [:initial, :image, :oembed, :opengraph, :opengraph_embed, :html].freeze
 
     SOURCE_PROPERTIES_TABLE =
       {
-        oembed:         {
+        oembed: {
           site_name: :provider_name,
           site_url: :provider_url,
           image_url: :thumbnail_url
         },
-        opengraph:         {
+        opengraph: {
+          image_url: [:image_secure_url, :image_url],
+          content_url: [:video_secure_url, :video_url],
+          content_type: :video_type,
+          content_width: :video_width,
+          content_height: :video_height
+        },
+        opengraph_embed: {
           image_url: [:image_secure_url, :image_url],
           content_url: [:video_secure_url, :video_url],
           content_type: :video_type,
@@ -108,7 +115,7 @@ module LinkPreview
     attr_reader :sources
 
     def as_oembed
-      if content_type_video? || content_type_flash?
+      if content_type_video? || content_type_flash? || content_type_embed?
         @sources[:oembed].reverse_merge(as_oembed_video)
       else
         @sources[:oembed].reverse_merge(as_oembed_link)
@@ -246,7 +253,7 @@ module LinkPreview
       sources.each do |source, properties|
         properties.symbolize_keys!
         properties.reject! { |_, value| value.blank? }
-        properties.each do |property, value|
+        prioritized_properties(source, properties).each do |property, value|
           next if @sources[source][property]
           @sources[source][property] = normalize_property(property_unalias(source, property), value)
         end
@@ -272,7 +279,6 @@ module LinkPreview
       end
     end
 
-    # FIXME: this is expensive
     def strip_html(value)
       Nokogiri::HTML(value).xpath('//text()').remove.to_s
     end
@@ -304,10 +310,19 @@ module LinkPreview
       content_type == 'application/x-shockwave-flash'
     end
 
+    def content_type_embed?
+      get_property(:html)
+    end
+
     def content_html
       return unless content_url.present?
+      return content_html_embed if content_type_embed?
       return content_html_video if content_type_video?
       return content_html_flash if content_type_flash?
+    end
+
+    def content_html_embed
+      get_property(:html)
     end
 
     def content_html_video
@@ -352,11 +367,13 @@ module LinkPreview
 
     def content_height_scaled
       # Width takes precedence over height
-      if @options[:width].to_i > 0 && content_width.to_i > 0
+      if @options[:width].to_i > 0 && content_width.to_i > 0 && content_height.to_i > 0
         # Compute scaled height using the ratio of requested width to actual width, round up to prevent truncation
         (((@options[:width].to_i * 1.0) / (content_width.to_i * 1.0)) * content_height.to_i).ceil
       elsif @options[:height].to_i > 0
         @options[:height]
+      elsif @options[:width].to_i > 0
+        (@options[:width].to_i * (1.0 / @config.default_content_aspect_ratio)).ceil
       else
         content_height.to_i
       end
@@ -366,6 +383,16 @@ module LinkPreview
 
     def crawler_class
       @crawler_class ||= @options.fetch(:allow_requests, true) ? LinkPreview::HTTPCrawler : LinkPreview::NullCrawler
+    end
+
+    def prioritized_properties(source, properties)
+      return properties unless prioritized_properties_for_source(source)
+      Hash[properties.sort_by { |key, _| prioritized_properties_for_source(source).find_index(key) || -1 }]
+    end
+
+    def prioritized_properties_for_source(source)
+      @prioritized_properties_for_source ||= {}
+      @prioritized_properties_for_source[source] = SOURCE_PROPERTIES_TABLE[source] ? SOURCE_PROPERTIES_TABLE[source].values.flatten : nil
     end
   end
 end
