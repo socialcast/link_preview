@@ -374,7 +374,7 @@ module LinkPreview
       elsif @options[:height].to_i > 0
         @options[:height]
       elsif @options[:width].to_i > 0
-        (@options[:width].to_i * 1.0 * @config.default_content_aspect_ratio).ceil
+        (@options[:width].to_i * (1.0 / @config.default_content_aspect_ratio)).ceil
       else
         content_height.to_i
       end

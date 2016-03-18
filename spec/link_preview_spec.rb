@@ -749,9 +749,9 @@ describe LinkPreview do
           description: %(Kaltura Player: Share plugin demonstrates the ease of which social share can be configured with the kaltura player toolkit.),
           type: 'video',
           thumbnail_url: 'http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400',
-          html: %(<video width="600" height="450" controls><source src="https://cdnapisec.kaltura.com/p/243342/sp/24334200/playManifest/entryId/1_sf5ovm7u/flavorId/1_d2uwy7vv/format/url/protocol/http/a.mp4" type="video/mp4" /></video>),
+          html: %(<video width="600" height="338" controls><source src="https://cdnapisec.kaltura.com/p/243342/sp/24334200/playManifest/entryId/1_sf5ovm7u/flavorId/1_d2uwy7vv/format/url/protocol/http/a.mp4" type="video/mp4" /></video>),
           width: 600,
-          height: 450
+          height: 338
         }
       end
     end

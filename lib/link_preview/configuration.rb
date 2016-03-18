@@ -81,7 +81,7 @@ module LinkPreview
     end
 
     def default_content_aspect_ratio
-      @default_content_aspect_ratio ||= (3.0 / 4.0)
+      @default_content_aspect_ratio ||= (16.0 / 9.0)
     end
 
     def ignore_opengraph_video_type_html
