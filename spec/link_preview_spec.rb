@@ -95,7 +95,7 @@ describe LinkPreview do
       content.image_data
     end
 
-    context '#as_oembed' do
+    describe '#as_oembed' do
       subject(:oembed) { content.as_oembed }
 
       it 'should encode as link' do
@@ -171,7 +171,7 @@ describe LinkPreview do
       content.image_data
     end
 
-    context '#as_oembed' do
+    describe '#as_oembed' do
       subject(:oembed) { content.as_oembed }
 
       it 'should proxy oembed content' do
@@ -317,7 +317,7 @@ describe LinkPreview do
       content.as_oembed
     end
 
-    context '#as_oembed' do
+    describe '#as_oembed' do
       subject(:oembed) { content.as_oembed }
 
       it 'should proxy oembed content' do
@@ -394,7 +394,7 @@ describe LinkPreview do
       content.image_data
     end
 
-    context '#as_oembed' do
+    describe '#as_oembed' do
       subject(:oembed) { content.as_oembed }
 
       it 'should convert to oembed link' do
@@ -461,7 +461,7 @@ describe LinkPreview do
     end
 
     # FIXME: should convert to photo via paperclip
-    context '#as_oembed' do
+    describe '#as_oembed' do
       subject(:oembed) { content.as_oembed }
 
       it 'should convert to oembed link' do
@@ -488,7 +488,7 @@ describe LinkPreview do
       content.title
     end
 
-    context '#as_oembed' do
+    describe '#as_oembed' do
       subject(:oembed) { content.as_oembed }
       it 'should return basic oembed' do
         should == {
@@ -560,7 +560,7 @@ describe LinkPreview do
       content.description
     end
 
-    context '#as_oembed' do
+    describe '#as_oembed' do
       subject(:oembed) { content.as_oembed }
 
       it 'should convert opengraph to oembed' do
@@ -630,7 +630,7 @@ describe LinkPreview do
       it { should == 'blank_hero.png' }
     end
 
-    context '#as_oembed' do
+    describe '#as_oembed' do
       subject(:oembed) { content.as_oembed }
 
       it 'should encode as link' do
@@ -734,7 +734,7 @@ describe LinkPreview do
       it { should == '400' }
     end
 
-    context '#as_oembed' do
+    describe '#as_oembed' do
       subject(:oembed) { content.as_oembed }
 
       it 'should issue minimum number of requests convert opengraph to oembed' do
@@ -807,7 +807,7 @@ describe LinkPreview do
       it { should == '400' }
     end
 
-    context '#as_oembed' do
+    describe '#as_oembed' do
       subject(:oembed) { content.as_oembed }
 
       it 'should issue minimum number of requests convert opengraph to oembed' do
@@ -886,7 +886,7 @@ describe LinkPreview do
       it { should == '400' }
     end
 
-    context '#as_oembed' do
+    describe '#as_oembed' do
       subject(:oembed) { content.as_oembed }
 
       it 'should issue minimum number of requests convert opengraph to oembed' do
@@ -959,7 +959,7 @@ describe LinkPreview do
       it { should == '2341623661_7c99f48bbf_q.jpg' }
     end
 
-    context '#as_oembed' do
+    describe '#as_oembed' do
       subject(:oembed) { content.as_oembed }
 
       it 'should convert opengraph to oembed' do
