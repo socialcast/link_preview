@@ -102,14 +102,13 @@ module LinkPreview
       }
     end
 
-    # FIXME: currently secure_url is favored over url via implicit ordering of keys
     def parse_opengraph_common_data(doc)
       opengraph_image_array_first_elem = find_meta_property_array(doc, 'og:image').first
       {
         title: find_meta_property(doc, 'og:title'),
         description: find_meta_property(doc, 'og:description'),
-        image_secure_url: opengraph_image_array_first_elem['og:image:secure_url'],
         image_url: opengraph_image_array_first_elem['og:image'] || opengraph_image_array_first_elem['og:image:url'],
+        image_secure_url: opengraph_image_array_first_elem['og:image:secure_url'],
         tag: find_meta_property(doc, 'og:tag'),
         url: find_meta_property(doc, 'og:url'),
         type: find_meta_property(doc, 'og:type'),
@@ -120,8 +119,8 @@ module LinkPreview
     def parse_opengraph_video_data(doc)
       opengraph_video_array_first_elem = find_meta_property_array(doc, 'og:video').detect { |x| x['og:video:type'] != 'text/html' }
       parse_opengraph_common_data(doc).merge(
-        video_secure_url: opengraph_video_array_first_elem['og:video:secure_url'],
         video_url: opengraph_video_array_first_elem['og:video'] || opengraph_video_array_first_elem['og:video:url'],
+        video_secure_url: opengraph_video_array_first_elem['og:video:secure_url'],
         video_type: opengraph_video_array_first_elem['og:video:type'],
         video_width: opengraph_video_array_first_elem['og:video:width'],
         video_height: opengraph_video_array_first_elem['og:video:height']

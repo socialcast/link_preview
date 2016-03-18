@@ -253,7 +253,7 @@ module LinkPreview
       sources.each do |source, properties|
         properties.symbolize_keys!
         properties.reject! { |_, value| value.blank? }
-        properties.each do |property, value|
+        prioritized_properties(source, properties).each do |property, value|
           next if @sources[source][property]
           @sources[source][property] = normalize_property(property_unalias(source, property), value)
         end
@@ -383,6 +383,16 @@ module LinkPreview
 
     def crawler_class
       @crawler_class ||= @options.fetch(:allow_requests, true) ? LinkPreview::HTTPCrawler : LinkPreview::NullCrawler
+    end
+
+    def prioritized_properties(source, properties)
+      return properties unless prioritized_properties_for_source(source)
+      properties.sort_by { |key, _| prioritized_properties_for_source(source).find_index(key) || -1 }.to_h
+    end
+
+    def prioritized_properties_for_source(source)
+      @prioritized_properties_for_source ||= {}
+      @prioritized_properties_for_source[source] = SOURCE_PROPERTIES_TABLE[source] ? SOURCE_PROPERTIES_TABLE[source].values.flatten : nil
     end
   end
 end
