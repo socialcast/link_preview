@@ -40,7 +40,7 @@ describe LinkPreview::HTTPCrawler do
 
       subject(:response) { crawler.dequeue! }
 
-      it 'should receive error_handler call and return non successful response' do
+      it 'receives error_handler call and return non successful response' do
         should be_a(Faraday::Response)
         should_not be_success
       end

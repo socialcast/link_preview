@@ -40,12 +40,14 @@ describe LinkPreview::Parser do
         expect(parser.parse_image_file_name(response)).to eq('image-cd.jpg')
       end
     end
+
     context 'when the content-disposition header does not contain a filename' do
       let(:content_disposition) { 'inline;' }
       it 'parses the filename from the url' do
         expect(parser.parse_image_file_name(response)).to eq('image-url.jpg')
       end
     end
+
     context 'when the content-disposition header contains a blank filename' do
       let(:content_disposition) { 'inline;filename=""' }
       it 'parses the filename from the url' do
