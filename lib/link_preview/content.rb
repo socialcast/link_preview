@@ -387,7 +387,7 @@ module LinkPreview
 
     def prioritized_properties(source, properties)
       return properties unless prioritized_properties_for_source(source)
-      properties.sort_by { |key, _| prioritized_properties_for_source(source).find_index(key) || -1 }.to_h
+      Hash[properties.sort_by { |key, _| prioritized_properties_for_source(source).find_index(key) || -1 }]
     end
 
     def prioritized_properties_for_source(source)
