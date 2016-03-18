@@ -279,7 +279,6 @@ module LinkPreview
       end
     end
 
-    # FIXME: this is expensive
     def strip_html(value)
       Nokogiri::HTML(value).xpath('//text()').remove.to_s
     end
