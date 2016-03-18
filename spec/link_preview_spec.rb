@@ -38,7 +38,7 @@ describe LinkPreview do
     it { should be_a(LinkPreview::Content) }
   end
 
-  context 'open graph data', vcr: { cassette_name: 'ogp.me' } do
+  context 'with open graph data', vcr: { cassette_name: 'ogp.me' } do
     let(:url) { 'http://ogp.me' }
 
     it_behaves_like 'link_preview'
@@ -112,7 +112,7 @@ describe LinkPreview do
     end
   end
 
-  context 'youtube oembed', vcr: { cassette_name: 'youtube' } do
+  context 'with youtube oembed', vcr: { cassette_name: 'youtube' } do
     let(:url) { 'http://youtube.com/watch?v=M3r2XDceM6A' }
 
     it_behaves_like 'link_preview'
@@ -196,7 +196,7 @@ describe LinkPreview do
     end
   end
 
-  context 'kaltura oembed', vcr: { cassette_name: 'kaltura' } do
+  context 'with kaltura oembed', vcr: { cassette_name: 'kaltura' } do
     let(:url) { 'http://videos.kaltura.com/oembed?url=http%3A%2F%2Fvideos.kaltura.com%2Fmedia%2F%2Fid%2F1_abxlxlll&playerId=3073841&entryId=1_abxlxlll' }
     let(:options) { { width: 420 } }
 
@@ -257,7 +257,7 @@ describe LinkPreview do
     end
   end
 
-  context 'sliderocket oembed discovery', vcr: { cassette_name: 'sliderocket' } do
+  context 'with sliderocket oembed discovery', vcr: { cassette_name: 'sliderocket' } do
     let(:url) { 'http://portal.sliderocket.com/SlideRocket-Presentations/Hoshyar-Foundation' }
     let(:options) { { width: 420 } }
 
@@ -338,7 +338,7 @@ describe LinkPreview do
     end
   end
 
-  context 'html data with unescaped html', vcr: { cassette_name: 'support.apple.com' } do
+  context 'with html data with unescaped html', vcr: { cassette_name: 'support.apple.com' } do
     let(:url) { 'http://support.apple.com/kb/HT5642' }
 
     it_behaves_like 'link_preview'
@@ -410,7 +410,7 @@ describe LinkPreview do
     end
   end
 
-  context 'image data', vcr: { cassette_name: 'ggp.png' } do
+  context 'with image data', vcr: { cassette_name: 'ggp.png' } do
     let(:url) { 'http://www.golden-gate-park.com/wp-content/uploads/2011/02/Golden_Gate_Park_Logo_Header.png' }
 
     it_behaves_like 'link_preview'
@@ -477,7 +477,7 @@ describe LinkPreview do
     end
   end
 
-  context 'youtube oembed 404', vcr: { cassette_name: 'youtube 404' } do
+  context 'with youtube oembed 404', vcr: { cassette_name: 'youtube 404' } do
     let(:url) { 'http://youtube.com/watch?v=1' }
 
     it_behaves_like 'link_preview'
@@ -502,7 +502,7 @@ describe LinkPreview do
     end
   end
 
-  context 'kaltura opengraph', vcr: { cassette_name: 'kaltura_opengraph' } do
+  context 'with kaltura opengraph', vcr: { cassette_name: 'kaltura_opengraph' } do
     let(:url) { 'https://media.mediaspace.kaltura.com/media/Despicable+Me/0_w2zsofdj/6065172' }
 
     it_behaves_like 'link_preview'
@@ -580,7 +580,7 @@ describe LinkPreview do
     end
   end
 
-  context 'elasticsearch', vcr: { cassette_name: 'elasticsearch' } do
+  context 'with elasticsearch', vcr: { cassette_name: 'elasticsearch' } do
     let(:url) { 'http://www.elasticsearch.org/overview/hadoop' }
 
     it_behaves_like 'link_preview'
@@ -647,7 +647,7 @@ describe LinkPreview do
     end
   end
 
-  context 'resource with bad utf-8 in response', vcr: { cassette_name: 'bad_utf8' } do
+  context 'with resource with bad utf-8 in response', vcr: { cassette_name: 'bad_utf8' } do
     let(:url) { 'http://s.taobao.com' }
 
     it_behaves_like 'link_preview'
@@ -683,7 +683,7 @@ describe LinkPreview do
     end
   end
 
-  context 'kaltura with html5 video response fallback', vcr: { cassette_name: 'kaltura_html5_video' } do
+  context 'with kaltura with html5 video response fallback', vcr: { cassette_name: 'kaltura_html5_video' } do
     let(:url) { 'http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html' }
     let(:options) { { width: 600 } }
 
@@ -757,7 +757,7 @@ describe LinkPreview do
     end
   end
 
-  context 'kaltura with html5 embed response', vcr: { cassette_name: 'kaltura_html5_embed' } do
+  context 'with kaltura with html5 embed response', vcr: { cassette_name: 'kaltura_html5_embed' } do
     let(:url) { 'http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html' }
 
     it_behaves_like 'link_preview'
@@ -830,7 +830,7 @@ describe LinkPreview do
     end
   end
 
-  context 'kaltura with html5 video response with configuration ignore_opengraph_video_type_html', vcr: { cassette_name: 'kaltura_html5_ignore_video_type_html' } do
+  context 'with kaltura with html5 video response with configuration ignore_opengraph_video_type_html', vcr: { cassette_name: 'kaltura_html5_ignore_video_type_html' } do
     let(:url) { 'http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html' }
 
     around do |example|
@@ -908,7 +908,7 @@ describe LinkPreview do
     end
   end
 
-  context 'flickr with oembed response', vcr: { cassette_name: 'flickr_oembed' } do
+  context 'with flickr with oembed response', vcr: { cassette_name: 'flickr_oembed' } do
     let(:url) { 'https://www.flickr.com/photos/bees/2341623661' }
     let(:options) { { width: 600 } }
 
