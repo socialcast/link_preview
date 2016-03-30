@@ -103,6 +103,7 @@ describe LinkPreview do
           version: '1.0',
           provider_name: %(ogp.me),
           provider_url: 'http://ogp.me',
+          url: url,
           title: %(Open Graph protocol),
           description: %(The Open Graph protocol enables any web page to become a rich object in a social graph.),
           type: 'link',
@@ -179,7 +180,7 @@ describe LinkPreview do
           version: '1.0',
           provider_name: %(YouTube),
           provider_url: 'https://www.youtube.com/',
-          url: 'http://youtube.com/watch?v=M3r2XDceM6A',
+          url: url,
           title: %(Amazing Nintendo Facts),
           description: %(Learn about the history of Nintendo, its gaming systems, and Mario! It's 21 amazing facts about Nintendo you may have never known. Update: As of late 2008, W...),
           type: 'video',
@@ -402,6 +403,7 @@ describe LinkPreview do
           version: '1.0',
           provider_name: %(support.apple.com),
           provider_url: 'http://support.apple.com',
+          url: url,
           title: %(About the security content of iOS 6.1 Software Update),
           description: %(This document describes the security content of iOS 6.1.\nFor the protection of our customers, Apple does not disclose, discuss, or confirm security issues until a full investigation has occurred and any necessary patches or releases are available. To learn more about Apple Product Security, see the Apple Product Security website.\nFor information about the Apple Product Security PGP Key, see How to use the Apple Product Security PGP Key.\nWhere possible, CVE IDs are used to reference the vulnerabilities for further information.\nTo learn about other Security Updates, see Apple Security Updates.),
           type: 'link'
@@ -469,6 +471,7 @@ describe LinkPreview do
           version: '1.0',
           provider_name: %(www.golden-gate-park.com),
           provider_url: 'http://www.golden-gate-park.com',
+          url: url,
           title: %(http://www.golden-gate-park.com/wp-content/uploads/2011/02/Golden_Gate_Park_Logo_Header.png),
           type: 'link',
           thumbnail_url: 'http://www.golden-gate-park.com/wp-content/uploads/2011/02/Golden_Gate_Park_Logo_Header.png'
@@ -495,6 +498,7 @@ describe LinkPreview do
           version: '1.0',
           provider_name: 'youtube.com',
           provider_url: 'http://youtube.com',
+          url: url,
           title: 'YouTube',
           type: 'link'
         }
@@ -568,6 +572,7 @@ describe LinkPreview do
           version: '1.0',
           provider_name: %(MediaSpace Demo Site),
           provider_url: 'http://media.mediaspace.kaltura.com',
+          url: 'http://media.mediaspace.kaltura.com/media/Despicable+Me/0_w2zsofdj',
           title: %(Despicable Me),
           description: %(In a happy suburban neighborhood surrounded by white picket fences with flowering rose bushes, sits a black house with a dead lawn. Unbeknownst to the neighbors, hidden beneath this home is a vast secret hideout. Surrounded by a small army of minions, we discover Gru planning the biggest heist in the history of the world. He is going to steal the moon, yes, the moon. Gru delights in all things wicked. Armed with his arsenal of shrink rays, freeze rays, and battle-ready vehicles for land and air, he vanquishes all who stand in his way. Until the day he encounters the immense will of three little orphaned girls who look at him and see something that no one else has ever seen: a potential Dad. The world's greatest villain has just met his greatest challenge: three little girls named Margo, Edith and Agnes.),
           type: 'video',
@@ -638,6 +643,7 @@ describe LinkPreview do
           version: '1.0',
           provider_name: %(Elasticsearch.org),
           provider_url: 'http://www.elasticsearch.org',
+          url: url,
           title: %(Hadoop | Elasticsearch),
           description: %(Search your Hadoop Data and Get Real-Time Results Deep API integration makes searching data in Hadoop easy Elasticsearch for Apache Hadoop enables real-time searching against data stored in Apache Hadoop. It provides native integration with Map/Reduce, Hive, Pig, and Cascading, all with no customization. Download Elasticsearch for Apache Hadoop Documentation Great fit for “Big Data” [...]),
           type: 'link',
@@ -745,6 +751,7 @@ describe LinkPreview do
           version: '1.0',
           provider_name: %(Kaltura),
           provider_url: 'http://player.kaltura.com',
+          url: url,
           title: %(Kaltura Player: Share Plugin example),
           description: %(Kaltura Player: Share plugin demonstrates the ease of which social share can be configured with the kaltura player toolkit.),
           type: 'video',
@@ -818,6 +825,7 @@ describe LinkPreview do
           version: '1.0',
           provider_name: %(Kaltura),
           provider_url: 'http://player.kaltura.com',
+          url: url,
           title: %(Kaltura Player: Share Plugin example),
           description: %(Kaltura Player: Share plugin demonstrates the ease of which social share can be configured with the kaltura player toolkit.),
           type: 'video',
@@ -896,6 +904,7 @@ describe LinkPreview do
           version: '1.0',
           provider_name: %(Kaltura),
           provider_url: 'http://player.kaltura.com',
+          url: url,
           title: %(Kaltura Player: Share Plugin example),
           description: %(Kaltura Player: Share plugin demonstrates the ease of which social share can be configured with the kaltura player toolkit.),
           type: 'video',
@@ -985,6 +994,77 @@ describe LinkPreview do
           web_page: 'https://www.flickr.com/photos/bees/2341623661/',
           web_page_short_url: 'https://flic.kr/p/4yVr8K',
           width: '320'
+        }
+      end
+    end
+  end
+
+  context 'with only with html5 embed response', vcr: { cassette_name: 'thinglink_html5_embed' } do
+    let(:url) { 'https://www.thinglink.com/scene/771673473431896065' }
+
+    it_behaves_like 'link_preview'
+
+    describe '#url' do
+      subject { content.url }
+      it { should == url }
+    end
+
+    describe '#title' do
+      subject { content.title }
+      it { should == %(#AmazonienLive by Gnter Exel) }
+    end
+
+    describe '#description' do
+      subject { content.description }
+      it { should == %(TOUCH this image to discover its story. Image tagging powered by ThingLink) }
+    end
+
+    describe '#site_name' do
+      subject { content.site_name }
+      it { should == 'www.thinglink.com' }
+    end
+
+    describe '#site_url' do
+      subject { content.site_url }
+      it { should == 'https://www.thinglink.com' }
+    end
+
+    describe '#image_url' do
+      subject { content.image_url }
+      it { should == 'https://cdn.thinglink.me/api/image/771673473431896065/1024/10/scaletowidth/0/0/1/1/false/true?wait=true' }
+    end
+
+    describe '#image_data' do
+      subject { content.image_data }
+      it { should be_a(StringIO) }
+    end
+
+    describe '#image_content_type' do
+      subject { content.image_content_type }
+      it { should == 'image/jpeg;charset=ISO-8859-1' }
+    end
+
+    describe '#image_file_name' do
+      subject { content.image_file_name }
+      it { should == 'tmp771673473431896065.jpg' }
+    end
+
+    describe '#as_oembed' do
+      subject(:oembed) { content.as_oembed }
+
+      it 'should convert opengraph to oembed' do
+        should == {
+          version: '1.0',
+          provider_name: %(www.thinglink.com),
+          provider_url: 'https://www.thinglink.com',
+          url: url,
+          title: %(#AmazonienLive by Gnter Exel),
+          description: 'TOUCH this image to discover its story. Image tagging powered by ThingLink',
+          type: 'video',
+          thumbnail_url: 'https://cdn.thinglink.me/api/image/771673473431896065/1024/10/scaletowidth/0/0/1/1/false/true?wait=true',
+          html: content.sources[:opengraph_embed][:html],
+          width: 1024,
+          height: 677
         }
       end
     end
