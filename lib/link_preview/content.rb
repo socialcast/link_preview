@@ -238,11 +238,11 @@ module LinkPreview
     def property_source_priority(property)
       case property
       when :description
-        [:html, :oembed, :default]
+        [:html, :oembed, :opengraph_oembed, :opengraph, :default]
       when :image_data, :image_content_type, :image_file_name
-        [:image, :oembed, :default]
+        [:image, :oembed, :opengraph_oembed, :opengraph, :default]
       else
-        [:oembed, :html, :image, :default]
+        [:oembed, :opengraph_oembed, :opengraph, :html, :image, :default]
       end
     end
 
@@ -288,6 +288,7 @@ module LinkPreview
         version: '1.0',
         provider_name: site_name,
         provider_url: site_url,
+        url: url,
         title: title,
         description: description,
         type: 'link',
@@ -303,7 +304,7 @@ module LinkPreview
     end
 
     def content_type_video?
-      content_type =~ %r{\Avideo/.*}
+      content_type =~ %r{\Avideo/.*} ? true : false
     end
 
     def content_type_flash?
@@ -311,11 +312,10 @@ module LinkPreview
     end
 
     def content_type_embed?
-      get_property(:html)
+      get_property(:html) ? true : false
     end
 
     def content_html
-      return unless content_url.present?
       return content_html_embed if content_type_embed?
       return content_html_video if content_type_video?
       return content_html_flash if content_type_flash?

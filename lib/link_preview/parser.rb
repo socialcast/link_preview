@@ -118,6 +118,7 @@ module LinkPreview
 
     def parse_opengraph_video_data(doc)
       opengraph_video_array_first_elem = find_meta_property_array(doc, 'og:video').detect { |x| x['og:video:type'] != 'text/html' }
+      return {} unless opengraph_video_array_first_elem
       parse_opengraph_common_data(doc).merge(
         video_url: opengraph_video_array_first_elem['og:video'] || opengraph_video_array_first_elem['og:video:url'],
         video_secure_url: opengraph_video_array_first_elem['og:video:secure_url'],
