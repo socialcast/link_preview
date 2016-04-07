@@ -23,44 +23,12 @@
 require 'spec_helper'
 
 describe LinkPreview::Parser do
-  describe '#parse_image_file_name' do
-    let(:config) { double(LinkPreview::Configuration) }
-    let(:parser) { LinkPreview::Parser.new(config) }
-    let(:response) do
-      Faraday::Response.new.tap do |response|
-        allow(response).to receive(:headers).and_return(:'content-disposition' => content_disposition)
-        allow(response).to receive(:url).and_return('http://example.com/image-url.jpg')
-      end
-    end
-
-    context 'when the content-disposition header contains a valid filename' do
-      let(:content_disposition) { 'inline;filename="image-cd.jpg"' }
-      it 'parses the filename from the header' do
-        expect(parser.parse_image_file_name(response)).to eq('image-cd.jpg')
-      end
-    end
-
-    context 'when the content-disposition header does not contain a filename' do
-      let(:content_disposition) { 'inline;' }
-      it 'parses the filename from the url' do
-        expect(parser.parse_image_file_name(response)).to eq('image-url.jpg')
-      end
-    end
-
-    context 'when the content-disposition header contains a blank filename' do
-      let(:content_disposition) { 'inline;filename=""' }
-      it 'parses the filename from the url' do
-        expect(parser.parse_image_file_name(response)).to eq('image-url.jpg')
-      end
-    end
-  end
-
   describe '#parse' do
     let(:config) { double(LinkPreview::Configuration) }
     let(:parser) { LinkPreview::Parser.new(config) }
     let(:response) do
       Faraday::Response.new.tap do |response|
-        allow(response).to receive(:headers).and_return(content_type: content_type)
+        allow(response).to receive(:headers).and_return(headers)
         allow(response).to receive(:url).and_return(url)
         allow(response).to receive(:body).and_return(body)
       end
@@ -106,7 +74,7 @@ describe LinkPreview::Parser do
     end
 
     context 'with json oembed response' do
-      let(:content_type) { 'application/json' }
+      let(:headers) { { content_type: 'application/json' } }
       let(:url) { 'http://example.com/oembed?url=http%3A%2F%2Fexample.com&format=json' }
 
       let(:body) do
@@ -117,7 +85,7 @@ describe LinkPreview::Parser do
     end
 
     context 'with xml oembed response' do
-      let(:content_type) { 'text/xml' }
+      let(:headers) { { content_type: 'text/xml' } }
       let(:url) { 'http://example.com/oembed?url=http%3A%2F%2Fexample.com&format=xml' }
 
       let(:body) do
@@ -133,6 +101,42 @@ describe LinkPreview::Parser do
       end
 
       include_examples 'oembed'
+    end
+
+    context 'with image response' do
+      let(:headers) { { content_type: 'image/jpg', :'content-disposition' => content_disposition } }
+      let(:url) { 'http://example.com/image-url.jpg' }
+      let(:body) { '' }
+
+      context 'when the content-disposition header contains a valid filename' do
+        let(:content_disposition) { 'inline;filename="image-cd.jpg"' }
+
+        it do
+          expect(data[:image][:image_url]).to eq(url)
+          expect(data[:image][:image_content_type]).to eq('image/jpg')
+          expect(data[:image][:image_file_name]).to eq('image-cd.jpg')
+        end
+      end
+
+      context 'when the content-disposition header does not contain a filename' do
+        let(:content_disposition) { 'inline;' }
+
+        it do
+          expect(data[:image][:image_url]).to eq(url)
+          expect(data[:image][:image_content_type]).to eq('image/jpg')
+          expect(data[:image][:image_file_name]).to eq('image-url.jpg')
+        end
+      end
+
+      context 'when the content-disposition header contains a blank filename' do
+        let(:content_disposition) { 'inline;filename=""' }
+
+        it do
+          expect(data[:image][:image_url]).to eq(url)
+          expect(data[:image][:image_content_type]).to eq('image/jpg')
+          expect(data[:image][:image_file_name]).to eq('image-url.jpg')
+        end
+      end
     end
   end
 end
