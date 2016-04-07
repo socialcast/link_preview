@@ -145,14 +145,17 @@ module LinkPreview
       )
     end
 
-    def parse_oembed(data)
-      # TODO: validate oembed response
-      { oembed: (parse_oembed_data(data) || {}).merge(url: parse_oembed_content_url(data)) }
-    end
-
     def parse_video_url_content(uri)
       url = LinkPreview::URI.parse(uri, @options)
       @config.http_client.get(url.to_s, @options)
+    end
+
+    def parse_oembed(data)
+      oembed_data = parse_oembed_data(data)
+      return {} unless oembed_data
+      return {} unless oembed_data.is_a?(Hash)
+      return {} unless oembed_data['type']
+      { oembed: oembed_data.merge(url: parse_oembed_content_url(data)) }
     end
 
     def parse_oembed_data(data)
@@ -162,6 +165,8 @@ module LinkPreview
       when /json/
         MultiJson.load(data.body)
       end
+    rescue
+      nil
     end
 
     def parse_oembed_content_url(data)
