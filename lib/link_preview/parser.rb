@@ -152,9 +152,7 @@ module LinkPreview
 
     def parse_oembed(data)
       oembed_data = parse_oembed_data(data)
-      return {} unless oembed_data
-      return {} unless oembed_data.is_a?(Hash)
-      return {} unless oembed_data['type']
+      return {} unless oembed_data.is_a?(Hash) && oembed_data['type']
       { oembed: oembed_data.merge(url: parse_oembed_content_url(data)) }
     end
 
