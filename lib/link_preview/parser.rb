@@ -48,27 +48,6 @@ module LinkPreview
       end
     end
 
-    def parse_image(data)
-      {
-        image: {
-          image_url: data.url,
-          image_data: parse_image_data(data),
-          image_content_type: data.headers[:content_type],
-          image_file_name: parse_image_file_name(data)
-        }
-      }
-    end
-
-    def parse_image_file_name(data)
-      content_disposition_filename = parse_content_disposition_filename(data)
-      if content_disposition_filename.present?
-        content_disposition_filename
-      elsif data.url
-        parsed_uri = LinkPreview::URI.parse(data.url, @options)
-        parsed_uri.path.split('/').last || parsed_uri.hostname.tr('.', '_')
-      end
-    end
-
     private
 
     def ignore_opengraph_video_type_html?
@@ -100,6 +79,27 @@ module LinkPreview
         description: find_meta_description(doc),
         tags: Array.wrap(find_rel_tags(doc))
       }
+    end
+
+    def parse_image(data)
+      {
+        image: {
+          image_url: data.url,
+          image_data: parse_image_data(data),
+          image_content_type: data.headers[:content_type],
+          image_file_name: parse_image_file_name(data)
+        }
+      }
+    end
+
+    def parse_image_file_name(data)
+      content_disposition_filename = parse_content_disposition_filename(data)
+      if content_disposition_filename.present?
+        content_disposition_filename
+      elsif data.url
+        parsed_uri = LinkPreview::URI.parse(data.url, @options)
+        parsed_uri.path.split('/').last || parsed_uri.hostname.tr('.', '_')
+      end
     end
 
     def parse_opengraph_common_data(doc)
