@@ -577,7 +577,7 @@ describe LinkPreview do
           description: %(In a happy suburban neighborhood surrounded by white picket fences with flowering rose bushes, sits a black house with a dead lawn. Unbeknownst to the neighbors, hidden beneath this home is a vast secret hideout. Surrounded by a small army of minions, we discover Gru planning the biggest heist in the history of the world. He is going to steal the moon, yes, the moon. Gru delights in all things wicked. Armed with his arsenal of shrink rays, freeze rays, and battle-ready vehicles for land and air, he vanquishes all who stand in his way. Until the day he encounters the immense will of three little orphaned girls who look at him and see something that no one else has ever seen: a potential Dad. The world's greatest villain has just met his greatest challenge: three little girls named Margo, Edith and Agnes.),
           type: 'video',
           thumbnail_url: 'https://cdnbakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/0_w2zsofdj/version/100021/width/400',
-          html: %(<object width=\"400\" height=\"333\"><param name=\"movie\" value=\"https://www.kaltura.com/index.php/kwidget/wid/_1059491/uiconf_id/16199142/entry_id/0_w2zsofdj\"></param><param name=\"allowScriptAccess\" value=\"always\"></param><param name=\"allowFullScreen\" value=\"true\"></param><embed src=\"https://www.kaltura.com/index.php/kwidget/wid/_1059491/uiconf_id/16199142/entry_id/0_w2zsofdj\" type=\"application/x-shockwave-flash\" allowscriptaccess=\"always\" allowfullscreen=\"true\" width=\"400\" height=\"333\"></embed></object>),
+          html: %(<iframe src="https://cdnapisec.kaltura.com/p/1059491/sp/105949100/embedIframeJs/uiconf_id/16199142/partner_id/1059491?iframeembed=true&playerId=kaltura_player&entry_id=0_w2zsofdj" width="400" height="333" />),
           width: 400,
           height: 333
         }
@@ -689,81 +689,6 @@ describe LinkPreview do
     end
   end
 
-  context 'with kaltura with html5 video response fallback', vcr: { cassette_name: 'kaltura_html5_video' } do
-    let(:url) { 'http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html' }
-    let(:options) { { width: 600 } }
-
-    it_behaves_like 'link_preview'
-
-    describe '#url' do
-      subject { content.url }
-      it { should == url }
-    end
-
-    describe '#title' do
-      subject { content.title }
-      it { should == %(Kaltura Player: Share Plugin example) }
-    end
-
-    describe '#description' do
-      subject { content.description }
-      it { should == %(Kaltura Player: Share plugin demonstrates the ease of which social share can be configured with the kaltura player toolkit.) }
-    end
-
-    describe '#site_name' do
-      subject { content.site_name }
-      it { should == 'Kaltura' }
-    end
-
-    describe '#site_url' do
-      subject { content.site_url }
-      it { should == 'http://player.kaltura.com' }
-    end
-
-    describe '#image_url' do
-      subject { content.image_url }
-      it { should == 'http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400' }
-    end
-
-    describe '#image_data' do
-      subject { content.image_data }
-      it { should be_a(StringIO) }
-    end
-
-    describe '#image_content_type' do
-      subject { content.image_content_type }
-      it { should == 'image/jpeg' }
-    end
-
-    describe '#image_file_name' do
-      subject { content.image_file_name }
-      it { should == '400' }
-    end
-
-    describe '#as_oembed' do
-      subject(:oembed) { content.as_oembed }
-
-      it 'should issue minimum number of requests convert opengraph to oembed' do
-        expect(http_client).to receive(:get).with('http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html', width: 600).ordered.and_call_original
-        expect(http_client).to receive(:get).with('https://cdnapisec.kaltura.com/p/243342/sp/24334200/embedIframeJs/uiconf_id/28685261/partner_id/243342?iframeembed=true&playerId=kaltura_player&entry_id=1_sf5ovm7u', width: 600).ordered.and_return(Faraday::Response.new(status: 404))
-        expect(http_client).to receive(:get).with('http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400', width: 600).ordered.and_call_original
-        should == {
-          version: '1.0',
-          provider_name: %(Kaltura),
-          provider_url: 'http://player.kaltura.com',
-          url: url,
-          title: %(Kaltura Player: Share Plugin example),
-          description: %(Kaltura Player: Share plugin demonstrates the ease of which social share can be configured with the kaltura player toolkit.),
-          type: 'video',
-          thumbnail_url: 'http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400',
-          html: %(<video width="600" height="338" controls><source src="https://cdnapisec.kaltura.com/p/243342/sp/24334200/playManifest/entryId/1_sf5ovm7u/flavorId/1_d2uwy7vv/format/url/protocol/http/a.mp4" type="video/mp4" /></video>),
-          width: 600,
-          height: 338
-        }
-      end
-    end
-  end
-
   context 'with kaltura with html5 embed response', vcr: { cassette_name: 'kaltura_html5_embed' } do
     let(:url) { 'http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html' }
 
@@ -819,7 +744,6 @@ describe LinkPreview do
 
       it 'should issue minimum number of requests convert opengraph to oembed' do
         expect(http_client).to receive(:get).with('http://player.kaltura.com/modules/KalturaSupport/components/share/Share.html', {}).ordered.and_call_original
-        expect(http_client).to receive(:get).with('https://cdnapisec.kaltura.com/p/243342/sp/24334200/embedIframeJs/uiconf_id/28685261/partner_id/243342?iframeembed=true&playerId=kaltura_player&entry_id=1_sf5ovm7u', {}).ordered.and_call_original
         expect(http_client).to receive(:get).with('http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400', {}).ordered.and_call_original
         should == {
           version: '1.0',
@@ -830,7 +754,7 @@ describe LinkPreview do
           description: %(Kaltura Player: Share plugin demonstrates the ease of which social share can be configured with the kaltura player toolkit.),
           type: 'video',
           thumbnail_url: 'http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400',
-          html: content.sources[:opengraph_embed][:html],
+          html: %(<iframe src="https://cdnapisec.kaltura.com/p/243342/sp/24334200/embedIframeJs/uiconf_id/28685261/partner_id/243342?iframeembed=true&playerId=kaltura_player&entry_id=1_sf5ovm7u" width="560" height="395" />),
           width: 560,
           height: 395
         }
@@ -1062,7 +986,7 @@ describe LinkPreview do
           description: 'TOUCH this image to discover its story. Image tagging powered by ThingLink',
           type: 'video',
           thumbnail_url: 'https://cdn.thinglink.me/api/image/771673473431896065/1024/10/scaletowidth/0/0/1/1/false/true?wait=true',
-          html: content.sources[:opengraph_embed][:html],
+          html: %(<iframe src="https://www.thinglink.com/card/771673473431896065?on=fb" width="1024" height="677" />),
           width: 1024,
           height: 677
         }

@@ -41,7 +41,7 @@ module LinkPreview
       :content_width,
       :content_height].freeze
 
-    SOURCES = [:initial, :image, :oembed, :opengraph, :opengraph_embed, :html].freeze
+    SOURCES = [:initial, :image, :oembed, :opengraph_embed, :opengraph, :html].freeze
 
     SOURCE_PROPERTIES_TABLE =
       {
@@ -115,7 +115,7 @@ module LinkPreview
     attr_reader :sources
 
     def as_oembed
-      if content_type_video? || content_type_flash? || content_type_embed?
+      if content_type_embed? || content_type_iframe? || content_type_video? || content_type_flash?
         @sources[:oembed].reverse_merge(as_oembed_video)
       else
         @sources[:oembed].reverse_merge(as_oembed_link)
@@ -307,6 +307,10 @@ module LinkPreview
       content_type =~ %r{\Avideo/.*} ? true : false
     end
 
+    def content_type_iframe?
+      content_type =~ %r{\Atext/html} ? true : false
+    end
+
     def content_type_flash?
       content_type == 'application/x-shockwave-flash'
     end
@@ -317,6 +321,7 @@ module LinkPreview
 
     def content_html
       return content_html_embed if content_type_embed?
+      return content_html_iframe if content_type_iframe?
       return content_html_video if content_type_video?
       return content_html_flash if content_type_flash?
     end
@@ -334,6 +339,15 @@ module LinkPreview
             <source src="#{content_url}"
                     type="#{content_type}" />
           </video>
+      EOF
+    end
+
+    def content_html_iframe
+      return unless content_url.present?
+      width_attribute = %(width="#{content_width_scaled}") if content_width_scaled > 0
+      height_attribute = %(height="#{content_height_scaled}") if content_height_scaled > 0
+      <<-EOF.strip.gsub(/\s+/, ' ').gsub(/>\s+</, '><')
+          <iframe src="#{content_url}" #{width_attribute} #{height_attribute} />
       EOF
     end
 
