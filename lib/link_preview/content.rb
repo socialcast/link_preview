@@ -39,7 +39,8 @@ module LinkPreview
       :content_url,
       :content_type,
       :content_width,
-      :content_height].freeze
+      :content_height
+    ].freeze
 
     SOURCES = [:initial, :image, :oembed, :opengraph_embed, :opengraph, :html].freeze
 
