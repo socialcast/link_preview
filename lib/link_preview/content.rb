@@ -336,10 +336,10 @@ module LinkPreview
       width_attribute = %(width="#{content_width_scaled}") if content_width_scaled > 0
       height_attribute = %(height="#{content_height_scaled}") if content_height_scaled > 0
       <<-EOF.strip.gsub(/\s+/, ' ').gsub(/>\s+</, '><')
-          <video #{width_attribute} #{height_attribute} controls>
-            <source src="#{content_url}"
-                    type="#{content_type}" />
-          </video>
+        <video #{width_attribute} #{height_attribute} controls>
+          <source src="#{content_url}"
+                  type="#{content_type}" />
+        </video>
       EOF
     end
 
@@ -348,23 +348,23 @@ module LinkPreview
       width_attribute = %(width="#{content_width_scaled}") if content_width_scaled > 0
       height_attribute = %(height="#{content_height_scaled}") if content_height_scaled > 0
       <<-EOF.strip.gsub(/\s+/, ' ').gsub(/>\s+</, '><')
-          <iframe src="#{content_url}" #{width_attribute} #{height_attribute} />
+        <iframe src="#{content_url}" #{width_attribute} #{height_attribute} />
       EOF
     end
 
     def content_html_flash
       return unless content_url.present?
       <<-EOF.strip.gsub(/\s+/, ' ').gsub(/>\s+</, '><')
-          <object width="#{content_width_scaled}" height="#{content_height_scaled}">
-            <param name="movie" value="#{content_url}"></param>
-            <param name="allowScriptAccess" value="always"></param>
-            <param name="allowFullScreen" value="true"></param>
-            <embed src="#{content_url}"
-                   type="#{content_type}"
-                   allowscriptaccess="always"
-                   allowfullscreen="true"
-                   width="#{content_width_scaled}" height="#{content_height_scaled}"></embed>
-          </object>
+        <object width="#{content_width_scaled}" height="#{content_height_scaled}">
+          <param name="movie" value="#{content_url}"></param>
+          <param name="allowScriptAccess" value="always"></param>
+          <param name="allowFullScreen" value="true"></param>
+          <embed src="#{content_url}"
+                 type="#{content_type}"
+                 allowscriptaccess="always"
+                 allowfullscreen="true"
+                 width="#{content_width_scaled}" height="#{content_height_scaled}"></embed>
+        </object>
       EOF
     end
 
