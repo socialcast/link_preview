@@ -577,7 +577,7 @@ describe LinkPreview do
           description: %(In a happy suburban neighborhood surrounded by white picket fences with flowering rose bushes, sits a black house with a dead lawn. Unbeknownst to the neighbors, hidden beneath this home is a vast secret hideout. Surrounded by a small army of minions, we discover Gru planning the biggest heist in the history of the world. He is going to steal the moon, yes, the moon. Gru delights in all things wicked. Armed with his arsenal of shrink rays, freeze rays, and battle-ready vehicles for land and air, he vanquishes all who stand in his way. Until the day he encounters the immense will of three little orphaned girls who look at him and see something that no one else has ever seen: a potential Dad. The world's greatest villain has just met his greatest challenge: three little girls named Margo, Edith and Agnes.),
           type: 'video',
           thumbnail_url: 'https://cdnbakmi.kaltura.com/p/1059491/sp/105949100/thumbnail/entry_id/0_w2zsofdj/version/100021/width/400',
-          html: %(<iframe src="https://cdnapisec.kaltura.com/p/1059491/sp/105949100/embedIframeJs/uiconf_id/16199142/partner_id/1059491?iframeembed=true&playerId=kaltura_player&entry_id=0_w2zsofdj" width="400" height="333" />),
+          html: %(<iframe src="https://cdnapisec.kaltura.com/p/1059491/sp/105949100/embedIframeJs/uiconf_id/16199142/partner_id/1059491?iframeembed=true&playerId=kaltura_player&entry_id=0_w2zsofdj" width="400" height="333" allowfullscreen />),
           width: 400,
           height: 333
         }
@@ -754,7 +754,7 @@ describe LinkPreview do
           description: %(Kaltura Player: Share plugin demonstrates the ease of which social share can be configured with the kaltura player toolkit.),
           type: 'video',
           thumbnail_url: 'http://cdnbakmi.kaltura.com/p/243342/sp/24334200/thumbnail/entry_id/1_sf5ovm7u/version/100003/width/400',
-          html: %(<iframe src="https://cdnapisec.kaltura.com/p/243342/sp/24334200/embedIframeJs/uiconf_id/28685261/partner_id/243342?iframeembed=true&playerId=kaltura_player&entry_id=1_sf5ovm7u" width="560" height="395" />),
+          html: %(<iframe src="https://cdnapisec.kaltura.com/p/243342/sp/24334200/embedIframeJs/uiconf_id/28685261/partner_id/243342?iframeembed=true&playerId=kaltura_player&entry_id=1_sf5ovm7u" width="560" height="395" allowfullscreen />),
           width: 560,
           height: 395
         }
@@ -986,7 +986,7 @@ describe LinkPreview do
           description: 'TOUCH this image to discover its story. Image tagging powered by ThingLink',
           type: 'video',
           thumbnail_url: 'https://cdn.thinglink.me/api/image/771673473431896065/1024/10/scaletowidth/0/0/1/1/false/true?wait=true',
-          html: %(<iframe src="https://www.thinglink.com/card/771673473431896065?on=fb" width="1024" height="677" />),
+          html: %(<iframe src="https://www.thinglink.com/card/771673473431896065?on=fb" width="1024" height="677" allowfullscreen />),
           width: 1024,
           height: 677
         }
