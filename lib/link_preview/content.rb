@@ -348,7 +348,7 @@ module LinkPreview
       width_attribute = %(width="#{content_width_scaled}") if content_width_scaled > 0
       height_attribute = %(height="#{content_height_scaled}") if content_height_scaled > 0
       <<-EOF.strip.gsub(/\s+/, ' ').gsub(/>\s+</, '><')
-        <iframe src="#{content_url}" #{width_attribute} #{height_attribute} allowfullscreen />
+        <iframe src="#{content_url}" #{width_attribute} #{height_attribute} allowfullscreen="true" />
       EOF
     end
 
