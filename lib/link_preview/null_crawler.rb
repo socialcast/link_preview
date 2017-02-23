@@ -22,14 +22,11 @@ require 'link_preview'
 
 module LinkPreview
   class NullCrawler
-    def initialize(config, options = {})
-    end
+    def initialize(config, options = {}); end
 
-    def enqueue!(uri, priority = :default)
-    end
+    def enqueue!(uri, priority = :default); end
 
-    def dequeue!(priority_order = [])
-    end
+    def dequeue!(priority_order = []); end
 
     def success?
       true
